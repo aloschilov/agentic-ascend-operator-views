@@ -1,0 +1,201 @@
+# Structured linked bibliography for agentic AscendC/operator optimization.
+# Status values: seed, core, supporting, to-verify.
+
+categories:
+  ascend_npu_specific:
+    - id: ascendoptimizer-2026
+      title: "AscendOptimizer: Episodic Agent for Ascend NPU Operator Optimization"
+      year: 2026
+      url: "https://arxiv.org/abs/2603.23566"
+      status: core
+      relevance: "Closest agentic AscendC operator-optimization work; host-side tiling plus kernel-side scheduling/pipelining loop."
+      tags: [ascend, ascendc, npu, agent, tiling, kernel-optimization]
+    - id: ascendcraft-2026
+      title: "AscendCraft: Automatic Ascend NPU Kernel Generation via DSL-Guided Transcompilation"
+      year: 2026
+      url: "https://arxiv.org/abs/2601.22760"
+      status: core
+      relevance: "DSL-guided path for making Ascend execution semantics explicit before lowering to AscendC."
+      tags: [ascend, dsl, llm, transcompilation, programming-model]
+    - id: ascendkernelgen-2026
+      title: "AscendKernelGen: A Systematic Study of LLM-Based Kernel Generation for Neural Processing Units"
+      year: 2026
+      url: "https://arxiv.org/abs/2601.07160"
+      status: core
+      relevance: "Shows general LLM weakness on NPU kernels and proposes domain-specific generation/evaluation."
+      tags: [ascend, npu, llm, benchmark, execution-feedback]
+    - id: multikernelbench-2025
+      title: "MultiKernelBench: A Multi-Platform Benchmark for Kernel Generation"
+      year: 2025
+      url: "https://arxiv.org/abs/2507.17773"
+      status: core
+      relevance: "Evaluation benchmark across Nvidia GPU, Huawei NPU, and Google TPU."
+      tags: [benchmark, kernel-generation, huawei-npu, gpu, tpu]
+    - id: ascend-roofline-2025
+      title: "Squeezing Operator Performance Potential for the Ascend Architecture"
+      year: 2025
+      url: "https://cs.nju.edu.cn/tianchen/lunwen/2025/asplos25-yuhang.pdf"
+      doi: "10.1145/3676641.3716243"
+      status: core
+      relevance: "Component-based roofline and underutilization analysis for Ascend operators; useful basis for performance evidence views."
+      tags: [ascend, roofline, bottleneck-analysis, performance-modeling]
+    - id: npumeter
+      title: "NPUMeter: Automatic Operator Optimization for Ascend NPU with Accurate Performance Modeling"
+      year: null
+      url: "https://dl.acm.org/doi/10.1145/3820380"
+      status: to-verify
+      relevance: "Potentially relevant for performance modeling and design-space exploration on Ascend."
+      tags: [ascend, npu, performance-modeling, autotuning]
+
+  agentic_kernel_optimization:
+    - id: kernelbench-2025
+      title: "KernelBench: Can LLMs Write Efficient GPU Kernels?"
+      year: 2025
+      url: "https://arxiv.org/abs/2502.10517"
+      status: core
+      relevance: "Benchmark and metric framing for correct-and-fast generated kernels."
+      tags: [llm, gpu, kernel-generation, benchmark, profiling-feedback]
+    - id: tritonbench-2025
+      title: "TritonBench: Benchmarking Large Language Model Capabilities for Generating Triton Operators"
+      year: 2025
+      url: "https://arxiv.org/abs/2502.14752"
+      status: core
+      relevance: "Triton operator generation benchmark; highlights LLM weakness in performance-aware DSL coding."
+      tags: [triton, llm, benchmark, kernel-generation]
+    - id: geak-2025
+      title: "Geak: Introducing Triton Kernel AI Agent & Evaluation Benchmarks"
+      year: 2025
+      url: "https://arxiv.org/abs/2507.23194"
+      status: supporting
+      relevance: "Agentic feedback-loop framework for AMD Triton kernel generation."
+      tags: [triton, amd, mi300x, agent, feedback-loop]
+    - id: compilergpt-2025
+      title: "CompilerGPT: Leveraging Large Language Models for Analyzing and Acting on Compiler Optimization Reports"
+      year: 2025
+      url: "https://arxiv.org/abs/2506.06227"
+      status: supporting
+      relevance: "Compiler reports as agent input; close to compiler-to-AI information pipeline."
+      tags: [compiler-reports, llm, optimization, harness]
+    - id: codeopt-survey-2025
+      title: "Language Models for Code Optimization: Survey, Challenges and Future Directions"
+      year: 2025
+      url: "https://arxiv.org/abs/2501.01277"
+      status: supporting
+      relevance: "Broad survey for related work framing."
+      tags: [survey, llm, code-optimization]
+
+  compiler_ir_and_autotuning:
+    - id: mlir-2020
+      title: "MLIR: A Compiler Infrastructure for the End of Moore's Law"
+      year: 2020
+      url: "https://arxiv.org/abs/2002.11054"
+      status: core
+      relevance: "Multi-level extensible IR infrastructure; useful for designing domain-specific views."
+      tags: [mlir, ir, compiler-infrastructure]
+    - id: stablehlo-spec
+      title: "StableHLO Specification"
+      year: null
+      url: "https://openxla.org/stablehlo/spec"
+      status: supporting
+      relevance: "Portable high-level operator semantics for ML compiler pipelines."
+      tags: [stablehlo, openxla, semantic-ir]
+    - id: tvm-2018
+      title: "TVM: An Automated End-to-End Optimizing Compiler for Deep Learning"
+      year: 2018
+      url: "https://arxiv.org/abs/1802.04799"
+      status: core
+      relevance: "Graph-level and operator-level optimization with learning-based cost modeling."
+      tags: [tvm, compiler, autotuning, tensor-programs]
+    - id: autotvm-2018
+      title: "Learning to Optimize Tensor Programs"
+      year: 2018
+      url: "https://arxiv.org/abs/1805.08166"
+      status: core
+      relevance: "Learning-based search over tensor program variants."
+      tags: [autotvm, tensor-programs, cost-model]
+    - id: ansor-2020
+      title: "Ansor: Generating High-Performance Tensor Programs for Deep Learning"
+      year: 2020
+      url: "https://arxiv.org/abs/2006.06762"
+      status: core
+      relevance: "Hierarchical search-space representation and evolutionary search."
+      tags: [ansor, autotuning, search-space, cost-model]
+    - id: metaschedule-2022
+      title: "Tensor Program Optimization with Probabilistic Programs"
+      year: 2022
+      url: "https://arxiv.org/abs/2205.13603"
+      status: core
+      relevance: "Search-space construction through modular probabilistic programs."
+      tags: [metaschedule, tensor-programs, probabilistic-programming]
+    - id: tensorir-2022
+      title: "TensorIR: An Abstraction for Automatic Tensorized Program Optimization"
+      year: 2022
+      url: "https://arxiv.org/abs/2207.04296"
+      status: core
+      relevance: "Loop-nest/tensor computation abstraction; relevant for schedule-level AI actions."
+      tags: [tensorir, tensorization, ir]
+    - id: triton-2019
+      title: "Triton: An Intermediate Language and Compiler for Tiled Neural Network Computations"
+      year: 2019
+      url: "https://research.ibm.com/publications/triton-an-intermediate-language-and-compiler-for-tiled-neural-network-computations"
+      status: core
+      relevance: "Tile-centric programming model; useful analogy for AI-friendly operator DSL."
+      tags: [triton, tile-ir, gpu, programming-model]
+    - id: halide-2017
+      title: "Halide: decoupling algorithms from schedules for high-performance image processing"
+      year: 2017
+      url: "https://cacm.acm.org/research/halide/"
+      status: supporting
+      relevance: "Canonical algorithm/schedule separation."
+      tags: [halide, schedule, dsl]
+    - id: exo-2022
+      title: "Exo: A Usable User-Schedulable Programming Language for Accelerators"
+      year: 2022
+      url: "https://people.csail.mit.edu/yuka/pdf/exo_pldi2022_full.pdf"
+      status: supporting
+      relevance: "User-schedulable accelerator programming with explicit hardware abstractions."
+      tags: [exo, accelerator, schedule, dsl]
+    - id: dace-sdfg-2019
+      title: "Stateful Dataflow Multigraphs: A Data-Centric Model for Performance Portability on Heterogeneous Architectures"
+      year: 2019
+      url: "https://arxiv.org/abs/1902.10345"
+      status: core
+      relevance: "Data-centric IR with transformations such as tiling and double-buffering."
+      tags: [dace, sdfg, dataflow, double-buffering]
+    - id: tiramisu-2018
+      title: "Tiramisu: A Polyhedral Compiler for Expressing Fast and Portable Code"
+      year: 2018
+      url: "https://arxiv.org/abs/1804.10694"
+      status: supporting
+      relevance: "Separates algorithm, loop transformations, data layouts, and communication."
+      tags: [tiramisu, polyhedral, schedule, ir]
+
+  program_analysis_foundations:
+    - id: kildall-1973
+      title: "A Unified Approach to Global Program Optimization"
+      year: 1973
+      url: "https://dl.acm.org/doi/10.1145/512927.512945"
+      status: supporting
+      relevance: "Classic data-flow fixed-point analysis foundation."
+      tags: [dataflow-analysis, compiler, fixed-point]
+    - id: cousot-1977
+      title: "Abstract Interpretation: A Unified Lattice Model for Static Analysis of Programs by Construction or Approximation of Fixpoints"
+      year: 1977
+      url: "https://www.di.ens.fr/~cousot/COUSOTpapers/POPL77.shtml"
+      status: supporting
+      relevance: "Foundation for sound approximation of program behavior and invariants."
+      tags: [abstract-interpretation, static-analysis, invariants]
+    - id: pdg-1987
+      title: "The Program Dependence Graph and Its Use in Optimization"
+      year: 1987
+      url: "https://dl.acm.org/doi/10.1145/24039.24041"
+      status: supporting
+      relevance: "Direct basis for data/control dependence views."
+      tags: [pdg, dependence-analysis, compiler-optimization]
+    - id: programl-2020
+      title: "ProGraML: Graph-based Deep Learning for Program Optimization and Analysis"
+      year: 2020
+      url: "https://arxiv.org/abs/2003.10536"
+      status: supporting
+      relevance: "Graph representation for ML over programs; useful precedent for AI-facing code views."
+      tags: [program-representation, graph, ml-for-code]
