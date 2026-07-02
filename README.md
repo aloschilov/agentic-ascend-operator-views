@@ -12,6 +12,7 @@ The central hypothesis is that AI agents should not optimize raw AscendC source 
 - [`docs/initial-prompt-commentary.ru.md`](docs/initial-prompt-commentary.ru.md) — Russian translation and critique of the original formulation.
 - [`bibliography/reading-list.md`](bibliography/reading-list.md) — human-readable linked bibliography.
 - [`bibliography/articles.yaml`](bibliography/articles.yaml) — structured metadata for linked articles and docs.
+- [`publications/README.md`](publications/README.md) — instructions for local-only downloaded copies of linked publications.
 - [`notes/01-ascend-npu.md`](notes/01-ascend-npu.md) — Ascend/NPU-specific sources.
 - [`notes/02-agentic-kernel-optimization.md`](notes/02-agentic-kernel-optimization.md) — LLM/agentic kernel optimization sources.
 - [`notes/03-compiler-ir-autotuning.md`](notes/03-compiler-ir-autotuning.md) — compiler IR, tensor IR, scheduling, autotuning.
@@ -38,3 +39,11 @@ AscendC source / operator spec / compiler IR
 ## What is stored here
 
 This repository stores links, metadata, and working notes. It does not vendor full PDFs or copyrighted article text.
+
+For local offline reading, run:
+
+```bash
+python3 tools/download_publications.py
+```
+
+Downloaded files are written to `publications/files/` and ignored by git.

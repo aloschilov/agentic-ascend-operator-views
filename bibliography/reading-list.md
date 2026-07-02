@@ -7,7 +7,7 @@
 - [AscendKernelGen: A Systematic Study of LLM-Based Kernel Generation for Neural Processing Units](https://arxiv.org/abs/2601.07160) — domain-specific kernel generation/evaluation for Ascend NPUs.
 - [MultiKernelBench: A Multi-Platform Benchmark for Kernel Generation](https://arxiv.org/abs/2507.17773) — benchmark across Nvidia GPU, Huawei NPU, and Google TPU.
 - [Squeezing Operator Performance Potential for the Ascend Architecture](https://cs.nju.edu.cn/tianchen/lunwen/2025/asplos25-yuhang.pdf) — component-based roofline and bottleneck analysis for Ascend operators.
-- [NPUMeter: Automatic Operator Optimization for Ascend NPU with Accurate Performance Modeling](https://dl.acm.org/doi/10.1145/3820380) — added as to-verify source for Ascend performance modeling / automatic optimization.
+- [NPUMeter: Automatic Operator Optimization for Ascend NPU with Accurate Analytical Performance Models](https://dl.acm.org/doi/10.1145/3820380) — added as to-verify source for Ascend performance modeling / automatic optimization.
 
 ## 2. LLM / agentic kernel optimization
 

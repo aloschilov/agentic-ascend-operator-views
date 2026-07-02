@@ -3,3 +3,7 @@
 *.tmp
 __pycache__/
 .DS_Store
+
+# Local publication downloads
+publications/files/
+publications/download-manifest.json

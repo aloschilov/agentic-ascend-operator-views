@@ -40,9 +40,11 @@ categories:
       relevance: "Component-based roofline and underutilization analysis for Ascend operators; useful basis for performance evidence views."
       tags: [ascend, roofline, bottleneck-analysis, performance-modeling]
     - id: npumeter
-      title: "NPUMeter: Automatic Operator Optimization for Ascend NPU with Accurate Performance Modeling"
-      year: null
+      title: "NPUMeter: Automatic Operator Optimization for Ascend NPU with Accurate Analytical Performance Models"
+      year: 2026
       url: "https://dl.acm.org/doi/10.1145/3820380"
+      download_url: "https://api.crossref.org/works/10.1145/3820380"
+      download_kind: metadata
       status: to-verify
       relevance: "Potentially relevant for performance modeling and design-space exploration on Ascend."
       tags: [ascend, npu, performance-modeling, autotuning]
@@ -145,6 +147,8 @@ categories:
       title: "Halide: decoupling algorithms from schedules for high-performance image processing"
       year: 2017
       url: "https://cacm.acm.org/research/halide/"
+      download_url: "https://andrew.adams.pub/halide_cacm.pdf"
+      download_kind: pdf
       status: supporting
       relevance: "Canonical algorithm/schedule separation."
       tags: [halide, schedule, dsl]
@@ -175,6 +179,8 @@ categories:
       title: "A Unified Approach to Global Program Optimization"
       year: 1973
       url: "https://dl.acm.org/doi/10.1145/512927.512945"
+      download_url: "https://haoxintu.github.io/files/1-A%20Unified%20Approach%20to%20Global%20Program%20Optimization.pdf"
+      download_kind: pdf
       status: supporting
       relevance: "Classic data-flow fixed-point analysis foundation."
       tags: [dataflow-analysis, compiler, fixed-point]
@@ -189,6 +195,8 @@ categories:
       title: "The Program Dependence Graph and Its Use in Optimization"
       year: 1987
       url: "https://dl.acm.org/doi/10.1145/24039.24041"
+      download_url: "https://web.eecs.umich.edu/~mahlke/courses/583f23/reading/ferrante_toplas_87.pdf"
+      download_kind: pdf
       status: supporting
       relevance: "Direct basis for data/control dependence views."
       tags: [pdg, dependence-analysis, compiler-optimization]
