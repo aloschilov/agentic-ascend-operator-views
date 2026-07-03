@@ -22,7 +22,7 @@ jobs:
           mkdir -p dist
           chmod 777 dist
 
-          for deck in agentic_ascend_operator_views_overview.ru agentic_ascend_operator_views_overview.en; do
+          for deck in agentic_ascend_operator_views_overview.ru agentic_ascend_operator_views_overview.en agentic_ascend_operator_views_survey.ru agentic_ascend_operator_views_survey.en; do
             docker run --rm --init \
               -v "${PWD}:/home/marp/app" \
               -e LANG=C.UTF-8 \

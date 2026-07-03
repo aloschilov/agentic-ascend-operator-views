@@ -7,6 +7,8 @@ marp_bin="${MARP_BIN:-marp}"
 decks=(
   "agentic_ascend_operator_views_overview.ru"
   "agentic_ascend_operator_views_overview.en"
+  "agentic_ascend_operator_views_survey.ru"
+  "agentic_ascend_operator_views_survey.en"
 )
 
 mkdir -p "${out_dir}"

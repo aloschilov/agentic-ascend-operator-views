@@ -22,6 +22,10 @@ The central hypothesis is that AI agents should not optimize raw AscendC source 
 - [`presentations/agentic_ascend_operator_views_overview.ru.marp.md`](presentations/agentic_ascend_operator_views_overview.ru.marp.md) — Russian overview Marp deck (same content in Russian).
 - [`presentations/agentic_ascend_operator_views_overview_speech.en.md`](presentations/agentic_ascend_operator_views_overview_speech.en.md) — English spoken-talk script for the overview deck.
 - [`presentations/agentic_ascend_operator_views_overview_speech.ru.md`](presentations/agentic_ascend_operator_views_overview_speech.ru.md) — Russian spoken-talk script for the overview deck.
+- [`presentations/agentic_ascend_operator_views_survey.en.marp.md`](presentations/agentic_ascend_operator_views_survey.en.marp.md) — English survey deck across the full bibliography (Ascend/NPU, agentic optimization, compiler IR/autotuning, program analysis).
+- [`presentations/agentic_ascend_operator_views_survey.ru.marp.md`](presentations/agentic_ascend_operator_views_survey.ru.marp.md) — Russian survey deck (same content in Russian).
+- [`presentations/agentic_ascend_operator_views_survey_speech.en.md`](presentations/agentic_ascend_operator_views_survey_speech.en.md) — English spoken-talk script for the survey deck.
+- [`presentations/agentic_ascend_operator_views_survey_speech.ru.md`](presentations/agentic_ascend_operator_views_survey_speech.ru.md) — Russian spoken-talk script for the survey deck.
 - [`templates/article-note.md`](templates/article-note.md) — template for per-paper notes.
 - [`roadmap.md`](roadmap.md) — next steps for turning the topic into a concrete research artifact.
 
