@@ -1,0 +1,142 @@
+/* @theme chapter-theme */
+@font-face {
+  font-family: 'Raleway';
+  font-style: normal;
+  font-weight: 400;
+  font-display: swap;
+  src: url('https://fonts.gstatic.com/s/raleway/v28/1Ptug8zYS_SKggPNyC0ITw.woff2') format('woff2');
+}
+@font-face {
+  font-family: 'Raleway';
+  font-style: normal;
+  font-weight: 700;
+  font-display: swap;
+  src: url('https://fonts.gstatic.com/s/raleway/v28/1Ptug8zYS_SKggPNyCAITQ.woff2') format('woff2');
+}
+
+:root {
+  --background: #FFFFFF;
+  --text: #1D1D1A;
+  --primary: #E9002F;
+  --accent2: #7F0000;
+  --accent3: #ED6D00;
+  --accent4: #FCC800;
+  --accent5: #61B230;
+  --accent6: #30B5C5;
+  --light-text: #666666;
+  --border: #DDDDDD;
+  font-family: 'Raleway', sans-serif;
+  font-size: 18px;
+}
+
+section * {
+  font-family: inherit !important;
+}
+
+pre,
+code,
+pre *,
+code *,
+.hljs,
+.hljs * {
+  font-family: ui-monospace, SFMono-Regular, Menlo, Monaco, Consolas,
+               "Liberation Mono", "Courier New", monospace !important;
+}
+
+span[data-marp-mermaid] {
+  font-family: monospace !important;
+}
+
+ul,
+ol,
+blockquote,
+table,
+td,
+th,
+div,
+.page-marker,
+.section-level1,
+.section-level2,
+.section-level3 {
+  font-family: 'Raleway', sans-serif;
+}
+
+section {
+  background: var(--background);
+  color: var(--text);
+  padding: 60px 40px;
+}
+
+h1, h2, h3 {
+  font-weight: 700;
+}
+
+h1 {
+  color: var(--primary);
+  border-bottom: 4px solid var(--accent3);
+  margin-bottom: 30px;
+  padding-bottom: 15px;
+}
+
+h2 {
+  color: var(--accent5);
+  border-left: 5px solid var(--accent6);
+  padding-left: 12px;
+}
+
+h3 {
+  color: var(--accent6);
+}
+
+blockquote {
+  background-color: rgba(151, 151, 151, 0.05);
+  border-left: 4px solid var(--accent3);
+  padding: 15px 20px;
+  margin: 20px 0;
+}
+
+pre {
+  background-color: #1D1D1A;
+  color: #EEE;
+  border-radius: 4px;
+  padding: 12px;
+  font-size: 0.9em;
+}
+
+pre code {
+  background: transparent;
+  color: inherit;
+  padding: 0;
+}
+
+ul, ol {
+  padding-left: 25px;
+}
+
+li::marker {
+  color: var(--primary);
+}
+
+table {
+  border-collapse: collapse;
+  margin: 20px auto;
+}
+
+th {
+  background-color: var(--primary);
+  color: white;
+  padding: 10px 12px;
+}
+
+td {
+  border: 1px solid var(--border);
+  padding: 8px 12px;
+}
+
+footer {
+  position: absolute;
+  bottom: 20px;
+  right: 40px;
+  color: var(--light-text);
+  font-size: 0.85em;
+}

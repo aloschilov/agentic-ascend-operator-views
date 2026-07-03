@@ -1,0 +1,53 @@
+name: Build Marp decks
+
+on:
+  push:
+    branches:
+      - main
+  pull_request:
+  workflow_dispatch:
+
+jobs:
+  build-decks:
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Check out repository
+        uses: actions/checkout@v4
+
+      - name: Build PDF and PPTX files
+        run: |
+          set -euo pipefail
+          mkdir -p dist
+          chmod 777 dist
+
+          for deck in agentic_ascend_operator_views_overview.ru agentic_ascend_operator_views_overview.en; do
+            docker run --rm --init \
+              -v "${PWD}:/home/marp/app" \
+              -e LANG=C.UTF-8 \
+              marpteam/marp-cli \
+              "presentations/${deck}.marp.md" \
+              --theme-set chapter-theme.css \
+              --allow-local-files \
+              --pdf \
+              -o "dist/${deck}.pdf"
+
+            docker run --rm --init \
+              -v "${PWD}:/home/marp/app" \
+              -e LANG=C.UTF-8 \
+              marpteam/marp-cli \
+              "presentations/${deck}.marp.md" \
+              --theme-set chapter-theme.css \
+              --allow-local-files \
+              --pptx \
+              -o "dist/${deck}.pptx"
+          done
+
+      - name: Upload generated deck assets
+        uses: actions/upload-artifact@v4
+        with:
+          name: marp-decks
+          path: |
+            dist/*.pdf
+            dist/*.pptx
+          if-no-files-found: error
