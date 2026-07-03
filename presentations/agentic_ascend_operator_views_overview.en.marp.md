@@ -311,6 +311,40 @@ pre {
 
 ---
 
+# The knowledge gap is real and measurable
+
+<div class="two-col">
+  <div class="box">
+    <h2>One-shot AscendC generation collapses</h2>
+    <p>MultiKernelBench reports Pass@1 for single-shot operator generation. Models that handle CUDA well nearly fail on AscendC.</p>
+    <table>
+      <thead><tr><th>Model</th><th>CUDA Pass@1</th><th>AscendC Pass@1</th></tr></thead>
+      <tbody>
+        <tr><td>DeepSeek-R1</td><td>52.6%</td><td>1.4%</td></tr>
+        <tr><td>Claude-Sonnet-4</td><td>47.0%</td><td>2.1%</td></tr>
+        <tr><td>Qwen3-235B (think)</td><td>44.2%</td><td>0.7%</td></tr>
+      </tbody>
+    </table>
+  </div>
+  <div class="box">
+    <h2>Why this happens</h2>
+    <ul>
+      <li>Few open AscendC kernels to learn from, unlike CUDA/Triton.</li>
+      <li>An operator is coupled: host tiling program + device kernel program.</li>
+      <li>The explicit UB/L1/L0 hierarchy must be orchestrated by hand.</li>
+      <li>Compiler and profiler feedback shows symptoms, not the structural rewrite.</li>
+    </ul>
+  </div>
+</div>
+
+<div class="callout">
+  <p>This is the empirical motivation for the whole repository: pretraining knowledge does not carry over to AscendC, so the agent needs a compiler-derived interface.</p>
+</div>
+
+<p class="source">Numbers: MultiKernelBench (arXiv:2507.17773), reported via AscendOptimizer (arXiv:2603.23566), Table 1.</p>
+
+---
+
 # The central idea: representations, not prompts
 
 <div class="pipeline">
@@ -407,6 +441,8 @@ pre {
   </div>
 </div>
 
+<p class="source">Lineage: StableHLO / MLIR (arXiv:2002.11054), Halide, TensorIR (arXiv:2207.04296), Tiramisu (arXiv:1804.10694), Exo, DaCe/SDFG (arXiv:1902.10345), Triton / TileLang.</p>
+
 ---
 
 # Analysis tools: how to help the LLM
@@ -448,7 +484,7 @@ pre {
   </tbody>
 </table>
 
-<p class="source">See notes/04-program-analysis.md and notes/05-ascend-toolchain-views.md.</p>
+<p class="source">Foundations: Kildall data-flow (1973), Cousot abstract interpretation (1977), Program Dependence Graph (1987), ProGraML (arXiv:2003.10536); Ascend evidence: ASPLOS'25 roofline. See notes/04-program-analysis.md and notes/05-ascend-toolchain-views.md.</p>
 
 ---
 
@@ -542,9 +578,82 @@ pre {
   </div>
 </div>
 
-<div class="callout">
-  <p>AscendOptimizer shows the value of episodic experience. The next question: how much stronger does the agent become if every episode is tied to structured representations of the program.</p>
+<div class="metric-row">
+  <div class="metric"><strong>101</strong><span>real AscendC operators from the cann-ops benchmark</span></div>
+  <div class="metric"><strong>1.21x</strong><span>geomean speedup over the open baseline (53.47% beat their reference)</span></div>
+  <div class="metric"><strong>1.89 GM</strong><span>on hardest level-3 ops vs 1.38 BoN / 1.45 OpenEvolve</span></div>
+  <div class="metric"><strong>Ablation</strong><span>experience lifts GM 1.09 to 1.16; tiling-only reaches only 1.02</span></div>
 </div>
+
+<p class="source">AscendOptimizer (arXiv:2603.23566), Tables 2-3; Ascend 910B2, CANN 8.3, 230 hardware evals per operator.</p>
+
+---
+
+# Real example: cross-operator motif transfer
+
+<div class="two-col">
+  <div class="box">
+    <h2>Source operator: clip_by_value_v2</h2>
+    <p>Optimization Rewind removes a "consolidated loop with conditional tail" motif and measures the damage on hardware.</p>
+    <ul>
+      <li>separate tail handling folded into one loop with <code>(i==last) ? tailNum : partNum</code>;</li>
+      <li>removing it raises pipeline stalls by 28.6%;</li>
+      <li>latency moves 56 us -> 75 us, so the motif is worth ~25%.</li>
+    </ul>
+  </div>
+  <div class="box">
+    <h2>Target operator: upsample_nearest_exact3d</h2>
+    <p>Structurally unrelated, initial 156 us. Profiling localizes a GatherData hot path with vector-pipeline stalls.</p>
+    <ul>
+      <li>retrieval pulls the motif mined from clip_by_value_v2;</li>
+      <li>the same loop consolidation is applied to GatherData;</li>
+      <li>first big drop: 156 us -> 145 us.</li>
+    </ul>
+  </div>
+</div>
+
+<div class="callout">
+  <p><strong>Counterfactual:</strong> given only an oracle bottleneck description but no retrieved experience, just 1 of 100 attempts reaches 145 us - even when Ascend C Best Practices docs are added. Structured, transferable experience is the missing link from diagnosis to the right rewrite.</p>
+</div>
+
+<p class="source">AscendOptimizer (arXiv:2603.23566), Section 4.4 and Figure 3.</p>
+
+---
+
+# Real example: a rewind-derived experience record
+
+<div class="two-col">
+  <div class="box">
+    <h2>Operator eye: remove redundant scattered zero writes</h2>
+
+```json
+{
+  "op": "eye",
+  "canonical_family": "kernel.memory.scatter",
+  "root_mechanism": "Output is already zero-initialized;
+     only diagonal values need explicit writes.",
+  "causal_chain": "remove scattered zero writes ->
+     fewer L2 misses -> higher bandwidth ->
+     shorter vector critical path",
+  "reusable_when": ["Eye-like diagonal init",
+     "Output buffer guaranteed zero-initialized"],
+  "avoid_when": ["Buffer not known to be zero-initialized"]
+}
+```
+
+  </div>
+  <div class="box">
+    <h2>Why this shape matters</h2>
+    <ul>
+      <li>Every record ties a code diff to a bottleneck, a causal mechanism, and profiler evidence.</li>
+      <li>L2 read hit rate: 0.02% -> 87.5%; task duration recovers from 925 ms to 1.19 ms once redundant writes are removed.</li>
+      <li>Retrieval keys, reusable_when and avoid_when make the episode transferable and safe.</li>
+      <li>This is exactly the "experience tied to view nodes and contracts" that structured views should standardize.</li>
+    </ul>
+  </div>
+</div>
+
+<p class="source">AscendOptimizer (arXiv:2603.23566), Figure 6 / Appendix B.4.</p>
 
 ---
 
@@ -598,6 +707,46 @@ pre {
 <div class="callout">
   <p>The first useful slice: one operator, one shape, one dtype, 5-7 views, 6-10 legal actions, and a reproducible compile/verify/profile loop.</p>
 </div>
+
+---
+
+# Prior art this builds on
+
+<div class="three-col">
+  <div class="box">
+    <h2>Programming models &amp; schedules</h2>
+    <ul>
+      <li>Halide, TVM, Ansor, TensorIR, Tiramisu, Exo</li>
+      <li>Triton, TileLang - tile-centric models</li>
+      <li>StableHLO, MLIR - semantics + multi-level IR</li>
+      <li>DaCe / SDFG - data-centric, double buffering</li>
+    </ul>
+  </div>
+  <div class="box">
+    <h2>Program analysis</h2>
+    <ul>
+      <li>Kildall data-flow analysis (1973)</li>
+      <li>Cousot abstract interpretation (1977)</li>
+      <li>Program Dependence Graph (1987)</li>
+      <li>ProGraML - graph ML over programs</li>
+    </ul>
+  </div>
+  <div class="box">
+    <h2>Agentic kernel optimization</h2>
+    <ul>
+      <li>KernelBench, TritonBench, Geak</li>
+      <li>CompilerGPT - compiler reports as input</li>
+      <li>Ascend: AscendOptimizer, AscendCraft, AscendKernelGen</li>
+      <li>Ascend perf: MultiKernelBench, ASPLOS'25 roofline</li>
+    </ul>
+  </div>
+</div>
+
+<div class="callout">
+  <p>The gap these leave: schedules, analyses, and agent loops exist separately. This repository asks how to fuse them into compiler-derived views that a single agent consumes for AscendC.</p>
+</div>
+
+<p class="source">Full links: bibliography/reading-list.md and bibliography/articles.yaml (AscendOptimizer arXiv:2603.23566, MultiKernelBench arXiv:2507.17773, AscendCraft arXiv:2601.22760, AscendKernelGen arXiv:2601.07160).</p>
 
 ---
 

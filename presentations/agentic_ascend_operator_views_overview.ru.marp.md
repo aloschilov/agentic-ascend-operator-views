@@ -311,6 +311,40 @@ pre {
 
 ---
 
+# Разрыв в знаниях реален и измерим
+
+<div class="two-col">
+  <div class="box">
+    <h2>Одношаговая генерация AscendC проваливается</h2>
+    <p>MultiKernelBench измеряет Pass@1 для одношаговой генерации операторов. Модели, которые хорошо справляются с CUDA, почти проваливаются на AscendC.</p>
+    <table>
+      <thead><tr><th>Модель</th><th>CUDA Pass@1</th><th>AscendC Pass@1</th></tr></thead>
+      <tbody>
+        <tr><td>DeepSeek-R1</td><td>52.6%</td><td>1.4%</td></tr>
+        <tr><td>Claude-Sonnet-4</td><td>47.0%</td><td>2.1%</td></tr>
+        <tr><td>Qwen3-235B (think)</td><td>44.2%</td><td>0.7%</td></tr>
+      </tbody>
+    </table>
+  </div>
+  <div class="box">
+    <h2>Почему так происходит</h2>
+    <ul>
+      <li>Мало открытых ядер AscendC для обучения, в отличие от CUDA/Triton.</li>
+      <li>Оператор связан: host tiling program + device kernel program.</li>
+      <li>Явную иерархию UB/L1/L0 нужно оркестрировать вручную.</li>
+      <li>Обратная связь компилятора и профайлера показывает симптомы, а не структурное переписывание.</li>
+    </ul>
+  </div>
+</div>
+
+<div class="callout">
+  <p>Это эмпирическая мотивация всего репозитория: знания из предобучения не переносятся на AscendC, поэтому агенту нужен compiler-derived интерфейс.</p>
+</div>
+
+<p class="source">Данные: MultiKernelBench (arXiv:2507.17773), приведены по AscendOptimizer (arXiv:2603.23566), таблица 1.</p>
+
+---
+
 # Центральная идея: не prompt, а представления
 
 <div class="pipeline">
@@ -407,6 +441,8 @@ pre {
   </div>
 </div>
 
+<p class="source">Родословная: StableHLO / MLIR (arXiv:2002.11054), Halide, TensorIR (arXiv:2207.04296), Tiramisu (arXiv:1804.10694), Exo, DaCe/SDFG (arXiv:1902.10345), Triton / TileLang.</p>
+
 ---
 
 # Инструменты анализа: чем помочь LLM
@@ -448,7 +484,7 @@ pre {
   </tbody>
 </table>
 
-<p class="source">См. notes/04-program-analysis.md и notes/05-ascend-toolchain-views.md.</p>
+<p class="source">Основы: data-flow Килдалла (1973), абстрактная интерпретация Кузо (1977), Program Dependence Graph (1987), ProGraML (arXiv:2003.10536); свидетельства по Ascend: roofline ASPLOS'25. См. notes/04-program-analysis.md и notes/05-ascend-toolchain-views.md.</p>
 
 ---
 
@@ -542,9 +578,82 @@ pre {
   </div>
 </div>
 
-<div class="callout">
-  <p>AscendOptimizer показывает ценность эпизодического опыта. Следующий вопрос: насколько сильнее агент станет, если каждый эпизод будет привязан к структурированным представлениям программы.</p>
+<div class="metric-row">
+  <div class="metric"><strong>101</strong><span>реальный оператор AscendC из бенчмарка cann-ops</span></div>
+  <div class="metric"><strong>1.21x</strong><span>геомеан ускорения над открытым baseline (53.47% обогнали эталон)</span></div>
+  <div class="metric"><strong>1.89 GM</strong><span>на сложнейших level-3 операторах против 1.38 BoN / 1.45 OpenEvolve</span></div>
+  <div class="metric"><strong>Абляция</strong><span>опыт поднимает GM с 1.09 до 1.16; только tiling дает лишь 1.02</span></div>
 </div>
+
+<p class="source">AscendOptimizer (arXiv:2603.23566), таблицы 2-3; Ascend 910B2, CANN 8.3, 230 аппаратных оценок на оператор.</p>
+
+---
+
+# Реальный пример: перенос мотива между операторами
+
+<div class="two-col">
+  <div class="box">
+    <h2>Оператор-источник: clip_by_value_v2</h2>
+    <p>Optimization Rewind удаляет мотив "консолидированный цикл с условным хвостом" и измеряет ущерб на железе.</p>
+    <ul>
+      <li>отдельная обработка хвоста свернута в один цикл с <code>(i==last) ? tailNum : partNum</code>;</li>
+      <li>его удаление повышает pipeline stalls на 28.6%;</li>
+      <li>задержка меняется 56 мкс -> 75 мкс, то есть мотив стоит ~25%.</li>
+    </ul>
+  </div>
+  <div class="box">
+    <h2>Целевой оператор: upsample_nearest_exact3d</h2>
+    <p>Структурно не связан, начальные 156 мкс. Профилирование локализует hot path GatherData со stalls векторного конвейера.</p>
+    <ul>
+      <li>retrieval достает мотив, добытый из clip_by_value_v2;</li>
+      <li>та же консолидация цикла применяется к GatherData;</li>
+      <li>первое крупное снижение: 156 мкс -> 145 мкс.</li>
+    </ul>
+  </div>
+</div>
+
+<div class="callout">
+  <p><strong>Контрфактический сценарий:</strong> имея только oracle-описание узкого места, но без извлеченного опыта, лишь 1 из 100 попыток достигает 145 мкс - даже с добавленной документацией Ascend C Best Practices. Структурированный переносимый опыт - это недостающее звено от диагностики к правильному переписыванию.</p>
+</div>
+
+<p class="source">AscendOptimizer (arXiv:2603.23566), раздел 4.4 и рисунок 3.</p>
+
+---
+
+# Реальный пример: rewind-запись опыта
+
+<div class="two-col">
+  <div class="box">
+    <h2>Оператор eye: убрать избыточные рассеянные записи нулей</h2>
+
+```json
+{
+  "op": "eye",
+  "canonical_family": "kernel.memory.scatter",
+  "root_mechanism": "Output is already zero-initialized;
+     only diagonal values need explicit writes.",
+  "causal_chain": "remove scattered zero writes ->
+     fewer L2 misses -> higher bandwidth ->
+     shorter vector critical path",
+  "reusable_when": ["Eye-like diagonal init",
+     "Output buffer guaranteed zero-initialized"],
+  "avoid_when": ["Buffer not known to be zero-initialized"]
+}
+```
+
+  </div>
+  <div class="box">
+    <h2>Почему важна эта форма</h2>
+    <ul>
+      <li>Каждая запись связывает code diff с узким местом, причинным механизмом и profiler evidence.</li>
+      <li>L2 read hit rate: 0.02% -> 87.5%; task duration восстанавливается с 925 мс до 1.19 мс после удаления избыточных записей.</li>
+      <li>Retrieval keys, reusable_when и avoid_when делают эпизод переносимым и безопасным.</li>
+      <li>Это ровно тот "опыт, привязанный к view nodes и contracts", который должны стандартизировать структурированные views.</li>
+    </ul>
+  </div>
+</div>
+
+<p class="source">AscendOptimizer (arXiv:2603.23566), рисунок 6 / приложение B.4.</p>
 
 ---
 
@@ -598,6 +707,46 @@ pre {
 <div class="callout">
   <p>Первый полезный slice: один оператор, одна форма, один dtype, 5-7 views, 6-10 legal actions и воспроизводимый compile/verify/profile loop.</p>
 </div>
+
+---
+
+# На какие работы это опирается
+
+<div class="three-col">
+  <div class="box">
+    <h2>Программные модели и schedules</h2>
+    <ul>
+      <li>Halide, TVM, Ansor, TensorIR, Tiramisu, Exo</li>
+      <li>Triton, TileLang - tile-centric модели</li>
+      <li>StableHLO, MLIR - семантика + multi-level IR</li>
+      <li>DaCe / SDFG - data-centric, double buffering</li>
+    </ul>
+  </div>
+  <div class="box">
+    <h2>Анализ программ</h2>
+    <ul>
+      <li>data-flow Килдалла (1973)</li>
+      <li>абстрактная интерпретация Кузо (1977)</li>
+      <li>Program Dependence Graph (1987)</li>
+      <li>ProGraML - graph ML над программами</li>
+    </ul>
+  </div>
+  <div class="box">
+    <h2>Агентная оптимизация ядер</h2>
+    <ul>
+      <li>KernelBench, TritonBench, Geak</li>
+      <li>CompilerGPT - compiler reports как вход</li>
+      <li>Ascend: AscendOptimizer, AscendCraft, AscendKernelGen</li>
+      <li>Ascend perf: MultiKernelBench, roofline ASPLOS'25</li>
+    </ul>
+  </div>
+</div>
+
+<div class="callout">
+  <p>Разрыв, который они оставляют: schedules, анализы и agent loops существуют по отдельности. Этот репозиторий спрашивает, как слить их в compiler-derived views, которые один агент потребляет для AscendC.</p>
+</div>
+
+<p class="source">Полные ссылки: bibliography/reading-list.md и bibliography/articles.yaml (AscendOptimizer arXiv:2603.23566, MultiKernelBench arXiv:2507.17773, AscendCraft arXiv:2601.22760, AscendKernelGen arXiv:2601.07160).</p>
 
 ---
 
