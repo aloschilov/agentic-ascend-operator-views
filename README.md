@@ -46,12 +46,53 @@ AscendC source / operator spec / compiler IR
 
 ## What is stored here
 
-This repository stores links, metadata, and working notes. It does not vendor full PDFs or copyrighted article text.
+This repository stores links, metadata, working notes, and vendored PDF copies of the linked publications (listed below). A few sources are only available as HTML pages (Cousot 1977, StableHLO spec, Triton 2019); those, plus the download manifest, remain local-only and are not committed.
 
-For local offline reading, run:
+To (re)download everything for local offline reading, run:
 
 ```bash
 python3 tools/download_publications.py
 ```
 
-Downloaded files are written to `publications/files/` and ignored by git.
+Downloaded PDFs are written to `publications/files/`; non-PDF downloads and the manifest are ignored by git.
+
+## Vendored publication PDFs
+
+Full-text PDFs of the linked papers are committed under [`publications/files/`](publications/files/).
+
+Ascend / NPU-specific:
+
+- [AscendOptimizer: Episodic Agent for Ascend NPU Operator Optimization](publications/files/ascendoptimizer-2026.pdf)
+- [AscendCraft: Automatic Ascend NPU Kernel Generation via DSL-Guided Transcompilation](publications/files/ascendcraft-2026.pdf)
+- [AscendKernelGen: LLM-Based Kernel Generation for Neural Processing Units](publications/files/ascendkernelgen-2026.pdf)
+- [MultiKernelBench: A Multi-Platform Benchmark for Kernel Generation](publications/files/multikernelbench-2025.pdf)
+- [Squeezing Operator Performance Potential for the Ascend Architecture (ASPLOS'25)](publications/files/ascend-roofline-2025.pdf)
+
+Agentic kernel optimization:
+
+- [KernelBench: Can LLMs Write Efficient GPU Kernels?](publications/files/kernelbench-2025.pdf)
+- [TritonBench: Benchmarking LLM Capabilities for Generating Triton Operators](publications/files/tritonbench-2025.pdf)
+- [Geak: Triton Kernel AI Agent & Evaluation Benchmarks](publications/files/geak-2025.pdf)
+- [CompilerGPT: LLMs for Analyzing and Acting on Compiler Optimization Reports](publications/files/compilergpt-2025.pdf)
+- [Language Models for Code Optimization: Survey, Challenges and Future Directions](publications/files/codeopt-survey-2025.pdf)
+
+Compiler IR, scheduling, autotuning:
+
+- [MLIR: A Compiler Infrastructure for the End of Moore's Law](publications/files/mlir-2020.pdf)
+- [TVM: An Automated End-to-End Optimizing Compiler for Deep Learning](publications/files/tvm-2018.pdf)
+- [Learning to Optimize Tensor Programs (AutoTVM)](publications/files/autotvm-2018.pdf)
+- [Ansor: Generating High-Performance Tensor Programs for Deep Learning](publications/files/ansor-2020.pdf)
+- [Tensor Program Optimization with Probabilistic Programs (MetaSchedule)](publications/files/metaschedule-2022.pdf)
+- [TensorIR: An Abstraction for Automatic Tensorized Program Optimization](publications/files/tensorir-2022.pdf)
+- [Halide: Decoupling Algorithms from Schedules](publications/files/halide-2017.pdf)
+- [Exo: A Usable User-Schedulable Programming Language for Accelerators](publications/files/exo-2022.pdf)
+- [Stateful Dataflow Multigraphs (DaCe/SDFG)](publications/files/dace-sdfg-2019.pdf)
+- [Tiramisu: A Polyhedral Compiler for Expressing Fast and Portable Code](publications/files/tiramisu-2018.pdf)
+
+Program-analysis foundations:
+
+- [A Unified Approach to Global Program Optimization (Kildall, 1973)](publications/files/kildall-1973.pdf)
+- [The Program Dependence Graph and Its Use in Optimization (1987)](publications/files/pdg-1987.pdf)
+- [ProGraML: Graph-based Deep Learning for Program Optimization and Analysis](publications/files/programl-2020.pdf)
+
+> These PDFs are third-party publications included for research convenience; copyright remains with the original authors and publishers.
