@@ -1,0 +1,432 @@
+\section{Library Learning modulo Equational Theory}\label{sec:egraphs}
+
+\begin{figure}
+  \begin{minipage}{.5\textwidth}
+    \textbf{Syntax}
+    $$
+    \begin{array}{rll}
+      \text{e-class ids} & a,b &\in \mathcal{I} \\
+      \text{e-nodes}     & n \gramdef s(a_1, \ldots, a_k)  &\in N\\
+      \text{e-classes}   & c \gramdef \{n_1, \ldots, n_m\} &\in C     
+    \end{array}
+    $$      
+  \end{minipage}%
+  \begin{minipage}{.5\textwidth}
+    \textbf{Denotation} $\denot{\cdot}\colon N\to 2^{\termsof{\Sigma}}$, $\denot{\cdot}\colon C\to 2^{\termsof{\Sigma}}$
+    $$
+    \begin{array}{rl}
+      \\
+      \denot{s(a_1, \ldots, a_k)} &= \{s(t_1, \ldots, t_k) \mid t_i \in \denot{M(a_i)}\}\\
+      \denot{\{n_1, \ldots, n_m\}} &= \bigcup_{i \in [1,m]} \denot{n_i}
+    \end{array}
+    $$      
+  \end{minipage}
+  \caption{Syntax, metavariables, and denotation for the components of an e-graph.
+           Here $s \in \Sigma$ and $k = \arity(s)$.}\label{fig:syntax}
+\end{figure}
+
+% \subsection{Preliminaries}
+
+\mypara{E-Graphs}
+%
+Let $\mathcal{I}$ be a denumerable set of \emph{e-class ids}.
+%
+An \emph{e-graph} $\mathcal{G}$ is a triple $\langle C, M, r\rangle$,
+where $C$ is a set of \emph{e-classes},
+$M\colon \mathcal{I} \to C$ is an \emph{e-class map}.
+and $r\in \mathcal{I}$ is the root class id.
+% \footnote{
+%   Other formalizations of e-graphs do not feature a distinguished root class.
+%   We include it, because denoting the e-graph to the set of
+%   terms represented by its root e-class (as opposed to other e-classes)
+%   is useful for our purposes.
+% }
+%
+An \emph{e-class} $c \in C$ is a set of \emph{e-nodes} $n \in N$,
+and an e-node is a constructor applied to e-class ids.
+%
+The syntax of e-classes and e-nodes is summarized in \autoref{fig:syntax} (left).
+% $$
+% c ::= \{n_1, \ldots, n_m\}\quad\quad\quad
+% n ::= s(a_1, \ldots, a_k) \quad\text{where}\ s\in \Sigma, k = \arity(s), a_i \in \mathcal{I}\\
+% $$
+An e-graph has to satisfy the \emph{congruence invariant},
+which states that the e-graph has no two identical e-nodes
+(or alternatively, that all e-classes are disjoint).%
+\footnote{In a real e-graph implementation, the definitions of e-graphs and the congruence invariant
+are more involved, 
+because efficient merging of e-classes requires introducing a non-trivial equivalence relation over e-class ids;
+these details are irrelevant for our purposes.
+Also, other formalizations of e-graphs do not feature a distinguished root e-class.} 
+
+The \emph{denotation} of an \emph{e-graph}---the set of terms it represents---%
+is the denotation of its root e-class $\denot{M(r)}$,
+where the denotation of e-classes and e-nodes is defined mutually-recursively
+in \autoref{fig:syntax} (right).
+%
+Note that the denotation can be infinite if the e-graph has cycles.
+% $$
+% \denot{\many{n}} = \bigcup_n \denot{n}\quad\quad\quad
+% \denot{s(a_1, \ldots, a_k)} = \{s(t_1, \ldots, t_k) \mid t_i \in \denot{M(a_i)}\}
+% $$
+An e-graph induces an equivalence relation $\eqg$, 
+where $t_1 \eqg t_2$ iff there exists an e-class $c \in C$ such that $t_1 \in \denot{c} \wedge t_2\in \denot{c}$.
+
+E-graphs provide means to \emph{extract} the cheapest term from an e-class according to some cost function:
+$\extract_{\cost}(a) = \argmin_{t\in \denot{M(a)}} \cost(t)$.
+%
+If $\cost$ is \emph{local},
+ meaning that the cost of a term can be computed 
+ from the costs of its immediate children,
+% \todo{david: we don't necessarily mean monotonic---we're referring to a term
+% costing at leasting as much as the SUM of its children}
+extraction can be done efficiently by a greedy algorithm,
+which recursively extracts the best term from each e-class.
+
+\mypara{E-Matching}
+%
+E-matching is a generalization of pattern matching to e-graphs,
+where matching an e-class $c$ against a pattern $p$ yields a set of \emph{e-class substitutions} 
+$\theta\colon \mathcal{X}\to \mathcal{I}$
+such that $\sapp{\theta}{p}$ is a ``subgraph'' of $c$.
+%
+To formalize this notion, we introduce \emph{partial terms} $\pi \in \patsof{\Sigma}{\mathcal{I}}$,
+which are terms whose leaves can be e-class ids
+(or, alternatively, patterns with e-class ids for variables).
+%
+The containment relation $\contains{\pi}{a}$ for some e-class id $a$ is defined as follows:
+$$
+\contains{a}{a} \quad\quad\quad
+\contains{s(\pi_1, \ldots, \pi_k)}{a}\ \text{iff}\ s(a_1, \ldots, a_k) \in M(a) \wedge \contains{\pi_i}{a_i}
+$$
+% if either $\pi = a$ or $\pi$'s constructor occurs as an e-node $n$ in $M(a)$ 
+% and all $\pi$'s children are recursively contained in $n$'s children.
+%
+With this definition, a pattern $p$ matches an e-class $a$, $a \sub p$, if there exists an e-class substitution $\theta$,
+such that $\contains{\sapp{\theta}{p}}{a}$.
+%
+We denote the set of such substitutions as $\matches{a}{p}$.
+
+\mypara{Rewriting and Equality Saturation}
+%
+Equality saturation (EqSat)~\cite{tate2009equality,willsey2021egg} 
+takes as input a term $t$ and a set of equations that induce an equivalence relation $\semeq$,
+and produces an e-graph $\mathcal{G}$ such that $\denot{\mathcal{G}} = \{t' \mid t \semeq t'\}$
+and $t \semeq t'$ iff $t \eqg t'$.
+%
+The core idea of EqSat is to convert equations into rewrite rules
+and apply them to the e-graph in a non-destructive way:
+so that the original term and the rewritten terms are both represented in the same e-class.
+%
+Applying a rewrite rule $p_1 \Rightarrow p_2$ to an e-class $a$ works as follows:
+for each $\theta \in \matches{a}{p_1}$, 
+we obtain the rewritten partial term $\pi' = \sapp{\theta}{p_2}$
+and then add this partial term to the same e-class $a$,
+restoring the congruence invariant
+(\ie merging e-classes that now have identical e-nodes).
+
+\subsection{Top-Level Algorithm}
+
+\input{llmt_algorithm}
+
+We can formalize the problem of \emph{library learning modulo equational theory} (LLMT) as follows:
+given a term $t$ and a set of equations that induce an equivalence relation $\semeq$,
+the goal is to find a compressed term $\hat{t} \in \absof{\Sigma}{\mathcal{X}}$,
+such that $\hat{t} \evals t' \semeq t$ (for some $t'$),
+and $\hat{t}$ has a minimal size.
+
+% This problem can be equivalently restated as library learning \emph{over an e-graph}:
+% given an e-graph $\mathcal{G} = (C, M, r)$,
+% the goal is to find a minimal-size compressed term $\hat{t} \in \absof{\Sigma}{\mathcal{X}}$,
+% such that $\hat{t} \evals t$ for some $t \in \denot{\mathcal{G}}$.
+% %
+% If we can solve this problem, we can also solve the original LLMT problem,
+% building the e-graph by applying EqSat to the input term and equations.
+
+Our top-level algorithm \T{LLMT} is depicted in \autoref{fig:algo-llmt}.
+%
+This algorithm takes as input the original corpus $t$ 
+and the equational theory, represented as a set of require rules $\ruleset_\semeq$
+(another input to the algorithm is the maximum size of the library;
+this parameter is introduced for the sake of efficiency, as we explain in \autoref{sec:beam}).
+%
+As the first step (lines 4--5),
+\T{LLMT} applies EqSat to obtain an e-graph $\mathcal{G}$ 
+that represents all terms $t'$ such that $t' \semeq t$.
+%
+This reduces the LLMT problem to library learning over an e-graph:
+\ie the goal is to find a minimal-size compressed term $\hat{t}$,
+such that $\hat{t} \evals t'$ for some $t' \in \denot{\mathcal{G}}$.
+%
+Similarly to \autoref{sec:au},
+we take a pattern-based approach to this problem,
+that is, we select a set $\patset$ of \emph{candidate patterns}
+and then perform compression rewrites using these patterns.
+
+The rest of the algorithm is split into two phases:
+\emph{candidate generation} and \emph{candidate selection}.
+%
+Candidate generation (lines 8--10)
+first computes the set of candidate patterns $\patset$ using the anti-unification mechanism extended to e-graphs.
+%
+Then it creates a compression rule ($\kappa$-rule, see \autoref{sec:au}) from each candidate pattern,
+and once again applies EqSat to obtain a new e-graph $\mathcal{G}'$.
+%
+This new e-graph represents all possible ways to compress the terms from $\mathcal{G}$ 
+using patterns in $\patset$.
+%
+Finally, the candidate selection phase (lines 13--15)
+selects the optimal subset of compression rules $\ruleset'$,
+constructs an e-graph $\mathcal{G}''$ that represents all possible compressions using only the selected compression rules,
+and finally extracts the smallest compressed term from this e-graph.
+
+The rest of this section focuses on the candidate generation via e-graph anti-unification
+(line 8).
+%
+The candidate selection functions \T{select\_library} and \T{extract} are discussed in \autoref{sec:beam}.
+
+\subsection{Candidate Generation via E-Graph Anti-Unification}
+
+The goal of candidate generation is to find a set of patterns
+that are useful for compression.
+%
+Following the discussion in \autoref{sec:au},
+we restrict our attention to patterns $\gau(t_1, t_2)$,
+where $t_1$ and $t_2$ are subterms of some $t \in \denot{\mathcal{G}}$.
+%
+The na\"ive approach is to enumerate all such $t$,
+and for each one, perform anti-unification on all pairs of subterms;
+this is suboptimal at best,
+and impossible at worst (when $\denot{\mathcal{G}}$ is infinite).
+%
+Hence in this section we show how to compute a finite set of candidate patterns 
+directly on the e-graph,
+without discarding any optimal patterns.
+
+\mypara{E-Class Anti-Unification}
+%
+Let us first consider anti-unification of two e-classes, $\gau(a,b)$,
+which takes as input e-class ids $a$ and $b$
+and returns a set of patterns.
+%
+We define $\gau(a,b) = \ecau{\emptyseq}{a}{b}$,
+where $\ecau{\Gamma}{a}{b}$ is an auxiliary function
+that additionally takes into account a \emph{context} $\Gamma$.
+%
+A context is a list of pairs of e-classes that have been visited while computing the AU,
+and is required to prevent infinite recursion in case of cycles in the e-graph.
+
+
+\begin{figure}
+  \textbf{E-node Anti-Unification} $\ecau{\Gamma}{n_1}{n_2}$
+  $$
+  \begin{array}{rl}
+    \ecau{\Gamma, (a,b)}{s(a_1,\ldots,a_k)}{s(b_1,\ldots,b_k)} &= \{s(p_1,\ldots,p_k) \mid p_i \in \ecau{\Gamma}{a_i}{b_i}\}\\
+    \ecau{\Gamma, (a,b)}{s_1(\ldots)}{s_2(\ldots)} &= \{X_{a,b}\} \quad\text{if}\ s_1 \neq s_2\\
+    \end{array}
+  $$
+  \textbf{E-class Anti-Unification} $\ecau{\Gamma}{a}{b}$
+  $$
+  \begin{array}{rl}
+    \ecau{\Gamma}{a}{b} &= \emptyset \quad\text{if}\ (a,b) \in \Gamma\\
+    % \textcolor{darkblue}{\ecau{\Gamma}{a}{a}} &\textcolor{darkblue}{= \extract_{\sz}(a)} \\
+    \ecau{\Gamma}{a}{b} &= \textcolor{darkblue}{\dominant} \left(
+       \bigcup_{n_a \in M(a), n_b \in M(b)} \ecau{\Gamma, (a, b)}{n_a}{n_b} 
+    \right)
+  \end{array}
+  $$
+\caption{E-class anti-unification defined as two mutually-recursive functions of e-nodes and e-class ids.}\label{fig:ecau}
+\end{figure}
+
+\autoref{fig:ecau} defines this operation using two mutually recursive functions
+that anti-unify e-classes and e-nodes.
+%
+Note that e-node AU is always invoked in a non-empty context.
+%
+The first equation anti-unifies two e-nodes with the same constructor:
+in this case, we recursively anti-unify their child e-classes
+and return the cross-product of the results.
+%
+The second equation applies to e-nodes with different constructors:
+as in term AU, this results in a pattern variable.
+%
+A nice side-effect of dealing with e-graphs
+% is that we can use e-class ids (instead of full terms) 
+% in the names the pattern variables $X_{a,b}$.
+is that we need not keep track of the anti-substitution
+to guarantee that each pair of subterms maps to the same variable:
+because any duplicate terms are represented by the same e-class,
+we can simply use the e-class ids $a$ and $b$ in the name of the pattern variable $X_{a,b}$.
+%
+% Although this causes the algorithm to generate equivalent patterns
+% (when a pattern has more than one match in either of the e-classes),
+% they can be be de-duplicated after the fact.
+
+The second block of equations defines anti-unification of e-classes
+(let us first ignore the \textcolor{darkblue}{\sf dominant} which will be explained shortly).
+%
+The first equation applies when $a$ and $b$ have already been visited:
+in this case, we break the cycle and return the empty set.
+%
+Otherwise, the last equation anti-unifies all pairs of e-nodes from the two e-classes
+in an updated context and merges the results.
+%
+Note that this will add a pattern variable unless all e-nodes in both e-classes
+have the same constructor;
+we have omitted this detail in \autoref{sec:overview} for simplicity,
+but this is implemented in \tool and often yields more optimal patterns.
+%
+For example, consider anti-unifying $c_1$ and $c_2$ from \autoref{fig:egraph} (right):
+although they have the constructor \T{scale} in common,
+$X$ is actually a better pattern for abstracting these two e-classes than $\T{scale}\  X\ Y$,
+because the total size of the actual arguments to pattern $X$ ($\pSide{6}$ and $\scale{\repRot{\pSide{8}}{8}{2\pi/8}}{2}$)
+is the same as those to the pattern $\T{scale}\  X\ Y$ ($\pSide{6}$, $1$, $\repRot{\pSide{8}}{8}{2\pi/8}$, and $2$),
+and the pattern $X$ itself is smaller.
+%
+This happens because the class $c_1$ represents several different terms, 
+and the term ``compatible with'' $X$ in this case is smaller than the term ``compatible wit'' $\T{scale}\  X\ Y$.
+
+%  because the argument to $X$ (\ie \T{(side 6)}) is shorter than 
+%  the total size of both arguments to $Y$ (\ie \T{(side 6)} and \T{1}).
+
+\mypara{Dominant Patterns}
+% \mw{this part is a bit confusing, could come back to it}
+% \mw{
+%   What are we claiming here? That we aren't throwing away anything optimal?
+%   Is it possible that a dominated pattern actually matches more terms, and thus is better?
+% }
+%
+Recall that $\gau(a,b)$ produces patterns
+with variable names $X_{a_i,b_i}$, which record the e-class ids they abstract;
+let us refer to such a pattern $p$ as \emph{uniquely matched}
+and define $\theta_l(p) = \{\many{X_{a_i,b_i} \mapsto a_i}\}$ and $\theta_r(p) = \{\many{X_{a_i,b_i} \mapsto b_i}\}$;
+these substitutions are necessarily among $\matches{a}{p}$ and $\matches{b}{p}$, respectively.
+%
+Given two uniquely matched patterns $p_1,p_2 \in \gau(a,b)$,
+we say that $p_1$ \emph{dominates} $p_2$ in the context of $(a,b)$ if
+  (1) $\fv(p_1) \subseteq \fv(p_2)$, and
+  (2) $\sz(p_1) \leq \sz(p_2)$.
+%
+We can show that if $p_1$ dominates $p_2$,
+then we can safely discard $p_2$ from the set of candidate patterns.
+%
+First, since $p_1$ is no larger than $p_2$, 
+the definition of its $\lambda$-abstraction is also no larger.
+%
+Second, given a term $t_a\in \denot{a}$,
+compressing this term using $p_1$ vs $p_2$,
+requires choosing actual arguments from $\rng{\theta_l(p_1)}$ vs $\rng{\theta_l(p_2)}$;
+because the former is a subset of the latter,
+the first application can always be made no larger
+(symmetric argument applies for $t_b\in \denot{b}$).
+
+Hence it is sufficient that $\gau(a,b)$ only returns the set of \emph{dominant patterns}
+(\ie a pattern dominated by any pattern in the set can be discarded).
+%
+This is what the function $\textcolor{darkblue}{\dominant}$ does in the last equation of \autoref{fig:ecau}.
+%
+This pruning technique is especially helpful in the presence of equational theories.
+%
+Suppose our theory contains the equation $X + Y \semeq Y + X$,
+and that the original term $t$ contains subterms $1 + 2$ and $3 + 1$.
+%
+After saturation, the e-graph will represent $1 + 2$ and $2 + 1$ in some e-class $a$
+and $3 + 1$ and $1 + 3$ in another e-class $b$;
+$\gau(a,b)$ will then produce both patterns $X + 1$ and $1 + X$,
+but it is clearly redundant to have both, 
+since they match the same e-classes with the same substitutions $\theta$.
+%
+Pruning of dominated patterns will eliminate one of them.
+
+\mypara{Avoiding Cycles}
+%
+Interestingly enough,
+the same notion of dominant patterns justifies why we need not follow cycles in the e-graph when computing $\gau(a,b)$,
+or, alternatively, why a finite set of candidate patterns is sufficient
+to compress any term in $\denot{\mathcal{G}}$, even if this set is infinite.
+%
+Removing the first equation that short-circuits cycles can only lead to solutions $p'$ of the form
+$$
+p' = \sapp{[X \mapsto p]}{q}
+$$
+where $p \in \gau(a,b)$ is another solution, and $q$ is some context, added by the cycle.
+%
+It is clear that any such $p'$ is dominated by $p$, and hence can be discarded.
+
+% \mypara{Self Anti-Unitification}
+% %
+% \TODO{I think we should remove this optimization from here and the figure: 
+% seems more low-level, and the proof is non-obvious.}
+% %
+% The final optimization in \autoref{fig:ecau} for anti-unifying an e-class with itself.
+% %
+% In this case we can show that it is sufficient to simply extract the smallest term from $a$.
+% %
+% The argument is as follows:
+% if $a$ occurs multiple times as a sub-term in the corpus,
+% we can either pick the same term from it every time or pick different terms.
+% %
+% If we do pick the same term,
+% then it is best to pick the smallest term and perform common sub-expression elimination on that term,
+% which is what the pattern $\extract_{\sz}(a)$ will let us do.
+% %
+% Picking different terms, also cannot be more optimal,
+% because in this case less than the entire term will be reused by the pattern.
+
+% \TODO{Would be nice to add a walk-through example \eg with the e-graph from \autoref{fig:egraph}.}
+
+\mypara{E-Graph Anti-Unification}
+%
+The algorithm $\gau(a,b)$ computes a set of patterns that can be used to compress terms
+represented by the e-classes $a$ and $b$.
+%
+Our ultimate goal, however, is to compute candidate patterns for abstracting
+\emph{all subterms} of some $t \in \denot{\mathcal{G}}$.
+%
+The most straightforward way to achieve this is to apply $\gau(a,b)$ to all pairs of e-classes in $\mathcal{G}$.
+%
+We can do better, however:
+some pairs of e-classes need not be considered,
+because they cannot occur together in a single term $t$.
+%
+For an example, consider the following e-graph, with $\mathcal{I} = \mathbb{N}$ and $r = 0$:
+$$
+0 \mapsto \{f(1),g(2)\}\quad 1\mapsto\{g(3)\} \quad 2\mapsto \{f(3)\} \quad 3\mapsto \{a\}
+$$
+This e-graph can result, for example, by rewriting a term $f(g(a))$
+using an equation $f(g(X)) \semeq g(f(X))$.
+%
+In this e-graph, the e-classes $1$ and $2$ (representing $g(a)$ and $f(a)$, respectively)
+clearly cannot \emph{co-occur} in the same term:
+since the e-graph only represents two terms, $f(g(a))$ and $g(f(a))$.
+
+To formalize this intuition, we define the co-occurrence relation between two e-class ids as follows.
+%
+An e-class $a$ is a \emph{sibling} of $b$ if there is an e-node that has both $a$ and $b$ as children.
+%
+An e-class $a$ is an \emph{ancestor} of $b$ if $a = b$ or $b$ is a child of some e-node $n \in M(c)$ and $a$ is an ancestor of $c$;
+$a$ is a \emph{proper ancestor} of $b$ if $a$ is an ancestor of $b$ and $a \neq b$.
+%
+Two e-classes $a$ and $b$ are \emph{co-occurring} if
+  (1) one of them is a proper ancestor of another, or
+  (2) they have ancestors that are siblings.
+
+Finally, to compute the set $\gau(\mathcal{G})$ of all candidate patterns for an e-graph $\mathcal{G}$,
+\T{LLMT} first computes the co-occurrence relation between all e-classes in $\mathcal{G}$,
+and then computes $\gau(a,b)$ of all pairs of e-classes that are co-occurring.
+%
+As mentioned in \autoref{sec:overview},
+we use a dynamic programming algorithm that memoizes the results of $\gau(a,b)$
+to avoid recomputation.
+
+% Note that this will add a pattern variable unless all e-nodes in both e-classes
+% have the same constructor;
+% we have omitted this detail in \autoref{sec:overview} for simplicity,
+% but this is required for completeness and is implemented in \tool.
+% %
+% For example, consider anti-unifying $c_1$ and $c_2$ from \autoref{fig:egraph} (right):
+% although they have the constructor \T{xform} in common,
+% $X$ is actually a better pattern for abstracting these two e-classes than $\T{xform}\  X\ Y$,
+% because the term \T{line} is shorter than \T{xform line 1}.
+
+

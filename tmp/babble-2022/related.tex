@@ -1,0 +1,223 @@
+\section{Related Work}
+\label{sec:related}
+
+\tool is inspired by work on library learning,
+specifically the \dc line of work,
+as well as equality saturation-based program synthesis and decompilation.
+
+\mypara{\dc}
+%
+\dc~\cite{dreamcoder} is a program synthesizer
+  that learns a library of abstractions
+  from solutions to a set of related synthesis tasks.
+The library is intended to be used for solving other
+  similar synthesis tasks.
+% The DSLs for the different domains in \dc
+%   are carefully designed to help scale the search.
+\dc
+  uses version spaces~\cite{vsa1, vsa2}
+  to compactly store a large
+  set of programs
+  and leverages ideas from \egraphs
+  (such as e-matching)
+  but only for exploring the space of refactorings
+  of the original program using the candidate libraries,
+  not for making library learning robust to syntactic variation.
+%
+Our evaluation shows that \tool can find more optimal abstractions faster than \dc.
+
+\dc has sparked several direction of follow-up work
+that attempt to improve the efficiency of its library learning procedure
+and the quality of the learned abstractions.
+%
+One of them is by \citet{laps},
+which uses natural language annotations and a neural network
+to guide library learning.
+%
+Another one is \stitch~\cite{stitch},
+which was developed \emph{concurrently} with this work
+and is the most closely related to \tool;
+we discuss \stitch in some detail below.
+
+\mypara{\stitch}
+%
+The core difference between the two approaches
+is that \stitch focuses on improving \emph{efficiency} of purely syntactic library learning,
+whereas \tool attempts to improve its \emph{expressiveness} by adding equational theories.
+%
+While \tool separates library learning into two phases---%
+candidate generation via anti-unification and candidate selection via e-graph extraction---%
+the \stitch algorithm \emph{interleaves} the generation and selection phases
+in a branch-and-bound top-down search.
+%
+Starting from the ``top'' pattern $X$,
+\stitch gradually refines it until further refinement does not pay off.
+%
+To quickly prune suboptimal candidate patterns,
+\stitch computes an upper bound on their compression
+by summing up the compression at each match of this pattern in the corpus
+(this bound is imprecise because it does not take into account that matches might overlap).
+%
+For candidates that are not pruned this way,
+\stitch computes their true compression by searching for the optimal subset of matches to rewrite,
+a so-called ``rewrite strategy''.
+%
+\tool's extraction algorithm can be seen as a generalization of \stitch's rewrite strategy:
+while the former searches over both subsets of patterns and how to apply them to the corpus at the same time,
+the latter considers a single pattern at a time and only searches for the best way to apply it.
+%
+Since the search space in the former case is much larger,
+\tool uses a beam search approximation,
+while in \stitch the rewrite strategy is precise.
+%
+To sum up, the main pros and cons of the two approaches are:
+\begin{itemize}
+\item \tool can learn libraries modulo equational theories, while \stitch cannot;
+\item \stitch provides optimality guarantees for learning a single best abstraction at a time, while \tool can learn multiple abstractions at once, but sacrifices theoretical optimality.
+\end{itemize}
+
+
+\mypara{Other Library Learning Techniques}
+%
+\tname{Knorf}~\cite{knorf} is a library learning tool for logic programs,
+which, like \tool, proceeds in two phases.
+%
+Their candidate generation phase is similar to the upper bound computation in \stitch,
+while their selection phase uses an off-the-shelf constraint solver.
+%
+It would be interesting to explore whether their constraint-based technique can be generalized beyond logic programs.
+
+Other work develops limited forms of library learning,
+where only certain kinds of sub-terms can be abstracted.
+%
+For example, ShapeMod~\cite{shapemod} learns macros
+  for 3D shapes represented
+  in a DSL called ShapeAssembly,
+  and only supports abstracting over numeric parameters,
+  like dimensions of shapes.
+%
+Our own prior work~\cite{cogsci-smiley} extracts common structure from graphical programs,
+  but only supports abstracting over primitive shapes
+  and applying the abstraction at the top level of the program.
+%
+Such restrictions make the library learning problem more computationally tractable,
+  but limit the expressiveness of the learned abstractions.
+
+There are several neural program synthesis tools%
+  ~\cite{polozov, srini, learner, gredilla}
+  that learn \emph{programming idioms}
+  using statistical techniques.
+  % learn programming idioms that make synthesis more efficient.
+Some of these tools have used
+  ``explore-compress'' algorithms~\cite{learner} to
+  iteratively enumerate a set of
+  programs from a grammar and find a solution
+  that exposes abstractions that make the set of
+  programs maximally compressible.
+This is similar to
+  common subexpression elimination which \tool uses
+  for guiding extraction.
+%\cite{gredilla} have used a similar approach for
+%  helping robots learn to complete various tasks by
+%  selecting from a library of abstractions.
+%A recent work from us combines this
+%  explore-compress algorithm with \egraphs
+%  for co-optimizing designs and fabrication instructions
+%  for carpentry~\cite{cc2}
+%  although it does not focus on synthesizing
+%  new abstractions.
+
+% \tool's library learning is based on \egraph
+%   anti-unification combined with DSRs, which differs
+%   different from prior approaches; our
+%   results show that it can find better compressions
+%   faster than the state-of-the-art~\cite{dreamcoder}.
+
+
+\mypara{Loop rerolling}
+%
+Loop rerolling is related to library learning in that it also aims to discover hidden structure in a program,
+except that this structure is in the form of loops.
+%
+A variety of domains have used loop rerolling
+  to infer abstractions from flat input programs.
+In hardware, loop rerolling is
+  used to optimize programs
+  for code size~\cite{hardware1, hardware2, hardware3}.
+In many of these tools,
+  the compiler first unrolls a loop,
+  applies optimizations, then rerolls it --- the compiler
+  therefore has structural information about the loop
+  that can be used for rerolling~\cite{hardware1}.
+The graphics domain has used
+  loop-rerolling to discover
+  latent structure from low-level representations.
+CSGNet~\cite{csgnet} and Shape2Prog~\cite{shape2prog} used
+  neural program generators to discover for loops from
+  pixel- and voxel-based input representations.
+\cite{handdrawn} used program synthesis
+  and machine learning
+  to infer loops from hand-drawn images.
+Szalinski~\cite{szalinski} used
+  equality saturation to
+  automatically learn loops in the form
+  of maps and folds
+  from flat 3D CAD programs that are
+  synthesized by mesh decompilation tools~\cite{reincarnate}.
+WebRobot~\cite{webrobot} has used speculative
+  rewriting for inferring loops from traces
+  of web interactions.
+% WebRobot is similar to Szalinski in that they both
+%   use the notion of speculative rewrites.
+Similar to \tool (and unlike Szalinski),
+  WebRobot finds abstractions
+  over \textit{multiple} input traces.
+% Compared to these tools however,
+%   \tool's approach is more general --- it is not
+%   restricted to finding only loops or limited
+%   types of macros and does not rely on
+%   any information
+%   about how the original
+%   ``flat'' programs were generated.
+
+\mypara{Applications of Anti-Unification}
+%
+Anti-unification is a well-established technique for discovering common structure in programs.
+%
+It is the core idea behind bottom-up Inductive Logic Programming~\cite{ilp},
+and has also been used for software clone detection~\cite{Bulychev10},
+programming by example~\cite{raza2014programming},
+and learning repetitive code edits~\cite{lase,refaser}.
+%
+It is possible that these applications could also benefit from \tool's notion of anti-unification over e-graphs
+to make them more robust to semantics-preserving transformations.
+
+\mypara{Synthesis and Optimization using \Egraphs}
+While traditionally \egraphs have been used
+  in SMT solvers for
+  facilatiting communication between
+  different theories,
+  several tools have demonstrated
+  their use for optimization
+  and synthesis.
+\citet{tate2009equality} first used \egraphs for
+  equality saturation: a rewrite-driven technique
+  for optimizing Java programs with loops.
+Since then, several tools have used equality saturation
+  for finding programs equivalent to,
+  but better than, some
+  input program~\cite{willsey2021egg, herbie, tensat, szalinski, diospyros, spores,
+  cc1}.
+\tool uses an anti-unification
+  algorithm on \egraphs
+  (together with domain specific
+  rewrites), which prior work has not shown.
+Additionally, prior work has either used
+  greedy or ILP-based extraction strategies,
+  whereas \tool uses a new targeted common
+  subexpression elimination approach which
+  we believe can be used in many other applications of
+  equality saturation, especially given its
+  amenability to approximation via beam search.
+
+

@@ -1,0 +1,44 @@
+\section{Conclusion and Future Work}
+
+We presented library learning modulo theory (LLMT),
+ a technique for learning abstractions from a corpus of programs
+ modulo a user-provided equational theory.
+We implemented LLMT in \tool.
+Our evaluation showed that \tool
+ achieves better compression orders of magnitude faster
+ than the state of the art.
+On a larger benchmark suite of \cogsci programs,
+ \tool learns sensible functions that
+ compress a dataset that was---until now---too large for library learning techniques.
+
+LLMT and \tool present many avenues for future work.
+First,
+ our evaluation showed that equational theories are important
+ for achieving high compression,
+ but these must be provided by domain experts.
+Recent work in automated theory synthesis like
+ Ruler~\cite{ruler} or \tname{TheSy}~\cite{thesy}
+ could aid the user in this task.
+Second,
+ LLMT uses e-graph anti-unification to generate
+ promising abstraction candidates, 
+ but this approach is incomplete and misses some patterns
+ that could achieve better compression.
+% Our prototype indicated that 
+%  a complete approach based on traversing the
+%  pattern generalization lattice 
+%  was prohibitively slow;
+%  future work could identify a subset of patterns
+%  that does not sacrifice optimality 
+%  but can still be enumerated efficiently. 
+An exciting direction for future work is to combine LLMT 
+with more efficient top-down search from \stitch~\cite{stitch}.
+%
+This is challenging because \stitch crucially relies on the ability 
+to quickly compute an upper bound on the compression of a given pattern 
+by summing up the local compression at each of its matches in the corpus.
+%
+This upper bound does not straightforwardly extend to e-graphs
+because in an e-graph different matches of a pattern may come from different syntactic variants of the corpus,
+and one needs to trade-off the compression from abstractions
+against the size difference between different syntactic variants.

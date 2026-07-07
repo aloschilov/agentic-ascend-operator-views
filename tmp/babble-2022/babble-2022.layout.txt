@@ -1,0 +1,1762 @@
+                                        babble: Learning Better Abstractions with E-Graphs and
+                                        Anti-Unification
+                                        DAVID CAO∗ , UC San Diego, USA
+                                        ROSE KUNKEL∗ , UC San Diego, USA
+
+
+
+
+arXiv:2212.04596v1 [cs.PL] 8 Dec 2022
+                                        CHANDRAKANA NANDI, Certora, Inc., USA
+                                        MAX WILLSEY, University of Washington, USA
+                                        ZACHARY TATLOCK, University of Washington, USA
+                                        NADIA POLIKARPOVA, UC San Diego, USA
+                                        Library learning compresses a given corpus of programs by extracting common structure from the corpus into
+                                        reusable library functions. Prior work on library learning suffers from two limitations that prevent it from
+                                        scaling to larger, more complex inputs. First, it explores too many candidate library functions that are not
+                                        useful for compression. Second, it is not robust to syntactic variation in the input.
+                                           We propose library learning modulo theory (LLMT), a new library learning algorithm that additionally
+                                        takes as input an equational theory for a given problem domain. LLMT uses e-graphs and equality saturation
+                                        to compactly represent the space of programs equivalent modulo the theory, and uses a novel e-graph anti-
+                                        unification technique to find common patterns in the corpus more directly and efficiently.
+                                           We implemented LLMT in a tool named babble. Our evaluation shows that babble achieves better
+                                        compression orders of magnitude faster than the state of the art. We also provide a qualitative evaluation
+                                        showing that babble learns reusable functions on inputs previously out of reach for library learning.
+                                        CCS Concepts: • Software and its engineering → Functional languages; Automatic programming.
+                                        Additional Key Words and Phrases: library learning, e-graphs, anti-unification
+
+                                        1   INTRODUCTION
+                                        Abstraction is the key to managing software complexity. Experienced programmers routinely
+                                        extract common functionality into libraries of reusable abstractions to express their intent more
+                                        clearly and concisely. What if this process of extracting useful abstractions from code could be
+                                        automated? Library learning seeks to answer this question with techniques to compress a given
+                                        corpus of programs by extracting common structure into reusable library functions. Library learning
+                                        has many potential applications from refactoring and decompilation [Jones et al. 2021; Nandi et al.
+                                        2020], to modeling human cognition [Wang et al. 2021; Wong et al. 2022], and speeding up program
+                                        synthesis by specializing the target language to a chosen problem domain [Ellis et al. 2021].
+                                           Consider the simple library learning task in Fig. 1. On the left, Fig. 1a shows a corpus of three
+                                        programs in a 2d cad DSL from Wong et al. [2022]. Each program corresponds to a picture composed
+                                        of regular polygons, each of which is made of multiple rotated line segments. On the right, Fig. 1b
+                                        shows a learned library with a single function (named f0) that abstracts away the construction
+                                        of scaled regular polygons. The three input programs can then be refactored into a more concise
+                                        form using the learned f0. Whether f0 is the “best” abstraction for this corpus is generally hard to
+                                        quantify. For this paper, we follow DreamCoder [Ellis et al. 2021] and use compression as a metric
+                                        for library learning, i.e., the goal is to reduce the total size of the corpus in AST nodes (from 208 to
+                                        72 Fig. 1). Importantly, the total size of the corpus includes the size of the library: this prevents
+                                        ∗ Equal contribution
+
+
+                                        Authors’ addresses: David Cao, UC San Diego, USA, dmcao@ucsd.edu; Rose Kunkel, UC San Diego, USA, rkunkel@
+                                        eng.ucsd.edu; Chandrakana Nandi, Certora, Inc., USA, chandra@certora.com; Max Willsey, University of Washington,
+                                        USA, mwillsey@cs.washington.edu; Zachary Tatlock, University of Washington, USA, ztatlock@cs.washington.edu; Nadia
+                                        Polikarpova, UC San Diego, USA, npolikarpova@eng.ucsd.edu.
+2                                                          Cao, D., Kunkel, R., Nandi, C., Willsey, M., Tatlock Z., Polikarpova, N.
+
+
+             A   Initial corpus (size 208)                                                B    Compressed corpus (size 72)
+                 (combine                                                           library:
+                   (xform
+                                                                                    f0 = λx0 x1 ->        // polygon with x1 sides scaled by x0
+                     (repeat (xform line ...) 6 [1 (2π / 6) 0 0])
+                                                                                      xform
+                     [2 0 0 0])
+                                                                                        (repeat (xform line ...) x1 [1 (2π / x1) 0 0])
+                   (xform
+                                                                                        [x0 0 0 0]
+                     (repeat (xform line ...) 6 [1 (2π / 6) 0 0])
+                     [1 0 0 0]))
+
+
+                 (combine (combine                                                  refactored programs:
+                  (xform
+                     (repeat (xform line ...) 6 [1 (2π / 6) 0 0])     library       (combine
+                     [2.25 0 0 0]))                                  learning         (f0 6 2)
+                  (xform                                                              (f0 6 1))
+                     (repeat (xform line ...) 6 [1 (2π / 6) 0 0])
+                     [2 0 0 0]))
+                   (xform                                                           (combine (combine
+                     (repeat (xform line ...) 6 [1 (2π / 6) 0 0])                     (f0 6 2.25)
+                     [0.5 0 0 0]))                                                    (f0 6 2))
+                                                                                      (f0 6 0.5))
+                 (combine
+                   (xform
+                     (repeat (xform line ...) 8 [1 (2π / 8) 0 0])                   (combine
+                     [2 0 0 0])                                                       (f0 8 2)
+                   (xform                                                             (f0 6 1))
+                     (repeat (xfrom line ...) 6 [1 (2π / 6) 0 0])
+                     [1 0 0 0]))
+
+
+
+
+Fig. 1. Example of library learning. Initial corpus A contains three graphical programs from the “nuts & bolts”
+dataset of Wong et al. [2022]. Corpus B is the output of library learning with a single learned function for a
+scaled polygon, and the original programs refactored using this function.
+
+
+library learning from generating too many overly-specific functions, and instead biases it towards
+more general and reusable abstractions.
+   Library learning can be phrased as a program synthesis problem structured in two phases:
+generating candidate abstractions, and then selecting those abstractions that produce the best
+(smallest) refactored corpus. The state-of-the-art technique, implemented in DreamCoder [Ellis
+et al. 2021], suffers from two primary limitations that hinder scaling library learning to larger and
+more realistic inputs.
+    • Candidate generation is not precise: DreamCoder generates many candidate abstractions
+        that cannot be useful, slowing down the selection phase and the algorithm as a whole.
+    • The technique is purely syntactic and hence not robust to superficial variation. For example, a
+        human programmer would immediately know that the terms 2 + 1 and 1 + 3 can be refactored
+        using the abstraction 𝜆𝑥  𝑥 + 1, because addition commutes; a purely syntactic library
+        learning approach cannot generate this abstraction.
+In this paper we propose library learning modulo (equational) theories (LLMT)—a new library
+learning algorithm that addresses both of the above limitations.
+Precise Candidate Generation via Anti-Unification. To make candidate generation more pre-
+cise, LLMT leverages two key observations:
+    • Useful abstractions must be used in the corpus at least twice. For example, in a corpus of two
+        programs 2 + 1 and 3 + 1, there is no need to consider 𝜆𝑥  3 + 𝑥 because it can only be used
+        in one place, and hence would only increase the size of the corpus.
+    • Abstractions should be “as concrete as possible” for a given corpus. For example, in the
+        same corpus with 2 + 1 and 3 + 1, the abstraction 𝜆𝑥  𝑥 + 1 is superior to the more general
+        𝜆𝑥 𝑦  𝑥 +𝑦, since both apply to the same two terms, but applying the latter is more expensive
+       (it requires two arguments).
+In other words, a useful abstraction corresponds to the least general pattern that matches some
+pair of subterms from the original corpus; such a pattern can be computed via anti-unification
+(AU) [Plotkin 1970]. For example, anti-unifying 2 + 1 and 3 + 1 yields the pattern 𝑋 + 1, and the
+desired candidate library function 𝜆𝑥  𝑥 + 1 can be derived by abstracting over the pattern variable
+Learning Better Abstractions with E-Graphs and Anti-Unification                                             3
+
+
+                                                       babble
+                                                                    candidate                  optimal
+                                      e-graph                      abstractions              abstractions
+           program        equality                  e-graph                       targeted
+                                                                                                  +
+            corpus       saturation             anti-unification                    CSE
+                                                                                             compressed
+                                                                                               corpus
+
+
+                         equational
+                           theory
+
+
+
+                                       Fig. 2. babble architecture overview
+
+
+𝑋 . Similarly, in Fig. 1, the abstraction f0 can be derived by anti-unifying, for example, the blue and
+the brown subterms of the corpus.
+Robustness via E-Graphs. To make candidate generation more robust, LLMT additionally takes
+as input a domain-specific equational theory and uses it to find programs that are semantically
+equivalent to the original corpus, but share the most syntactic structure. For example, in the domain
+of arithmetic, we expect the theory to contain the equation 𝑋 + 𝑌 ≡ 𝑌 + 𝑋 , which states that
+addition is commutative. Given the corpus with terms 2 + 1 and 1 + 3, this rule can be used to
+rewrite the second term in to 3 + 1, enabling the discovery of the common abstraction 𝜆𝑥  𝑥 + 1.
+   The main challenge with this approach is to search over the large space of programs that
+are semantically equivalent to the original corpus. To this end, LLMT relies on the e-graph data
+structure and the equality saturation technique [Tate et al. 2009; Willsey et al. 2021] to compute and
+represent the space of semantically equivalent programs. To enable efficient library learning over
+this space, we propose a new candidate generation algorithm that efficiently computes the set of all
+anti-unifiers between pairs of sub-terms represented by an e-graph, using dynamic programming.
+   Finally, selecting the optimal library in this setting reduces to the problem of extracting the
+smallest term out of an e-graph in the presence of common sub-expressions. This problem is
+extremely computationally intensive in its general form, and existing approaches have limited
+scalability [Yang et al. 2021]. Instead we propose targeted subexpression elimination: a novel e-graph
+extraction algorithm that uses domain-specific knowledge to reduce the search space and readily
+supports approximation via beam search to trade off accuracy and efficiency.
+babble. We have implemented LLMT in babble, a tool built on top of the egg e-graph li-
+brary [Willsey et al. 2021]. The overview of the babble’s workflow is shown in Fig. 2, with
+gray boxes representing existing techniques and black boxes representing our contributions.
+  We evaluated babble on benchmarks from two sources: compression tasks extracted from
+DreamCoder runs [Bowers 2022] and 2d cad programs used to evaluate concept learning in
+humans [Wong et al. 2022]. Our evaluation shows that babble outperforms DreamCoder on its
+own benchmarks, achieving better compression in orders of magnitude less time. Adding domain-
+specific rewrites improves compression even further. We also show that babble scales to the larger
+2d cad corpora, which is beyond reach of DreamCoder. We also present and discuss a selection of
+abstractions learned by babble, demonstrating that the LLMT approach can learn functions that
+match human intuition.
+Contributions. In summary, this paper makes the following contributions:
+    • library learning modulo equational theory: a library learning algorithm that can incorporate an
+      arbitrary domain-specific equational theory to make learning robust to syntactic variations;
+    • e-graph anti-unification: an algorithm that efficiently generates the set of candidate abstrac-
+      tions using the mechanism of anti-unification extended from terms to e-graphs;
+4                                                  Cao, D., Kunkel, R., Nandi, C., Willsey, M., Tatlock Z., Polikarpova, N.
+
+
+    • targeted common subexpression elimination: a new approximate algorithm for extracting the
+      best term from an e-graph in the presence of common sub-expressions.
+
+2   OVERVIEW
+We illustrate LLMT via a running example building on Fig. 1. The input corpus in Fig. 1 is written
+in a 2d cad DSL by Wong et al. [2022], which features the following primitives:
+                     line a line segment from the origin (0, 0) to the point (1, 0)
+        combine (𝐹 1, 𝐹 2 ) the union of figures 𝐹 1 and 𝐹 2
+            xform (𝐹, 𝜏)    applying transformation 𝜏 to figure 𝐹
+        repeat (𝐹, 0, 𝜏)    the empty figure
+    repeat (𝐹, 𝑛 + 1, 𝜏)    combine (𝐹, xform ( repeat (𝐹, 𝑛, 𝜏), 𝜏)), similar to a “fold”
+
+   A transformation 𝜏 is a 4-tuple [𝑠, 𝜃, 𝑡𝑥 , 𝑡 𝑦 ] denoting uniformly scaling by a factor of 𝑠, rotating
+by 𝜃 radians, and translating by (𝑡𝑥 , 𝑡 𝑦 ) in the 𝑥 and 𝑦 directions respectively. For example, the
+green hexagon in Fig. 1 is implemented as:
+
+          xform ( repeat (xform ( line,   [1, 0, −0.5, 0.5/tan(𝜋/6)]), 6, [1, 2𝜋/6, 0, 0]), [2, 0, 0, 0])
+
+That is, a hexagon side xform ( line, [1, 0, −0.5, 0.5/tan(𝜋/6)]) is repeated six times, each time rotated
+by another 2𝜋/6 radians, and the resulting unit hexagon is scaled by 2.
+   Taking a closer look at the two blue hexagons in Fig. 1, however, we notice something peculiar.
+The two occurrences of xform ( repeat . . . , [1, 0, 0, 0]) in Fig. 1 are no-ops: they merely scale a figure
+𝐹 by a factor of 1 and neither rotate nor translate it. These redundant transformations would likely
+not be there had the code been written by hand or decompiled from a lower-level representation
+(by a tool like Szalinski [Nandi et al. 2020]);1 and yet, they are crucial if we hope to learn the
+optimal abstraction 𝑓0 with a purely syntactic technique.
+   Fig. 3 shows a simplified and “more natural” version of the corpus from Fig. 1, which eliminates
+these no-op transformations. As illustrated in the figure, this causes a purely syntactic technique to
+learn a different function, 𝑓1 , which abstracts over an unscaled unit polygon. Because the scaling
+transformation is now outside the abstraction, it must be repeated five times. As a result, although
+the simplified input corpus C from Fig. 3 is smaller than the original corpus A (196 AST nodes
+instead of 208), its compressed version D is larger (81 AST nodes instead of 72)! In other words,
+syntactic library learning is not robust with respect to semantics-preserving code variations.
+   In contrast, our tool babble can take the simplified corpus C as input and still discover, in a
+fraction of a second, the scaled polygon abstraction 𝑓0 , yielding the compressed corpus B of size 72.
+In the rest of this section, we illustrate how babble achieves this using our new algorithm, library
+learning modulo equational theory (LLMT).
+Simplified DSL. In the rest of this section we use a tailored version of the 2d cad DSL with the
+following additional constructs:
+        scale (𝐹, 𝑠)  scale 𝐹 by a factor of 𝑠
+    repRot (𝐹, 𝑛, 𝜃 ) a special case of repeat that only performs rotation between iterations
+            side (𝑛)  a side of a regular unit 𝑛-gon
+These are expressible in the original DSL, and could be even discovered with library learning, given
+an appropriate corpus; we treat them as primitives here for the sake of simplifying presentation.
+
+
+1 We suspect that these transformations ended up in the dataset of Wong et al. [2022] because it was generated programmat-
+
+ically from human-designed abstractions, such as “scaled polygon”.
+Learning Better Abstractions with E-Graphs and Anti-Unification                                                                     5
+
+
+                                                                              D    Compressed corpus (size 81)
+                                             syntactic
+  C   Simplified corpus (size 196)            library                 library:
+                                             learning                 f1 = λx ->            // polygon with x sides
+          (combine                                                        (repeat (xform line ...) x [1 (2π / x) 0 0])
+            (...)
+            (repeat (xform line ...)                                  refactored programs:
+              6 [1 (2π / 6) 0 0]))
+                                                                      (+
+          (combine (combine
+                                                                           (xform (f 6) [2 0 0 0])   (+ (+
+           (...)
+                                                                           (f 6))                      (xform (f 6) [2.25 0 0 0])
+           (...))
+           (...))                                                     (+                               (xform (f 6) [2 0 0 0]))
+                                                                           (xform (f 8) [2 0 0 0])     (xform (f 6) [0.5 0 0 0]))
+          (combine                             LLMT                        (f 6))
+            (...)
+            (repeat (xform line ...)
+              6 [1 (2π / 6) 0 0]))
+                                                                      Compressed corpus B (size 72)
+                                       equational theory:
+                                                                       // see Fig. 1
+                                       F = xform F [1 0 0 0]
+                                       ...
+
+
+
+
+Fig. 3. Difference between syntactic library learning and LLMT. Here the initial corpus C is the simplified
+version of corpus A from Fig. 1, with the redundant transformations on the blue subterms removed (unchanged
+terms are shown as ellipses). With this modification, syntactic techniques would learn an inferior abstraction
+𝑓1 , leading to corpus D, while LLMT still learns the better abstraction 𝑓0 .
+
+
+
+2.1    Representing Equivalent Terms with E-Graphs
+To exploit equivalences during library learning, babble takes as input a domain-specific equational
+theory. For our running example, let us assume that the theory contains a single equation:
+
+                                                   𝐹 ≡ scale (𝐹, 1)                                                             (1)
+
+which stipulates that any figure 𝐹 is equivalent to itself scaled by one. With this equation in hand,
+it is possible to “rewrite” corpus C into corpus A, and from there learn the optimal compressed
+corpus B by purely syntactic techniques. The challenge is that there are infinitely many alternative
+corpora C may be rewritten to; how do we know which to pick to maximize syntactic alignment,
+and thus the chance of discovering an optimal abstraction?
+   Instead of trying to guess the best equivalent corpus or enumerating them one by one, babble
+uses equality saturation [Tate et al. 2009; Willsey et al. 2021]. Equality saturation takes as input a
+term 𝑡 and a set of rewrite rules, and finds the space of all terms equivalent to 𝑡 under the given
+rules; this is possible due to the high degree of sharing provided by the e-graph data structure,
+which can compactly represent the resulting space.
+   Fig. 4 (left) shows the e-graph built by equality saturation for the blue term in Fig. 3—represented
+in the simplified DSL as repRot ( side (6), 6, 2𝜋/6)—using the rewrite rule (1). The blue part of the
+graph represents the original term, and the gray part is added by equality saturation. The solid
+rectangles in the e-graph denote e-nodes (which are similar to regular AST nodes), while the dashed
+rectangles denote e-classes (which represent equivalence classes of terms). Importantly, the edges
+in the e-graph go from e-nodes to e-classes, which enables compact representation of programs
+with variation in sub-terms: for example, making e-class 𝑐 1 the first child of the repRot node,
+enables it to represent both terms repRot ( side (6), 6, 2𝜋/6) and repRot ( scale ( side (6), 1), 6, 2𝜋/6)
+without duplicating their common parts. Furthermore, because e-graphs can have cycles, they
+can also represent infinite sets of terms: for example, the e-class 𝑐 1 represents all terms of the
+form: side (6), scale ( side (6), 1), scale ( scale ( side (6), 1), 1), etc. Because this e-graph represents
+the space of all equivalent terms up to the rewrite (1), the term we seek for library learning, namely
+scale ( repRot ( side (6), 6, 2𝜋/6), 1), is also represented in the e-class 𝑐 0 .
+6                                                     Cao, D., Kunkel, R., Nandi, C., Willsey, M., Tatlock Z., Polikarpova, N.
+
+                                                                                             c2
+
+                                                                                                       scale    scale
+              c0
+                   scale       repRot                          c0                            c3
+                                                                     scale     repRot                  scale    repRot   2
+
+
+    c1                                                  c1
+                                                                                                  c4
+          scale        side           /                      scale      side         /                  scale     side   /
+
+
+                                                                                2π       6                                   8
+          1                     2π          6
+
+                                                                                         1
+
+
+
+Fig. 4. (Left) An e-graph representing the space of all programs equivalent the blue term in Fig. 3 under rule
+(1). (Right) An e-graph with both the blue and the brown terms from Fig. 3 after equality saturation. All terms
+are written in the simplified DSL.
+
+
+2.2      Candidate Generation via E-Graph Anti-Unification
+After building an e-graph from the given corpus by running equality saturation with the given
+equational theory, the next step in library learning is to generate candidate patterns that capture
+syntactic similarities across the corpus. The challenge is to generate sufficiently few candidates
+to make library learning tractable, but sufficiently many to achieve good compression. We illus-
+trate candidate generation using the e-graph in Fig. 4 (right), which represents the part of our
+corpus consisting of the (saturated) blue and brown terms. Recall that the optimal pattern—which
+corresponds to the scaled polygon abstraction 𝑓0 —is:
+                                     𝑃0 = scale ( repRot ( side (𝑋 ), 𝑋, 2𝜋/𝑋 ), 𝑌 )                                             (2)
+  Prior work on DreamCoder generates patterns by picking a random fragment from the corpus,
+and then replacing arbitrarily chosen subterms with pattern variables. For example, to generate the
+pattern 𝑃0 , DreamCoder needs to pick the entire brown subterm as a fragment, and then decide to
+abstract over its subterms 8 and 2. This approach successfully restricts the set of candidates from all
+syntactically valid patterns to only those that have at least one match in the corpus; however, since
+there are too many ways to select the subterms to abstract over, this space is still too large to explore
+exhaustively beyond small corpora of short programs. In babble, this problem is exacerbated by
+equality saturation, since the e-graph often contains exponentially or infinitely more programs
+than the original corpus.
+Generality Filters. To further prune the set of viable candidates in babble, we identify two classes
+of patterns that can be safely discarded, either because they are too concrete or too abstract. First,
+a pattern like repRot ( side (8), 𝑋, 2𝜋/8) can be discarded because it is too concrete for this corpus:
+the corresponding abstraction can be applied only once, essentially replacing the sole matching
+term, repRot ( side (8), 8, 2𝜋/8) with (𝜆𝑥  repeat ( side (8), 𝑥, 2𝜋/8)) 8, which only adds more AST
+nodes to the corpus. Second, a pattern like repRot ( side (𝑋 ), 𝑋, 𝑌 ) can be discarded because it is too
+abstract for this corpus: everywhere it matches, a more concrete pattern repRot ( side (𝑋 ), 𝑋, 2𝜋/𝑋 )
+would also match; using the more concrete pattern leads to better compression, since the actual
+arguments in its applications are both fewer and smaller: f 6 2𝜋 /6 and f 8 2𝜋 /8 vs. f 6 and f 8.
+   Thus, our first key insight is to restrict the set of candidates to the most concrete patterns
+that match some pair of subterms in the (saturated) corpus.2 For example, pattern 𝑃 0 is the most
+2 As we discuss in Sec. 3 this can in theory eliminate optimal patterns, but our evaluation shows that it works well in practice.
+Learning Better Abstractions with E-Graphs and Anti-Unification                                                            7
+
+
+concrete pattern that matches the two terms
+                                        scale ( repRot ( side (6), 6, 2𝜋/6), 1)                                          (3)
+                                        scale ( repRot ( side (8), 8, 2𝜋/8), 2)                                          (4)
+represented in Fig. 4 by the e-classes 𝑐 0 and 𝑐 2 , respectively.
+Term Anti-Unification. Computing the most concrete pattern that matches two given terms is
+known as anti-unification (AU) [Plotkin 1970; Reynolds 1969]. AU works by a simple top-down
+traversal of the two terms, replacing any mismatched constructors by pattern variables. For example,
+to anti-unify the terms (3) and (4), we start from the root of both terms; since both AST nodes share
+the same constructor scale, it becomes part of the pattern and we recurse into the children. We
+eventually encounter a mismatch, where the term on the left is 6 and the term on the right is 8; so
+we create a fresh pattern variable 𝑋 and remember the anti-substitution 𝜎 = {( 6, 8) ↦→ 𝑋 }. When
+we encounter a mismatch in the denominator of the angle, we look up the pair of mismatched
+terms ( 6, 8) in 𝜎; because we already created a variable for this pair, we simply return the existing
+variable 𝑋 . The final mismatch is (1, 2) in the second child of scale; since this pair is not yet in 𝜎,
+we create a second pattern variable, 𝑌 . At this point, the resulting anti-unifier is the pattern 𝑃0 (2).
+   Anti-unifying a single pair of terms is simple and efficient. However, in LLMT we want to
+anti-unify all pairs of subterms that can occur in any corpus equivalent (modulo the given equational
+theory) to the original3 . Explicitly enumerating all equivalent corpora represented by the e-graph
+and then performing AU on each pair of subterms is infeasible. Instead, babble performs anti-
+unification directly on the e-graph.
+From Terms to E-Classes. We first explain how to anti-unify two e-classes. This operation takes
+as input a pair of e-classes and returns a set of dominant anti-unifiers, i.e. a set of patterns that (1)
+match both e-classes, and (2) is guaranteed to include the best abstraction among the most concrete
+patterns that match pairs of terms represented by the two e-classes.
+   Consider computing AU(𝑐 1, 𝑐 4 ) for the e-classes 𝑐 1 and 𝑐 4 in the e-graph from Fig. 4 (right). AU
+still proceeds as a top-down traversal, but in this context we must check whether two e-classes have
+any constructors in common. In this case they do: both a side constructor and a scale constructor.
+Let us first pick the two side constructors and recurse into their only child, computing AU({6}, {8}).
+These two e-classes have no matching constructors, so AU simply returns a pattern variable,
+similarly to term anti-unification; this yields the first pattern for 𝑐 1 and 𝑐 4 : side 𝑋 .
+   Recall, however, that 𝑐 1 and 𝑐 4 also have matching scale constructors. This is where things get
+interesting: these constructors are involved in a cycle (their first child is the parent e-class itself). If
+we let AU follow this cycle, the set of anti-unifiers becomes infinite:
+                             AU(𝑐 1, 𝑐 4 ) = {side 𝑋 } ∪ {scale 𝑝 1 | 𝑝 ∈ AU(𝑐 1, 𝑐 4 )}
+Fortunately, we can show that side 𝑋 dominates all the other patterns from this set, because their
+pattern variables—in this case, just 𝑋 —match the same e-classes, but they are also larger (in Sec. 4
+we show how this domination relation lets us prune other patterns, not just those caused by cycles).
+Hence AU(𝑐 1, 𝑐 4 ) simply returns {side 𝑋 }.
+  Following the same logic for the root e-classes of the two polygons, 𝑐 0 and 𝑐 2 , AU(𝑐 0, 𝑐 2 ) yields
+that pattern 𝑃0 (2), which is required to learn the optimal abstraction.
+From E-Classes to E-Graphs. To obtain the set of all candidate abstractions, we need to perform
+anti-unification over all pairs of e-classes in the e-graph. Clearly, these computations have overlap-
+ping subproblems (for example, we have to compute AU(𝑐 1, 𝑐 4 ) as part of AU(𝑐 0, 𝑐 2 ) and AU(𝑐 0, 𝑐 3 )).
+3 A careful reader might be wondering if we need to compute infinitely many anti-unifiers because there might be infinitely
+
+many equivalent corpora. As we explain shortly, there are only finitely many patterns that are viable abstraction candidates.
+8                                             Cao, D., Kunkel, R., Nandi, C., Willsey, M., Tatlock Z., Polikarpova, N.
+
+                                                                     c2
+                                                                              app         scale
+            c0
+                                                                              c3
+                  scale             app        app                                  app             2
+
+
+                                                     f0         f1
+
+                           1              6               λxy         λx                  8
+
+
+                                                           …              …
+
+Fig. 5. The e-graph from Fig. 4 (right) with applications of 𝑓0 and 𝑓1 depicted in red. We show the unchanged
+parts of the graph representing the unit hexagon and octagon as corresponding shapes; we also omit some of
+the gray e-nodes added in the previous stage.
+
+
+To avoid duplicating work, babble uses an efficient dynamic programming algorithm that processes
+all pairs of e-classes in a bottom-up fashion.
+
+2.3   Candidate Selection via Targeted Common Subexpression Elimination
+We now illustrate the final step of library learning in babble: given the set of candidate abstractions
+generated by e-graph anti-unification, the goal is to pick a subset that gives the best compression
+for the corpus as a whole. For example, the candidates generated for the corpus from Fig. 3 include:
+            𝑓0   = 𝜆𝑥 𝑦  scale ( repRot ( side (𝑥), 𝑥, 2𝜋/𝑥), 𝑦)                   scaled regular 𝑥-gon
+            𝑓1   = 𝜆𝑥  repRot ( side (𝑥), 𝑥, 2𝜋/𝑥)                                 regular 𝑥-gon
+            𝑓2   = 𝜆𝑦  scale ( repRot ( side (6), 6, 2𝜋/6), 𝑦)                     scaled hexagon
+It is not immediately clear which abstraction is better: 𝑓0 matches more terms than 𝑓2 , but 𝑓2 requires
+fewer arguments (so if we have enough scaled hexagons in the corpus and only one octagon, it
+might be better to leave the octagon un-abstracted). On the other hand, 𝑓1 might be better, since it
+does not introduce the redundant transformation on the blue hexagons. Finally, if we pick 𝑓0 and
+𝑓2 together, we can also abstract the definition of 𝑓2 as 𝑓0 6, thereby getting additional reuse! As
+you can see, candidate selection is highly non-trivial, since it needs to take into account the choice
+between different equivalent programs in the e-graph, and the fact that some abstractions can be
+defined using others.
+Reduction to E-Graph Extraction. To overcome this difficulty, we once again leverage e-graph
+and equality saturation. Our second key insight is that selecting the optimal subset of abstractions
+can be reduced to the problem of extracting the smallest term from an e-graph in the presence of
+common sub-expressions.
+    To illustrate this reduction, let us limit our attention to only two candidate abstractions, 𝑓0 and
+𝑓1 , defined above. babble converts each of the candidate patterns and its corresponding abstraction
+into a rewrite rule that introduces a local 𝜆-abstraction followed by application into the corpus; for
+our two abstractions these rules are:
+                            scale ( repRot ( side (𝑋 ), 𝑋, 2𝜋/𝑋 ), 𝑌 ) ⇒ 𝑓0 𝑋 𝑌                                   (5)
+                                       repRot ( side (𝑋 ), 𝑋, 2𝜋/𝑋 ) ⇒ 𝑓1 𝑋                                       (6)
+The result of applying these rules to the e-graph from Fig. 4 (right) is shown in Fig. 5. For example,
+you can see that the e-class 𝑐 2 (which represents the scale-2 octagon) now stores an alternative
+Learning Better Abstractions with E-Graphs and Anti-Unification                                           9
+
+
+representation: 𝑓0 8 2. The e-class 𝑐 0 (unit hexagon) has representations using either 𝑓0 or 𝑓1 , because
+this class matches both rewrite rules (5) and (6) above. Note also that because the definitions of
+the 𝜆-abstractions are also stored in the e-graph, equality saturation can use the above rewrite
+rules inside their bodies, to make one function use another: for example, one term stored for the
+definition of 𝑓0 is
+
+                                             𝜆𝑥 𝑦  scale (𝑓1 𝑥, 𝑦).
+
+   Once we have built the version of the e-graph with local lambdas for all the candidate abstractions,
+all that is left is to extract the smallest term out of this e-graph. The tricky part is that we want to
+count the size of the duplicated lambdas only once. For example, in Fig. 5, 𝑓0 is applied twice (in 𝑐 0
+and 𝑐 2 ); if term extraction were to choose both of these e-nodes, we want to treat their first child
+(the definition of 𝑓0 ) as a common sub-expression, whose size contributes to the final expression
+only once. Intuitively, this is because we can “float” these lambdas into top-level let-bindings,
+thereby defining 𝑓0 only once, and replacing each local lambda with a name.
+   Extraction with common sub-expressions is a known but notoriously hard problem, which is
+traditionally reduced to integer linear programming (ILP) [Wang et al. 2020; Yang et al. 2021].
+Because the scalability of the ILP approach is very limited, we have developed a custom extraction
+algorithm, which scales better by using domain-specific knowledge and approximation.
+Extraction Algorithm. The main idea for making extraction more efficient is that for library
+learning we are only interested in sharing a certain type of sub-terms: namely, the 𝜆-abstractions.
+Hence for each e-class we only need to keep track of the the best term for each possible library (i.e.
+each subset of 𝜆-abstractions). More precisely, for each e-class and library, we keep track of (1) the
+smallest size of the library (2) the smallest size of the program refactored using this library (counting
+the 𝜆-abstractions as a single node). We compute and propagate this information bottom-up through
+the e-graph. Once this information is computed for the root e-class (that represents the entire
+corpus), we can simply choose the library with the smallest total size.
+   For example, for the e-class 𝑐 2 from Fig. 5, with the empty library ∅, the size of library is 0 and
+the size of the smallest program (scale ( repRot ( side (8), 8, 2𝜋/8), 2)) is 9; with the library {𝑓0 }, the
+size of the library is 9 and the size of the smallest program (𝑓0 2 8) is 3; while with the library {𝑓1 },
+the size of the library is 7 and the size of the smallest program (scale (𝑓1 8, 2)) is 4. Clearly for this
+e-class introducing library functions is not paying off yet (0 + 9 < 7 + 4 < 9 + 3), since each one
+can be only used once. This situation changes, however, as we move up towards the root. Already
+for the parent e-class of 𝑐 0 and 𝑐 2 , the cost of introducing {𝑓0 } and {𝑓1 } is amortized: the size of
+the smallest program is 17 with the empty library and 7 with either {𝑓0 } or {𝑓1 }, so {𝑓1 } is already
+worthwhile to introduce (9 + 7 < 0 + 17). Including even more programs with scaled polygons
+eventually makes the library {𝑓0 } the most profitable of the four subsets.
+   Since in a larger corpus, keeping track of all subsets of candidate abstractions is not feasible,
+babble provides a way to trade off scalability and precision by using a beam search approach.
+
+3   LIBRARY LEARNING OVER TERMS
+In this section we formalize the problem of library learning over a corpus of terms and motivate
+our first core contribution: generating candidate abstractions via anti-unification. Sec. 4 generalizes
+this formalism to library learning over an e-graph. For simplicity of exposition, our formalization
+of library learning is first order, that is, the initial corpus does not itself contain any 𝜆-abstractions,
+and all the learned abstractions are first-order functions (the babble implementation does not have
+this limitation).
+10                                                     Cao, D., Kunkel, R., Nandi, C., Willsey, M., Tatlock Z., Polikarpova, N.
+
+
+3.1    Preliminaries
+Terms. A signature Σ is a set of constructors, each associated with an arity. T (Σ) denotes the set
+of terms over Σ, defined as the smallest set containing all 𝑠 (𝑡 1, . . . , 𝑡𝑘 ) where 𝑠 ∈ Σ, 𝑘 = arity(𝑠),
+and 𝑡 1, . . . , 𝑡𝑘 ∈ T (Σ). We abbreviate nullary terms of the form 𝑠 () as 𝑠. The size of a term size(𝑡) is
+defined in the usual way (as the number of constructors in the term). We use subterms(𝑡) to denote
+the set of all subterms of 𝑡 (including 𝑡 itself). We assume that Σ contains a dedicated variadic tuple
+constructor, written ⟨𝑡 1, . . . , 𝑡𝑛 ⟩, which we use to represent a corpus of programs as a single term
+(⟨⟩ does not contribute to the size of a term).
+Patterns. If X is a denumerable set of variables, T (Σ, X) is a set of patterns, i.e. terms that can
+contain variables from X. A pattern is linear if each of its variables occurs only once: ∀𝑋 ∈
+vars(𝑝).occurs(𝑋, 𝑝) = 1. A substitution 𝜎 = [𝑋 1 ↦→ 𝑝 1, . . . , 𝑋𝑛 ↦→ 𝑝𝑛 ] is a mapping from variables
+to patterns. We write 𝜎 (𝑝) to denote the application of 𝜎 to pattern 𝑝, which is defined in the
+standard way. We define the size of a substitution size(𝜎) as the total size of its right-hand sides.
+    A pattern 𝑝 is more general than (or matches) 𝑝 ′, written 𝑝 ′ ⊑ 𝑝, if there exists 𝜎 such that
+𝑝 = 𝜎 (𝑝); we will denote such a 𝜎 by match(𝑝 ′, 𝑝). For example 𝑋 + 1 ⊑ 𝑋 + 𝑌 with match(𝑋 +
+  ′
+
+1, 𝑋 + 𝑌 ) = [𝑌 ↦→ 1]. The relation ⊑ is a partial order on patterns, and induces an equivalence
+relation 𝑝 1 ∼ 𝑝 2 ≜ 𝑝 1 ⊑ 𝑝 2 ∧ 𝑝 2 ⊑ 𝑝 1 (equivalence up to variable renaming). In the following, we
+always distinguish patterns only up to this equivalence relation.
+    The join of two patterns 𝑝 1 ⊔ 𝑝 2 —also called their anti-unifier—is the least general pattern that
+matches both 𝑝 1 and 𝑝 2 ; the join is unique up to ∼. Note that ⟨T (Σ, X), ⊑, ⊔, ⊤ = 𝑋 ⟩ is a join
+semi-lattice (part of Plotkin’s subsumption lattice [Plotkin 1970]). Consequently, the join can be
+generalized to an arbitrary set of patterns.
+    A context C is a pattern with a single occurrence of a distinguished variable ◦. We write C [𝑝]—𝑝
+in context C—as a syntactic sugar for [◦ ↦→ 𝑝] (C). A rewrite rule 𝑅 is a pair of patterns, written
+𝑝 1 ⇒ 𝑝 2 . Applying a rewrite rule 𝑅 to a term or pattern 𝑝, written 𝑅(𝑝) is defined in the standard
+way: 𝑅(𝑝) = (match(𝑝, 𝑝 1 )) (𝑝 2 ) if 𝑝 ⊑ 𝑝 1 and undefined otherwise. A pattern 𝑝 can be re-written
+in one step into 𝑞 using a rule 𝑅, written 𝑝 →𝑅1 𝑞, if there exists a context C such that 𝑝 = C [𝑝 ′]
+and 𝑞 = C [𝑅(𝑝 ′)]. The reflexive-transitive closure of this relation is the rewrite relation → R , where
+R is a set of rewrite rules.
+Compressed Terms. Compressed terms T̂ (Σ, X) are of the form:
+                               𝑡ˆ ::= 𝑋 | 𝑠 (𝑡ˆ1, . . . , 𝑡ˆ𝑘 ) | (𝜆𝑋 1 . . . 𝑋𝑛  𝑡ˆ) 𝑡ˆ1 . . . 𝑡ˆ𝑛
+In other words, compressed terms may contain applications of a 𝜆-abstraction with zero or more
+binders to the same number of arguments. Note that this is a first-order language in the sense
+that all abstractions are fully applied. Importantly, we define size(𝑡ˆ) in such a way that multiple
+occurrences of a 𝜆-abstraction are only counted once. For simplicity of accounting, the size of an
+application (𝜆𝑋  𝑡ˆ1 ) 𝑡ˆ2 is defined as size(𝑡ˆ1 ) + size(𝑡ˆ2 ), that is, abstraction nodes themselves do
+                                                      Í
+not add to the size.4
+                                                           𝛽
+   Beta-reduction on compressed terms, denoted 𝑡ˆ1 →1 𝑡ˆ2 , is defined in the usual way:
+                                                                  𝛽
+                                           (𝜆𝑋  𝑡ˆ1 ) 𝑡ˆ2 →1 [𝑋 ↦→ 𝑡ˆ2 ] (𝑡ˆ1 )
+where substitution on compressed terms is the standard capture-avoiding substitution for 𝜆-calculus.
+Note that because our language is first-order and has no built-in recursion, it is strongly normalizing
+(the proof of this statement, as well as other proofs omitted from this section, can be found in
+the supplementary material). Hence, the order of 𝛽-reductions is irrelevant, and without loss of
+4 Hereafter, 𝑎 stands for a sequence of elements of syntactic class 𝑎 and 𝜖 denotes the empty sequence.
+Learning Better Abstractions with E-Graphs and Anti-Unification                                                      11
+
+
+
+          ⟨𝑓 (𝑔(𝑎) + 𝑔(𝑎)) + (𝑔(1) + ℎ(2))                          ⟨ 𝑓ˆ2 𝑔(𝑎) 1 2, 𝑓ˆ2 𝑔(𝑏) 2 3, 𝑓ˆ1 5 6⟩   where
+          , 𝑓 (𝑔(𝑏) + 𝑔(𝑏)) + (𝑔(3) + ℎ(4))                         𝑓ˆ1 = 𝜆𝑌 𝑍  𝑔(𝑌 ) + ℎ(𝑍 )
+          , 𝑔(5) + ℎ(6)⟩                                            𝑓ˆ2 = 𝜆𝑋 𝑌 𝑍  𝑓 (𝑋 + 𝑋 ) + 𝑓ˆ1 𝑌 𝑍
+
+Fig. 6. Library learning. Left: initial term (size 29). Right: an optimal solution with two abstractions, one of
+which uses the other (size 26). A solution with 𝑓ˆ2 = 𝜆𝑋 𝑌 𝑍  𝑓 (𝑔(𝑋 ) + 𝑔(𝑋 )) + 𝑓ˆ1 𝑌 𝑍 also has size 26.
+
+
+generality we can define evaluation on compressed terms, 𝑡ˆ1 →𝛽 𝑡ˆ2 , to follow applicative order, i.e.
+innermost 𝛽-redexes are reduced first. As a result, any application reduced during evaluation has
+the form (𝜆𝑋  𝑝 1 ) 𝑝 2 , that is, neither the body 𝑝 1 nor the actual arguments 𝑝 2 contain any redexes
+(and hence any 𝜆-abstractions). This simplifies several aspects of our formalization; for example,
+there is no need for 𝛼-renaming, since with no binders in 𝑝 1 , no variable capture can occur.
+Problem Statement. We can now formalize the library learning problem as follows: given a term
+𝑡 ∈ T (Σ), the goal is to find the smallest compressed term 𝑡ˆ ∈ T̂ (Σ, X) that evaluates to 𝑡 (i.e.
+𝑡ˆ →𝛽 𝑡). The reason such 𝑡ˆ may be smaller than 𝑡, is that it may contain multiple occurrences of the
+same 𝜆-abstraction (applied to different arguments), whose size is only counted once. An example
+is shown in Fig. 6.
+   Although in full generality the solution might include nested lambdas with free variables (defined
+in the outer lambdas), in the rest of the paper we restrict our attention to global library learning,
+where all lambdas are closed terms. This is motivated by the purpose of library learning to discover
+reusable abstraction for a given problem domain. The solution in Fig. 6 already has this form.
+
+3.2   Pattern-Based Library Learning
+At a high-level, our approach to library learning is to use patterns that occur in the original corpus
+as candidate bodies for 𝜆-abstractions in the compressed corpus. Looking at the example in Fig. 6, it
+is not immediately obvious that using just the patterns from the original corpus is sufficient, since
+the body of 𝑓2 contains an application of 𝑓1 . Perhaps surprisingly, this is not an issue: the key idea
+is that we can compress 𝑡 into 𝑡ˆ by inverting the evaluation 𝑡ˆ →𝛽 𝑡, and because the evaluation
+order is applicative, the rewritten sub-term at every step will not contain any 𝛽-redexes.
+Compression. More formally, given a pattern 𝑝, let us define its compression rule (or 𝜅-rule for
+short) as the rewrite rule
+                            𝜅 (𝑝) ≜ 𝑝 ⇒ (𝜆𝑋  𝑝) 𝑋                where 𝑋 = vars(𝑝)
+In other words, 𝜅 (𝑝) will replace any term matching 𝑝 with an application of a function whose body
+is exactly 𝑝. For example, if 𝑝 = 𝑔(𝑌 ) + ℎ(𝑍 ), its 𝜅-rule is 𝑔(𝑌 ) + ℎ(𝑍 ) ⇒ (𝜆𝑌 𝑍  𝑔(𝑌 ) + ℎ(𝑍 )) 𝑌 𝑍 .
+Note that on the right-hand side of this rule only the free occurrences of 𝑌 and 𝑍 will be substituted
+during rewriting; the bound 𝑌 and 𝑍 will be left unchanged, following the usual semantics of
+substitution for 𝜆-calculus. For example, this rule can rewrite the third term in Fig. 6 (left) as follows:
+                                            𝜅 (𝑔 (𝑌 )+ℎ (𝑍 ))
+                           𝑔(5) + ℎ(6) →1                       (𝜆𝑌 𝑍  𝑔(𝑌 ) + ℎ(𝑍 )) 5 6
+                            𝜅 (𝑝 )       𝜅 (𝑝 )
+A sequence of 𝜅-rewrites 𝑡 →1 1 . . . →1 𝑛 𝑡ˆ, where all 𝑝𝑖 ∈ P, is called a compression of 𝑡 into 𝑡ˆ
+using patterns P and written 𝑡 →𝜅 ( P) 𝑡ˆ. We can now show that the library learning problem is
+equivalent to finding the smallest compression of 𝑡 using only patterns that occur in 𝑡.
+   Theorem 3.1 (Soundness and Completeness of Pattern-Based Library Learning). For any
+term 𝑡 ∈ T (Σ) and compressed term 𝑡ˆ ∈ T̂ (Σ, X):
+12                                                Cao, D., Kunkel, R., Nandi, C., Willsey, M., Tatlock Z., Polikarpova, N.
+
+
+(Soundness) If 𝑡 compresses into 𝑡ˆ, then 𝑡ˆ evaluates to 𝑡: ∀P.𝑡 →𝜅 ( P) 𝑡ˆ =⇒ 𝑡ˆ →𝛽 𝑡.
+(Completeness) If 𝑡ˆ is a solution to the (global) library learning problem, then 𝑡 compresses into 𝑡ˆ
+     using only patterns that have a match in 𝑡: 𝑡ˆ ∈ arg min𝑡ˆ′ →𝛽 𝑡 size(𝑡ˆ′) =⇒ 𝑡 →𝜅 ( P) 𝑡ˆ, where
+     P = {𝑝 ∈ T (Σ, X) | 𝑡 ′ ∈ subterms(𝑡), 𝑡 ′ ⊑ 𝑝}.
+
+     The proof can be found in the supplementary material.
+Example. Consider once again the library learning problem in Fig. 6. Here the set of patterns used
+to compress the original corpus into the solution on the right is:
+
+                       𝑝 1 = 𝑔(𝑌 ) + ℎ(𝑍 )              𝑝 2 = 𝑓 (𝑋 + 𝑋 ) + 𝑔(𝑌 ) + ℎ(𝑍 )
+
+Rewriting the first term of the corpus proceeds in two steps (the redexes of 𝜅-steps are highlighted):
+
+                                       𝜅 (𝑝 2 )
+     𝑓 (𝑔(𝑎) + 𝑔(𝑎)) + (𝑔(1) + ℎ(2)) →1
+                                                                                                 𝜅 (𝑝 1 )
+                (𝜆𝑋 𝑌 𝑍  𝑓 (𝑋 + 𝑋 ) + 𝑔(𝑌 ) + ℎ(𝑍 )) 𝑔(𝑎) 𝑔(𝑎) (𝑔(1) + ℎ(2)) →1
+                     (𝜆𝑋 𝑌 𝑍  𝑓 (𝑋 + 𝑋 ) + (𝜆𝑌 𝑍  𝑔(𝑌 ) + ℎ(𝑍 )) 𝑌 𝑍 ) 𝑔(𝑎) 𝑔(𝑎) (𝑔(1) + ℎ(2))
+
+In other words, we first rewrite the entire term using 𝑝 2 , and then rewrite inside the body of
+the introduced abstraction using 𝑝 1 (note that this order of compression is the inverse of the
+applicative evaluation order). The second term of the corpus compresses analogously; the third
+term compresses in a single step using 𝑝 1 . Although this is not obvious from the rewrite sequence
+above, the resulting compressed corpus is indeed smaller than the original thanks to sharing of
+both 𝜆-abstractions, as illustrated on the right of Fig. 6.
+Library Learning as Term Rewriting. Theorem 3.1 reduces library learning to a term rewriting
+problem. Namely, given a term 𝑡 and a finite set of rewrite rules R = {𝜅 (𝑝) | 𝑡 ′ ∈ subterms(𝑡), 𝑡 ′ ⊑
+𝑝}, our goal is to find a minimal-size term 𝑡ˆ such that 𝑡 → R 𝑡ˆ, which is a standard formulation in
+term rewriting. Unfortunately, this particular problem is notoriously difficult because (a) the rule
+set R is very large for any non-trivial term 𝑡, and (b) our size function is non-local (it takes sharing
+into account) In the rest of this section we discuss how we can prune the rule set R to reduce it to
+a tractable size. Sec. 5 discusses how we tackle the remaining term rewriting problem using the
+equality saturation technique [Tate et al. 2009; Willsey et al. 2021].
+
+3.3     Pruning Candidate Patterns
+In this section, we discuss which patterns can be discarded from consideration when constructing
+the set of 𝜅-rules R for the term rewriting problem.
+Cost of a Pattern. Consider a compression 𝑡 →𝜅 ( P) 𝑡ˆ where each pattern 𝑝 ∈ P is used some
+                                      𝑝          𝑝
+number 𝑛 times, with substitutions 𝜎1 , . . . , 𝜎𝑛 . We can break down the total amount of compression
+into contributions of individual patterns:
+                                                     ∑︁
+                                                                   𝑝          𝑝
+                            size(𝑡ˆ) − size(𝑡) =         cost(𝑝, {𝜎1 , . . . 𝜎𝑛 })
+                                                        𝑝 ∈P
+
+
+The cost of a pattern 𝑝, in turn, consists of three components. The cost of introducing the abstraction
+is the size of its body, i.e. size(𝑝). The cost of using an abstraction—use(𝑝, 𝜎) (7)—includes the
+application itself and the size of the arguments. The cost saved by using an abstraction—save(𝑝, 𝜎)
+Learning Better Abstractions with E-Graphs and Anti-Unification                                           13
+
+
+(8)—is just the cost of the term matched by 𝑝 (i.e. the redex of the corresponding 𝜅-step).
+                                ∑︁
+             use(𝑝, 𝜎) = 1 +         size(𝜎 (𝑋 ))                                                        (7)
+                                𝑋 ∈vars(𝑝)
+                                                          ∑︁
+             save(𝑝, 𝜎) = size(𝜎 (𝑝)) = size(𝑝) +                   occurs(𝑋, 𝑝) · (size(𝜎 (𝑋 )) − 1)    (8)
+                                                       𝑋 ∈vars(𝑝)
+
+The total cost of 𝑝 is the cost of introducing the abstraction paid a single time, plus the cost of each
+use, minus what you save for each application:
+                                                           ∑︁
+                    cost(𝑝, {𝜎1, . . . , 𝜎𝑛 }) = size(𝑝) +    (use(𝑝, 𝜎𝑖 ) − save(𝑝, 𝜎𝑖 ))            (9)
+                                                             𝜎𝑖
+
+When 𝑝 is linear (all occurs(𝑋, 𝑝) = 1), the cost depends only on 𝑛 but not on the substitutions 𝜎𝑖 :
+                                                          ∑︁
+                   cost(𝑝, {𝜎1, . . . , 𝜎𝑛 }) = size(𝑝) +    (1 − size(𝑝) + |vars(𝑝)|)         (10)
+                                                             𝜎𝑖
+                                              = size(𝑝) + 𝑛 · (1 − size(𝑝) + |vars(𝑝)|)                 (11)
+We can show that a pattern 𝑝 with a non-negative cost can be safely discarded, that is: there exists
+another compression using only P \ {𝑝}, whose result is at least as small.
+Trivial Patterns. Based on this analysis, any linear pattern 𝑝 with skeleton(𝑝) ≤ 1 can be discarded,
+where skeleton(𝑝) = size(𝑝) − |vars(𝑝)| is the size of 𝑝’s “skeleton”, i.e. it’s body without the
+variables. Intuitively, the skeleton of 𝑝 is simply too small to pay for introducing an application. In
+this case, cost(𝑝, _) > 0 independently of how many times it is used. We refer to such patterns as
+trivial. Examples of trivial patterns are 𝑋 and 𝑋 + 𝑌 .
+Patterns with a Single Match. We can show that patterns with only a single match in the corpus
+can also be discarded. If 𝑝 has a single match in 𝑡, then it can appear at most once in any compression
+of 𝑡. If 𝑝 is linear, cost(𝑝, _) = 1 + |vars(𝑝)|, which is always positive, so 𝑝 can be discarded. But
+what about non-linear patterns, where even a single 𝜅-step can decrease size thanks to variable
+reuse? It turns out that any non-linear pattern with a single match can always be replaced by a
+nullary pattern (with no variables) that is more optimal.
+   Without loss of generality, assume that 𝑝 has a single variable 𝑋 that occurs 𝑚 > 1 times, and let its
+                         𝜅 (𝑝)
+sole 𝜅-step be 𝜎 (𝑝) →1        (𝜆𝑋  𝑝) 𝜎 (𝑋 ). The size of the right-hand side is size(𝑝) +1+size(𝜎 (𝑋 )),
+or, rewritten in terms of 𝑝’s skeleton: 1 + (skeleton(𝑝) + 𝑚) + size(𝜎 (𝑋 )). Instead, we can rewrite
+the same redex 𝜎 (𝑝) → {𝑅 } 𝑝 ′ using 𝑚 applications of the rule 𝑅 ≜ 𝜎 (𝑋 ) ⇒ (𝜆𝜖  𝜎 (𝑋 )) 𝜖. This
+is a 𝜅-rule for a nullary pattern 𝜎 (𝑋 ) with no variables (hence the corresponding 𝜆-abstraction
+has zero binders). The size of 𝑝 ′ obtained in this way is size(𝜎 (𝑋 )) + 𝑚 + skeleton(𝑝) (where the
+former is the size of the shared 𝜆-abstraction, 𝑚 is the number of applications, and skeleton(𝑝) is
+the size of the term around the applications). As you can see, this term is one smaller than the one
+we get by applying 𝑝. Intuitively, this result says that instead of using a non-linear pattern that
+occurs only once, it is better to perform common sub-expression elimination.
+Parameterization Lattice. Eliminating from consideration all patterns with fewer than two
+matches in the corpus suggests an algorithm for generating a complete set P of candidate patterns:
+(1) start from the set P 2 (𝑡) = {𝑡 1 ⊔ 𝑡 2 | 𝑡𝑖 ∈ subterms(𝑡)} of all pairwise joins of subterms of the
+input program, (2) explore all elements of the subsumption semi-lattice above those patterns, by
+gradually replacing sub-patterns with variables, until we hit trivial patterns at the top of the lattice.
+We will refer to this semi-lattice above P 2 (𝑡) as the parametrization lattice of 𝑡, denoted P (𝑡). A
+fragment of P (𝑡) for 𝑡 = ⟨𝑓 (𝑎 + 𝑏), 𝑓 (𝑎 + 𝑐), 𝑓 (𝑏 + 𝑐)⟩ is shown in Fig. 7 (left).
+14                                                Cao, D., Kunkel, R., Nandi, C., Willsey, M., Tatlock Z., Polikarpova, N.
+
+                       X
+                                                                                     f(X + Y)
+                    f(X)
+              f(X + Y)
+                                                                                                        f(X + c)
+                                                                   f(a + X)                f(X + X)
+         f(a + X)               f(X + c)
+
+
+                                                                        f(a + a)      f(a + c)     f(c + c)
+        f(a + b)     f(a + c)    f(b + c)         t
+
+
+Fig. 7. Left: fragment of the parametrization lattice for the term 𝑡 = ⟨𝑓 (𝑎 + 𝑏), 𝑓 (𝑎 + 𝑐), 𝑓 (𝑏 + 𝑐)⟩; only filled
+black circles correspond to candidate patterns: hollow circles match fewer than two terms and gray circles
+are trivial. Right: an example where is it insufficient to consider pairwise joins to obtain an optimal pattern.
+
+
+Approximation. In practice, computing the set P 2 (𝑡) is feasible: although there are quadratically
+many pairs of subterms, most of them do not have a common constructor at the root, and hence their
+join is trivially 𝑋 . An example is the join of 𝑡 with any of its subterms in Fig. 7 (left). Unfortunately,
+generalizing the patterns from P 2 (𝑡) according to the parameterization lattice (Fig. 7) is expensive.
+For this reason, babble adopts an approximation and simply uses P 2 (𝑡) as the set of candidates.
+   This approximation makes our pattern generation theoretically incomplete. Consider a pattern
+𝑝 ∈ P (𝑡) \ P 2 (𝑡); there are two reasons why we might need 𝑝 in the optimal compression of 𝑡:
+   (1) there is no 𝑝 ′ ∈ P 2 (𝑡) with the same set of matches as 𝑝, or
+   (2) there is such a 𝑝 ′ but it has few enough matches that its larger size does not pay off.
+   The first kind of incompleteness occurs when 𝑝 matches a set of subterms 𝑡 1, . . . , 𝑡𝑛 (𝑛 > 2),
+whose join is distinct from all their pairwise joins (otherwise some 𝑡𝑖 ⊔ 𝑡 𝑗 ∈ P 2 (𝑡) would also
+match all 𝑡 1, . . . , 𝑡𝑛 ). An example is shown in Fig. 7 (right), where the three subterms in question
+are 𝑓 (𝑎 + 𝑎), 𝑓 (𝑎 + 𝑐), and 𝑓 (𝑐 + 𝑐). In this case, an optimal compression might use the pattern
+𝑓 (𝑋 + 𝑌 ) to rewrite all three subterms, but our approximation would only include the patterns
+𝑓 (𝑎 + 𝑋 ), 𝑓 (𝑋 + 𝑋 ), and 𝑓 (𝑋 + 𝑐), each of which can rewrite only two of the three subterms.
+   The second kind of incompleteness occurs when there exists 𝑝 ′ ∈ P 2 (𝑡) that has the same set of
+matches as 𝑝, despite being strictly more specific, and yet using 𝑝 ′ instead of 𝑝 still doe not pay off.
+The understand when this happens, consider the difference in costs between 𝑝 and 𝑝 ′, assuming
+that they are both used to rewrite the same 𝑛 subterms (i.e. their save cost is the same):
+                                                                  ∑︁
+              cost(𝑝 ′, 𝜎 ′) − cost(𝑝, 𝜎) = size(𝑝 ′) − size(𝑝) +    (use(𝑝 ′, 𝜎𝑖′) − use(𝑝, 𝜎𝑖 ))
+                                                                        𝑖
+                                                                       ∑︁
+                                            = size(𝑝 ′) − size(𝑝) +         (size(𝜎𝑖′) − size(𝜎𝑖 ))
+                                                         𝑖
+Because 𝑝 is strictly more specific than 𝑝, we know that size(𝑝 ′) ≥ size(𝑝), but all its substitu-
+         ′
+
+tions 𝜎𝑖′ must be strictly smaller than 𝜎𝑖 . Hence, with enough uses, 𝑝 ′ is bound to become more
+compressive than 𝑝; when there are just a few uses, however, 𝑝 can be more optimal. For example,
+consider the corpus ⟨C [𝑓 (1, 2, 3)], C [𝑓 (4, 5, 6)]⟩, where C is some sufficiently large context. Here, a
+more general pattern 𝑝 = C [𝑋 ] is more optimal than the more specific 𝑝 ′ = C [𝑓 (𝑋, 𝑌 , 𝑍 )], because
+size(𝑝 ′) − size(𝑝) = 3, each use of 𝑝 ′ is only one node cheaper, and there are only two uses.
+   Despite the lack of theoretical completeness guarantees, we argue that restricting candidate
+patterns to P 2 (𝑡) is a reasonable trade-off. Note, that the counter-examples above are quite contrived,
+and they no longer apply once the corpus contains sufficiently many and sufficiently diverse
+instances of a pattern (for example, adding 𝑓 (𝑏, 𝑏) to the first corpus would make 𝑓 (𝑋, 𝑌 ) appear in
+P 2 (𝑡), and adding just one more occurrence of 𝑝 ′ into the second corpus would make it as optimal
+as 𝑝). Our empirical evaluation confirms that this approximation works well in practice.
+Learning Better Abstractions with E-Graphs and Anti-Unification                                                                15
+
+
+Syntax                                                        Denotation J·K : 𝑁 → 2 T (Σ) , J·K : 𝐶 → 2 T (Σ)
+       e-class ids 𝑎, 𝑏                         ∈I
+         e-nodes 𝑛 ::= 𝑠 (𝑎 1, . . . , 𝑎𝑘 )     ∈𝑁             J𝑠 (𝑎 1, . . . , 𝑎𝑘 )K   = {𝑠 (𝑡 1, . . . , 𝑡𝑘 ) | 𝑡𝑖 ∈ J𝑀 (𝑎𝑖 )K}
+        e-classes 𝑐 ::= {𝑛 1, . . . , 𝑛𝑚 }      ∈𝐶
+                                                                                          Ð
+                                                               J{𝑛 1, . . . , 𝑛𝑚 }K     = 𝑖 ∈ [1,𝑚] J𝑛𝑖 K
+
+Fig. 8. Syntax, metavariables, and denotation for the components of an e-graph. Here 𝑠 ∈ Σ and 𝑘 = arity(𝑠).
+
+
+4     LIBRARY LEARNING MODULO EQUATIONAL THEORY
+E-Graphs. Let I be a denumerable set of e-class ids. An e-graph G is a triple ⟨𝐶, 𝑀, 𝑟 ⟩, where 𝐶 is a
+set of e-classes, 𝑀 : I → 𝐶 is an e-class map. and 𝑟 ∈ I is the root class id. An e-class 𝑐 ∈ 𝐶 is a set
+of e-nodes 𝑛 ∈ 𝑁 , and an e-node is a constructor applied to e-class ids. The syntax of e-classes and
+e-nodes is summarized in Fig. 8 (left). An e-graph has to satisfy the congruence invariant, which
+states that the e-graph has no two identical e-nodes (or alternatively, that all e-classes are disjoint).5
+   The denotation of an e-graph—the set of terms it represents—is the denotation of its root e-class
+J𝑀 (𝑟 )K, where the denotation of e-classes and e-nodes is defined mutually-recursively in Fig. 8
+(right). Note that the denotation can be infinite if the e-graph has cycles. An e-graph induces an
+equivalence relation ≡ G , where 𝑡 1 ≡ G 𝑡 2 iff there exists an e-class 𝑐 ∈ 𝐶 such that 𝑡 1 ∈ J𝑐K ∧ 𝑡 2 ∈ J𝑐K.
+   E-graphs provide means to extract the cheapest term from an e-class according to some cost
+function: extractcost (𝑎) = arg min𝑡 ∈J𝑀 (𝑎) K cost(𝑡). If cost is local, meaning that the cost of a term
+can be computed from the costs of its immediate children, extraction can be done efficiently by a
+greedy algorithm, which recursively extracts the best term from each e-class.
+E-Matching. E-matching is a generalization of pattern matching to e-graphs, where matching
+an e-class 𝑐 against a pattern 𝑝 yields a set of e-class substitutions 𝜃 : X → I such that 𝜃 (𝑝) is
+a “subgraph” of 𝑐. To formalize this notion, we introduce partial terms 𝜋 ∈ T (Σ, I), which are
+terms whose leaves can be e-class ids (or, alternatively, patterns with e-class ids for variables). The
+containment relation 𝜋 ≺ 𝑎 for some e-class id 𝑎 is defined as follows:
+                     𝑎≺𝑎             𝑠 (𝜋 1, . . . , 𝜋𝑘 ) ≺ 𝑎 iff 𝑠 (𝑎 1, . . . , 𝑎𝑘 ) ∈ 𝑀 (𝑎) ∧ 𝜋𝑖 ≺ 𝑎𝑖
+With this definition, a pattern 𝑝 matches an e-class 𝑎, 𝑎 ⊑ 𝑝, if there exists an e-class substitution 𝜃 ,
+such that 𝜃 (𝑝) ≺ 𝑎. We denote the set of such substitutions as matches(𝑎, 𝑝).
+Rewriting and Equality Saturation. Equality saturation (EqSat) [Tate et al. 2009; Willsey et al.
+2021] takes as input a term 𝑡 and a set of equations that induce an equivalence relation ≡, and
+produces an e-graph G such that JGK = {𝑡 ′ | 𝑡 ≡ 𝑡 ′ } and 𝑡 ≡ 𝑡 ′ iff 𝑡 ≡ G 𝑡 ′. The core idea of EqSat is
+to convert equations into rewrite rules and apply them to the e-graph in a non-destructive way: so
+that the original term and the rewritten terms are both represented in the same e-class. Applying a
+rewrite rule 𝑝 1 ⇒ 𝑝 2 to an e-class 𝑎 works as follows: for each 𝜃 ∈ matches(𝑎, 𝑝 1 ), we obtain the
+rewritten partial term 𝜋 ′ = 𝜃 (𝑝 2 ) and then add this partial term to the same e-class 𝑎, restoring the
+congruence invariant (i.e. merging e-classes that now have identical e-nodes).
+
+4.1    Top-Level Algorithm
+  We can formalize the problem of library learning modulo equational theory (LLMT) as follows:
+given a term 𝑡 and a set of equations that induce an equivalence relation ≡, the goal is to find a
+compressed term 𝑡ˆ ∈ T̂ (Σ, X), such that 𝑡ˆ →𝛽 𝑡 ′ ≡ 𝑡 (for some 𝑡 ′), and 𝑡ˆ has a minimal size.
+5 In a real e-graph implementation, the definitions of e-graphs and the congruence invariant are more involved, because
+
+efficient merging of e-classes requires introducing a non-trivial equivalence relation over e-class ids; these details are
+irrelevant for our purposes. Also, other formalizations of e-graphs do not feature a distinguished root e-class.
+16                                            Cao, D., Kunkel, R., Nandi, C., Willsey, M., Tatlock Z., Polikarpova, N.
+
+
+ 1    # Original term 𝑡 , set of equational rewrite rules R ≡ , maximum library size 𝑁
+ 2    def LLMT(𝑡 , 𝑅≡ , 𝑁 ):
+ 3       # EqSat phase:
+ 4       G = egraph(𝑡 ) # initialize with a single term 𝑡
+ 5       G = eqSat(G, R ≡ ) # G represents all terms that are ≡ 𝑡
+ 6
+ 7       # candidate generation phase:
+ 8       P = AU(G ) # generate candidate patterns by anti-unification
+ 9       R𝜅 = {𝜅 (𝑝) | 𝑝 ∈ P} # construct a compression rule from every pattern
+10       G ′ = eqSat(G, R𝜅 ) # G ′ represents all ways to compress G
+11
+12       # candidate selection phase:
+13       R ′ = select_library(G ′, 𝑁 ) # select the best 𝑁 rules from R𝜅 using beam search
+14       G ′′ = eqSat(G, 𝑅 ′ ) # G ′′ represents all ways to compress G using the optimal library
+15       return extract( G ′′ ) # extract the smallest compressed term from G ′′
+
+
+                                   Fig. 9. The top-level LLMT algorithm.
+
+
+    Our top-level algorithm LLMT is depicted in Fig. 9. This algorithm takes as input the original
+corpus 𝑡 and the equational theory, represented as a set of require rules R ≡ (another input to the
+algorithm is the maximum size of the library; this parameter is introduced for the sake of efficiency,
+as we explain in Sec. 5). As the first step (lines 4–5), LLMT applies EqSat to obtain an e-graph G that
+represents all terms 𝑡 ′ such that 𝑡 ′ ≡ 𝑡. This reduces the LLMT problem to library learning over
+an e-graph: i.e. the goal is to find a minimal-size compressed term 𝑡ˆ, such that 𝑡ˆ →𝛽 𝑡 ′ for some
+𝑡 ′ ∈ JGK. Similarly to Sec. 3, we take a pattern-based approach to this problem, that is, we select a
+set P of candidate patterns and then perform compression rewrites using these patterns.
+    The rest of the algorithm is split into two phases: candidate generation and candidate selection.
+Candidate generation (lines 8–10) first computes the set of candidate patterns P using the anti-
+unification mechanism extended to e-graphs. Then it creates a compression rule (𝜅-rule, see Sec. 3)
+from each candidate pattern, and once again applies EqSat to obtain a new e-graph G ′. This new
+e-graph represents all possible ways to compress the terms from G using patterns in P. Finally, the
+candidate selection phase (lines 13–15) selects the optimal subset of compression rules R ′, constructs
+an e-graph G ′′ that represents all possible compressions using only the selected compression rules,
+and finally extracts the smallest compressed term from this e-graph.
+    The rest of this section focuses on the candidate generation via e-graph anti-unification (line 8).
+The candidate selection functions select_library and extract are discussed in Sec. 5.
+
+4.2    Candidate Generation via E-Graph Anti-Unification
+The goal of candidate generation is to find a set of patterns that are useful for compression. Following
+the discussion in Sec. 3, we restrict our attention to patterns AU(𝑡 1, 𝑡 2 ), where 𝑡 1 and 𝑡 2 are subterms
+of some 𝑡 ∈ JGK. The naïve approach is to enumerate all such 𝑡, and for each one, perform anti-
+unification on all pairs of subterms; this is suboptimal at best, and impossible at worst (when JGK is
+infinite). Hence in this section we show how to compute a finite set of candidate patterns directly
+on the e-graph, without discarding any optimal patterns.
+E-Class Anti-Unification. Let us first consider anti-unification of two e-classes, AU(𝑎, 𝑏), which
+takes as input e-class ids 𝑎 and 𝑏 and returns a set of patterns. We define AU(𝑎, 𝑏) = AU(𝜖 ⊢ 𝑎, 𝑏),
+where AU(Γ ⊢ 𝑎, 𝑏) is an auxiliary function that additionally takes into account a context Γ. A
+Learning Better Abstractions with E-Graphs and Anti-Unification                                                          17
+
+
+                                    E-node Anti-Unification AU(Γ ⊢ 𝑛 1, 𝑛 2 )
+         AU(Γ, (𝑎, 𝑏) ⊢ 𝑠 (𝑎 1, . . . , 𝑎𝑘 ), 𝑠 (𝑏 1, . . . , 𝑏𝑘 ))   = {𝑠 (𝑝 1, . . . , 𝑝𝑘 ) | 𝑝𝑖 ∈ AU(Γ ⊢ 𝑎𝑖 , 𝑏𝑖 )}
+                     AU(Γ, (𝑎, 𝑏) ⊢ 𝑠 1 (. . .), 𝑠 2 (. . .))         = {𝑋𝑎,𝑏 } if 𝑠 1 ≠ 𝑠 2
+                                      E-class Anti-Unification AU(Γ ⊢ 𝑎, 𝑏)
+                  AU(Γ ⊢ 𝑎, 𝑏)                       ∈Γ
+                                       = ∅ if (𝑎, 𝑏) Ð                                         
+                  AU(Γ ⊢ 𝑎, 𝑏)         = dominant 𝑛𝑎 ∈𝑀 (𝑎),𝑛𝑏 ∈𝑀 (𝑏) AU(Γ, (𝑎, 𝑏) ⊢ 𝑛𝑎 , 𝑛𝑏 )
+
+  Fig. 10. E-class anti-unification defined as two mutually-recursive functions of e-nodes and e-class ids.
+
+
+context is a list of pairs of e-classes that have been visited while computing the AU, and is required
+to prevent infinite recursion in case of cycles in the e-graph.
+    Fig. 10 defines this operation using two mutually recursive functions that anti-unify e-classes
+and e-nodes. Note that e-node AU is always invoked in a non-empty context. The first equation
+anti-unifies two e-nodes with the same constructor: in this case, we recursively anti-unify their
+child e-classes and return the cross-product of the results. The second equation applies to e-nodes
+with different constructors: as in term AU, this results in a pattern variable. A nice side-effect of
+dealing with e-graphs is that we need not keep track of the anti-substitution to guarantee that each
+pair of subterms maps to the same variable: because any duplicate terms are represented by the
+same e-class, we can simply use the e-class ids 𝑎 and 𝑏 in the name of the pattern variable 𝑋𝑎,𝑏 .
+    The second block of equations defines anti-unification of e-classes (let us first ignore the dominant
+which will be explained shortly). The first equation applies when 𝑎 and 𝑏 have already been visited:
+in this case, we break the cycle and return the empty set. Otherwise, the last equation anti-unifies
+all pairs of e-nodes from the two e-classes in an updated context and merges the results. Note that
+this will add a pattern variable unless all e-nodes in both e-classes have the same constructor; we
+have omitted this detail in Sec. 2 for simplicity, but this is implemented in babble and often yields
+more optimal patterns. For example, consider anti-unifying 𝑐 1 and 𝑐 2 from Fig. 4 (right): although
+they have the constructor scale in common, 𝑋 is actually a better pattern for abstracting these
+two e-classes than scale 𝑋 𝑌 , because the total size of the actual arguments to pattern 𝑋 (side (6)
+and scale ( repRot ( side (8), 8, 2𝜋/8), 2)) is the same as those to the pattern scale 𝑋 𝑌 (side (6), 1,
+repRot ( side (8), 8, 2𝜋/8), and 2), and the pattern 𝑋 itself is smaller. This happens because the class
+𝑐 1 represents several different terms, and the term “compatible with” 𝑋 in this case is smaller than
+the term “compatible wit” scale 𝑋 𝑌 .
+Dominant Patterns. Recall that AU(𝑎, 𝑏) produces patterns with variable names 𝑋𝑎𝑖 ,𝑏𝑖 , which
+record the e-class ids they abstract; let us refer to such a pattern 𝑝 as uniquely matched and
+define 𝜃𝑙 (𝑝) = {𝑋𝑎𝑖 ,𝑏𝑖 ↦→ 𝑎𝑖 } and 𝜃 𝑟 (𝑝) = {𝑋𝑎𝑖 ,𝑏𝑖 ↦→ 𝑏𝑖 }; these substitutions are necessarily among
+matches(𝑎, 𝑝) and matches(𝑏, 𝑝), respectively. Given two uniquely matched patterns 𝑝 1, 𝑝 2 ∈
+AU(𝑎, 𝑏), we say that 𝑝 1 dominates 𝑝 2 in the context of (𝑎, 𝑏) if (1) vars(𝑝 1 ) ⊆ vars(𝑝 2 ), and (2)
+size(𝑝 1 ) ≤ size(𝑝 2 ). We can show that if 𝑝 1 dominates 𝑝 2 , then we can safely discard 𝑝 2 from the
+set of candidate patterns. First, since 𝑝 1 is no larger than 𝑝 2 , the definition of its 𝜆-abstraction is also
+no larger. Second, given a term 𝑡𝑎 ∈ J𝑎K, compressing this term using 𝑝 1 vs 𝑝 2 , requires choosing
+actual arguments from range(𝜃𝑙 (𝑝 1 )) vs range(𝜃𝑙 (𝑝 2 )); because the former is a subset of the latter,
+the first application can always be made no larger (symmetric argument applies for 𝑡𝑏 ∈ J𝑏K).
+    Hence it is sufficient that AU(𝑎, 𝑏) only returns the set of dominant patterns (i.e. a pattern
+dominated by any pattern in the set can be discarded). This is what the function dominant does
+in the last equation of Fig. 10. This pruning technique is especially helpful in the presence of
+equational theories. Suppose our theory contains the equation 𝑋 + 𝑌 ≡ 𝑌 + 𝑋 , and that the original
+18                                          Cao, D., Kunkel, R., Nandi, C., Willsey, M., Tatlock Z., Polikarpova, N.
+
+
+term 𝑡 contains subterms 1 + 2 and 3 + 1. After saturation, the e-graph will represent 1 + 2 and 2 + 1
+in some e-class 𝑎 and 3 + 1 and 1 + 3 in another e-class 𝑏; AU(𝑎, 𝑏) will then produce both patterns
+𝑋 + 1 and 1 + 𝑋 , but it is clearly redundant to have both, since they match the same e-classes with
+the same substitutions 𝜃 . Pruning of dominated patterns will eliminate one of them.
+Avoiding Cycles. Interestingly enough, the same notion of dominant patterns justifies why we
+need not follow cycles in the e-graph when computing AU(𝑎, 𝑏), or, alternatively, why a finite set
+of candidate patterns is sufficient to compress any term in JGK, even if this set is infinite. Removing
+the first equation that short-circuits cycles can only lead to solutions 𝑝 ′ of the form
+                                           𝑝 ′ = [𝑋 ↦→ 𝑝] (𝑞)
+where 𝑝 ∈ AU(𝑎, 𝑏) is another solution, and 𝑞 is some context, added by the cycle. It is clear that
+any such 𝑝 ′ is dominated by 𝑝, and hence can be discarded.
+E-Graph Anti-Unification. The algorithm AU(𝑎, 𝑏) computes a set of patterns that can be used
+to compress terms represented by the e-classes 𝑎 and 𝑏. Our ultimate goal, however, is to compute
+candidate patterns for abstracting all subterms of some 𝑡 ∈ JGK. The most straightforward way to
+achieve this is to apply AU(𝑎, 𝑏) to all pairs of e-classes in G. We can do better, however: some
+pairs of e-classes need not be considered, because they cannot occur together in a single term 𝑡.
+For an example, consider the following e-graph, with I = N and 𝑟 = 0:
+                      0 ↦→ {𝑓 (1), 𝑔(2)}   1 ↦→ {𝑔(3)}      2 ↦→ {𝑓 (3)}      3 ↦→ {𝑎}
+This e-graph can result, for example, by rewriting a term 𝑓 (𝑔(𝑎)) using an equation 𝑓 (𝑔(𝑋 )) ≡
+𝑔(𝑓 (𝑋 )). In this e-graph, the e-classes 1 and 2 (representing 𝑔(𝑎) and 𝑓 (𝑎), respectively) clearly
+cannot co-occur in the same term: since the e-graph only represents two terms, 𝑓 (𝑔(𝑎)) and 𝑔(𝑓 (𝑎)).
+    To formalize this intuition, we define the co-occurrence relation between two e-class ids as
+follows. An e-class 𝑎 is a sibling of 𝑏 if there is an e-node that has both 𝑎 and 𝑏 as children. An
+e-class 𝑎 is an ancestor of 𝑏 if 𝑎 = 𝑏 or 𝑏 is a child of some e-node 𝑛 ∈ 𝑀 (𝑐) and 𝑎 is an ancestor of
+𝑐; 𝑎 is a proper ancestor of 𝑏 if 𝑎 is an ancestor of 𝑏 and 𝑎 ≠ 𝑏. Two e-classes 𝑎 and 𝑏 are co-occurring
+if (1) one of them is a proper ancestor of another, or (2) they have ancestors that are siblings.
+    Finally, to compute the set AU(G) of all candidate patterns for an e-graph G, LLMT first computes
+the co-occurrence relation between all e-classes in G, and then computes AU(𝑎, 𝑏) of all pairs of
+e-classes that are co-occurring. As mentioned in Sec. 2, we use a dynamic programming algorithm
+that memoizes the results of AU(𝑎, 𝑏) to avoid recomputation.
+
+5    CANDIDATE SELECTION VIA E-GRAPH EXTRACTION
+After generating candidate abstractions, the LLMT algorithm invokes select_library to pick the subset
+of candidate patterns that can best be used to compress the input corpus. This section describes
+our approach to selecting the optimal library dubbed targeted common subexpression elimination.
+Library Selection as E-Graph Extraction. Recall that candidate selection starts with an e-graph
+G ′, which represents all the ways of compressing the initial corpus and its equivalent terms using
+the candidate patterns P. We will refer to a subset L ⊂ P as a library. The optimal size of an e-class
+𝑐 compressed with L can be computed as the sum of the sizes of (1) the smallest term 𝑡 ∈ J𝑐K using
+only the library functions in L and where 𝜆-abstractions do not count toward the size of 𝑡, and
+(2) the smallest version of each 𝑝 ∈ L. Note that the cost of defining an abstraction in L is only
+counted once, and that abstractions in L can be used to compress other abstractions in L. Our goal
+is to find L such that the root e-class compressed with L has the smallest size.
+   Given a particular library, we can find the size of the smallest term via a relatively straight-
+forward top-down traversal of the e-graph. Hence, a naïve approach to library selection would
+Learning Better Abstractions with E-Graphs and Anti-Unification                                               19
+
+
+                                         E-node cost set costset𝑁 (𝑛)
+                                costset𝑁 (𝑠 ())     = {(∅, 1)}
+                              costset𝑁 (𝑠 (𝑎𝑖 ))    = {(L, 𝑢 + 1) | (L, 𝑢) ∈ cross(𝑎𝑖 )}
+                        costset𝑁 ((𝜆𝑋  𝑎) 𝑏)       = addlib(𝑎, costset(𝑎), costset(𝑏))
+                                          E-class cost set costset(𝑎)
+                                                               Ð
+                             costset({𝑛 𝑗 }) = prune(reduce( costset𝑁 (𝑛 𝑗 )))
+                             Auxiliary definitions cross, addlib, reduce, prune
+         cross(𝑧 1, 𝑧 2 )    = prune(reduce({(L1 ∪ L2, 𝑢 1 + 𝑢 2 ) | (L1, 𝑢 1 ) ∈ 𝑧 1, (L2, 𝑢 2 ) ∈ 𝑧 2 }))
+      addlib(𝑎, 𝑧 1, 𝑧 2 )   = prune(reduce({(L1 ∪ L2 ∪ {𝑎}, 𝑢 2 ) | (L1, 𝑢 1 ) ∈ 𝑧 1, (L2, 𝑢 2 ) ∈ 𝑧 2 }))
+           reduce(𝑧)         = {(L1, 𝑢 1 ) ∈ 𝑧 | ∀(L2, 𝑢 2 ) ∈ 𝑧 \ (L1, 𝑢 1 ). L1 ⊂ L2 ∨ 𝑢 1 < 𝑢 2 }
+       prune(𝑁 , 𝐾, 𝑧)       = top_k({(L, 𝑢) ∈ 𝑧 | |L| ≤ 𝑁 }, 𝐾)
+
+Fig. 11. Cost set propagation, defined as two mutually recursive functions. Blue text corresponds to the
+partial order reduction optimization and red text corresponds to the beam approximation. top_k(𝑆, 𝐾) is a
+helper function that returns top 𝐾 elements from the sorted set 𝑆.
+
+
+
+be to enumerate all subsets of P and pick the one that produces the smallest term at the root.
+Unfortunately, this approach becomes intractable as the size of P grows.
+Exploiting Partial Shared Structure. Instead, babble selects the optimal library using a bottom-
+up dynamic programming algorithm. To this end, it associates each e-node and e-class with a cost
+set, which is a set of pairs (L, 𝑢) where L is a library and 𝑢 is the use cost of this library, i.e. the
+size of the smallest term represented by the e-node / e-class if it is allowed to use L (excluding
+the size of L itself). Cost sets are propagated up the e-graph using the rules shown in Fig. 11. The
+base case is a nullary e-node 𝑠 (), which cannot use any library functions and whose size is always
+1. For an e-node that has children, babble computes the cross product over the cost sets of all its
+child e-classes. Finally, for an application e-node (𝜆𝑋  𝑎) 𝑏, the cost set must include the library
+function 𝑎 (in addition to some combination of libraries from the cost sets of 𝑎 and 𝑏); note that
+the use cost of the abstraction node only includes the use cost of 𝑏, since abstraction bodies are
+excluded from the use cost.
+   To compute the cost set of an e-class, babble takes the union of the cost sets of all its e-nodes.
+However, doing this naively would result in the size of the cost set growing exponentially. To
+mitigate this, we define a partial order reduction (reduce), which only prunes provably sub-optimal
+cost sets. Given two pairs (L1, 𝑢 1 ) and (L2, 𝑢 2 ) in the cost set of an e-class, if L1 ⊂ L2 and 𝑢 1 ≤ 𝑢 2 ,
+then L2 is subsumed by L1 and can be removed from the cost set, intuitively because L1 can
+compress this e-class even better and with fewer library functions. In practice this optimization
+prunes libraries with redundant abstraction, where two different abstractions can be used to
+compress the same subterms.
+Beam Approximation. Even with the partial order reduction, calculating the cost set for every
+e-node and e-class can blow up exponentially. To mitigate this, babble provides the option to limit
+both the size of each library inside a cost set and the size of the cost set stored for each e-class. This
+results in a beam-search style algorithm, where the cost set of each e-class is pruneed, as shown in
+Fig. 11. This pruning operation first filters out libraries that have more than 𝑁 patterns, then ranks
+the rest by the total cost (i.e. the sum of use cost and the size of the library), and finally returns the
+top 𝐾 libraries from that set.
+20                                          Cao, D., Kunkel, R., Nandi, C., Willsey, M., Tatlock Z., Polikarpova, N.
+
+
+          DreamCoder [Ellis et al. 2021]                       2d cad [Wong et al. 2022]
+        Domain # Benchmarks # Eqs                        Domain        # Benchmarks # Eqs
+        List                   59       14               Nuts & Bolts                1    7
+        Physics                18        8               Vehicles                    1    9
+        Text                   66        -               Gadgets                     1   17
+        Logo                   12        -               Furniture                   1    9
+        Towers                 18        -
+Table 1. We selected our benchmark domains from two previous works: DreamCoder [Ellis et al. 2021] and
+2d cad [Wong et al. 2022]. Each domain from DreamCoder has multiple benchmarks; 2d cad has one large
+benchmark per domain. For some domains, we additionally supplied babble with an equational theory; we
+report the number of equations in the final column.
+
+
+
+
+6     EVALUATION
+We evaluated babble and the LLMT algorithm behind it with two quantitative research questions
+and a third qualitative one:
+RQ 1. Can babble compress programs better than a state-of-the-art library learning tool?
+RQ 2. Are the main techniques in LLMT (anti-unification and equational theories) important to the
+      algorithm’s performance?
+RQ 3. Do the functions babble learns make intuitive sense?
+
+Benchmark Selection. We use two suites of benchmarks to evaluate babble, both shown in Tab. 1.
+The first suite originates from the DreamCoder work [Ellis et al. 2021], and is available as a
+public repository [Bowers 2022]. DreamCoder is the current state-of-the-art library learning tool,
+and using these benchmarks allows us to perform a head-to-head comparison. The DreamCoder
+benchmarks are split into five domains (each with a different DSL); we selected two of the domains—
+List and Physics—which we understood best, to add an equational theory.
+   The second benchmark suite, called 2d cad, comes from Wong et al. [2022]. This work collects a
+large suite of programs in a graphics DSL for the purpose of studying connections between the gen-
+erated objects and their natural language descriptions. There are 1,000 programs in the “Drawings”
+portion of this dataset, divided into four subdomains (listed in Tab. 1) of 250 programs each.
+   We ran babble on all benchmarks on an AMD EPYC 7702P processor at 2.0 GHz. Each benchmark
+was run on a single core. The DreamCoder results were taken from the benchmark repository [Bow-
+ers 2022]; DreamCoder was run on 8 cores of an AMD EPYC 7302 processor at 3.0 GHz.
+
+6.1    Comparison with DreamCoder
+To answer RQ 1, we compare to the state-of-the-art DreamCoder tool [Ellis et al. 2021] on its
+own benchmarks. The DreamCoder benchmarks are suited to its workflow; while the input to
+a library learning task is conceptually a set of programs (or just one big program), each input to
+DreamCoder is a set of groups of programs. Each group is a set of programs that are all output
+from the same program synthesis task (from an earlier part of the DreamCoder pipeline). When
+compressing a program via library learning, DreamCoder is minimizing the cost of the program
+made by concatenating the most compressed program from each group together, in other words:
+                                      ∑︁
+                                               min     cost(𝑝)
+                                                program 𝑝 ∈ 𝑔
+                                      group 𝑔
+Learning Better Abstractions with E-Graphs and Anti-Unification                                                                                                                                       21
+
+                  103
+                                                                                  Babble                                                                                                 Babble
+                                                                                                                          103
+                                                                                  DreamCoder                                                                                             DreamCoder
+                                                                                  BabbleSyn                                                                                              BabbleSyn
+                  102                                                             EqSat                                                                                                  EqSat
+                                                                                                                          102
+
+
+
+
+Time (seconds)                                                                                          Time (seconds)
+                  101
+                                                                                                                          101
+
+
+
+                  100
+                                                                                                                          100
+
+
+
+                 10−1                                                                                                    10−1
+
+
+
+                 10−2                                                                                                    10−2
+                        1.0   1.1        1.2          1.3                         1.4                                           1.0      1.2         1.4      1.6    1.8     2.0   2.2      2.4    2.6
+                                      Compression Ratio                                                                                                      Compression Ratio
+
+
+
+                              (a) List domain                                                                                                  (b) Physics domain
+                 103                                                              Babble                                              Babble
+                                                                                  DreamCoder                                          DreamCoder
+
+
+
+
+                 102                                                                                                     103
+
+
+
+
+Time (seconds)                                                                                          Time (seconds)
+                 101
+                                                                                                                         102
+
+
+
+
+                 100
+                                                                                                                         101
+
+
+
+                        1.0     1.1            1.2                          1.3            1.4                                         1.1                 1.2         1.3         1.4            1.5
+                                      Compression Ratio                                                                                                      Compression Ratio
+
+
+                              (c) Text domain                                                                                                    (d) Logo domain
+
+                                                                103
+
+
+
+
+                                                                102
+
+
+
+
+                                               Time (seconds)   101
+
+
+
+
+                                                                100
+
+                                                                                                                                          Babble
+                                                                                                                                          DreamCoder
+
+                                                                      1.0            1.2          1.4            1.6                           1.8
+                                                                                               Compression Ratio
+
+
+                                                                                        (e) Towers domain
+
+Fig. 12. babble consistently achieves better compression ratios than DreamCoder on benchmarks from the
+DreamCoder domains, and it does so 1–2 orders of magnitude faster. Each marker shows the compression
+ratio (x-axis) and run time (y-axis) of a benchmark. Each benchmark is one DreamCoder input, i.e., a set of
+groups of programs as described above. Lower and to the right is better. In the domains where we supplied
+babble with an equational theory (List and Physics), additional markers show the performance of babble
+using purely syntactic learning (without equations, “BabbleSyn”) or only equality saturation without library
+learning (“EqSat”).
+22                                             Cao, D., Kunkel, R., Nandi, C., Willsey, M., Tatlock Z., Polikarpova, N.
+
+
+                                                Without Eqs                              With Eqs
+ Benchmark            Input Size          Out Size CR Time (s)                  Out Size    CR Time (s)
+ Nuts & Bolts             19009               2059 9.23      18.74                  1744 10.90     40.75
+ Vehicles                 35427               6477 5.47      79.50                  5505 6.44      78.03
+ Gadgets                  35713               6798 5.25      75.07                  5037 7.09      82.29
+ Furniture                42936             10539 4.07      133.25                  9417 4.56     110.00
+ Nuts & Bolts (clean)     18259               2215 8.24      18.12                  1744 10.47     40.91
+
+Table 2. Results for running babble on the four large examples from the 2d cad dataset [Wong et al. 2022], both
+without and with an equational theory. Each row includes the input and output AST sizes, the compression
+ratio (CR), and babble’s run time in seconds. Fig. 13 plots this data. The final row shows performance on a
+modified dataset.
+
+
+
+DreamCoder takes this approach to give its library learning component many variants of the same
+program, in order to introduce more shared structure between solution programs across different
+synthesis problems.
+   To implement DreamCoder’s benchmarks in babble, we use the e-graph to capture the notion
+of program variants in a group. Since every program in a group is the output of the same synthesis
+task, babble considers them equivalent and places them in the same e-class.
+Results. We ran babble on five domains from the DreamCoder benchmark suite. The results
+are shown in Fig. 12. In summary, babble consistently achieves better compression ratios than
+DreamCoder on benchmarks from the DreamCoder domains, and it does so 1–2 orders of
+magnitude faster.
+The Role of Equational Theory. To answer RQ 2, we again turn to the DreamCoder benchmarks,
+focusing on the domains where we supplied babble with an equational theory: List and Physics. In
+these domains, we ran babble in two additional configurations:
+    • “BabbleSyn” ignores the equational theory, just doing syntactic library learning.
+    • “EqSat” just optimizes the program using Equality Saturation with the rewrites from the
+       equational theory. This configuration does not do any library learning.
+Fig. 12a and 12b show the results for these additional configurations, as well as DreamCoder
+and the normal babble configuration. All babble configurations rely on targeted subexpression
+elimination to select the final learned library. The “EqSat” configuration is unsurprisingly very
+fast but performs relatively little compression, as it does not learn any library abstractions. The
+“BabbleSyn” configuration does indeed compress the inputs, in fact it is still better than DreamCoder
+in both domains. However, the addition of the equational theory (the “babble” markers in the
+plots) significantly improves compression and adds relatively little run time, well within an order
+of magnitude.
+
+6.2   Large-Scale 2d cad Benchmarks
+The previous section demonstrated that babble’s performance far surpasses the state of the art. In
+this section, we present and discuss the results of running babble on benchmarks from the 2d cad
+domain. These benchmarks, taken from Wong et al. [2022], are significantly larger (roughly 10x -
+100x) than those from the DreamCoder dataset and out of reach for DreamCoder.
+Quantitative Results. Tab. 2 and Fig. 13 show the results of running babble on the benchmarks
+from the 2d cad domain. The plot in Fig. 13 makes two observations clear. First and relevant for
+RQ 2, the addition of an equational theory improved all four benchmarks (the solid marker is
+Learning Better Abstractions with E-Graphs and Anti-Unification                                          23
+
+
+                                                                                          Nuts & Bolts
+                                                                                          Vehicles
+                                                120                                       Gadgets
+                                                                                          Furniture
+
+                                                100
+
+
+
+
+                               Time (seconds)
+                                                80
+
+
+
+                                                60
+
+
+
+                                                40
+
+
+
+                                                20
+
+                                                      0   2   4             6         8       10
+                                                                  Compression Ratio
+
+
+
+
+Fig. 13. Data from Tab. 2 in scatter plot. Each line segment shows compression ratio and run time for a
+domain without (hollow marker) and with (solid marker) an equational theory. Using an equational theory
+improves compression in all cases, and even improves run time in two cases.
+
+
+
+always to the right of the hollow marker). Second, and perhaps surprisingly, equational theories
+can sometimes make babble faster! This is consistent with previous observations about equality
+saturation [Willsey et al. 2021]: while equality saturation typically makes an e-graph larger, it can
+sometimes combine two relevant e-classes into one and reduce the amount of work that some
+operation over an e-graph must do.
+   We also observed that the Nuts-and-bolts dataset contains several redundant transformations,
+like the “scale by 1” featured in the running example of Sec. 2. These redundancies can be useful for
+finding abstractions in the absence of an equational theory. However, they should not be required
+in babble since LLMT can introduce the redundancies wherever required. We therefore removed
+all existing redundant transformations from Nuts-and-bolts and ran babble on the transformed
+dataset. The results are in the final row of Tab. 2. On the modified dataset, babble achieves identical
+compression when using the equational theory, but without the equations it performs worse than
+on the unmodified dataset.
+Qualitative Evaluation. Fig. 14 highlights a sample of abstractions that babble discovered from
+the 2d cad benchmarks. We ran babble on each of the benchmarks and applied the learned
+abstractions on a few input programs to visualize their usage. Questions about usability and
+readability of learned libraries are difficult to answer without rigorous user studies which we leave
+for future work. Nevertheless, Fig. 14 shows that babble identifies common structures that are
+similar across different benchmarks, which makes its output easier to reuse and interpret.
+  First, we revisit the Nuts-and-bolts example from Sec. 1: Fig. 14 shows that babble learns the
+scaled polygon (ngon) abstraction which is applicable to several programs in the dataset. We also
+see that babble consistently finds a similar abstraction representing a “ring of shapes” for both
+Nuts-and-bolts and Vehicles. Finally, as the Gadgets example shows, babble finds abstractions for
+both the entire model as well as its components. In this case, it learned the function gadget_body that
+abstracts the entire outer shape, and it also learned dial that abstracts the handles of the outer shape.
+
+7   RELATED WORK
+babble is inspired by work on library learning, specifically the DreamCoder line of work, as well
+as equality saturation-based program synthesis and decompilation.
+24                                                                Cao, D., Kunkel, R., Nandi, C., Willsey, M., Tatlock Z., Polikarpova, N.
+
+
+     nuts & bolts
+                                         ngon = λsize sides
+                                           T (repeat (T l (M 1 0 -0.5 (0.5 / tan (π / sides)))) sides
+                                                     (M 1 ((2 * π) / sides) 0 0))
+                                             (M size 0 0 0)                                   scaled n-gon ngon 4 8                         ngon 1 6
+
+
+                                         con_hex = λinner_size                       ring = λn shape
+                                           C (ngon 4 6) (ngon inner_size 6)            repeat (offset 1.5 shape) n (rotate n)
+
+
+
+
+                                          con_hex 4.25     con_hex 2    con_hex 1
+                                                                                        ring 6 s      ring 6 s
+                                                concentric scaled hexagons                                             ring of shapes
+
+  vehicles
+                                          oneseg_body = λrest                                                    circle_ring = λn    repeat
+                                            C (C (C (C (T (T (r_s 0 0) (xform_x 0)) (xform_x -8))                 (T (T c (M 0.25 0 0 0))
+                                                    (T (T (r_s 16 4.5) (M 1 0 0 2.25))                               (M 1 0 0.53033 0.53033))
+                                                       (xform_x 0)))                                              n
+                                                 (T (T (r_s 0 0) (xform_x 0)) (xform_x 8)))                       (M 1 ((2 * π) / x0) 0 0)
+                                              (T (r_s 12 1) (M 1 0 0 5))) rest
+
+
+
+                                                                                                                      circle_ring 4    circle_ring 8
+                                                         oneseg_body <antenna>      oneseg_body <wheels>
+
+                                                                             one-segment vehicle body                                 ring of circles
+
+     furniture
+
+                                         shelf = λhandle
+                                           C (T (move_y -3 (C (move_y 0 (r_s 15 3))
+                                                              (T (repeat (T (T handle (M 0.84375 0 0 0)) (xform_x 0))
+                                                                         2
+                                                                         (xform_x 6.375))
+                                                              (xform_x -3.1875))))
+                                                           (M 1 0 0 0.75))                       shelf c              shelf s
+                                             (move_y -2.25 (r_s 16.5 4.5))
+                                                                                                                                               shelf
+
+
+     gadgets                             dial = λhandle                                     gadget_body = λheight top
+                                           C (C (T c (xform_x 0)) (T handle (M 1.5 0 0 0)))   C (C top (T (r_s 1 height) (xform_x 7.75)))
+                                             (T (T (T l (xform_x -0.5)) (M 1 (π / 2) 0 0))
+                                                                                                (T (r_s 1 height)
+                                                (M 1 0 (1 * (0.5 * cos (π / 2))) 0.5))
+                                                                                                       (l31 (0 - 0.5 * (arith 0 + 2 * 0.5))))
+
+
+
+
+                                                                        dial c      dial s
+                                                                                                   gadget_body        gadget_body
+                                                                                                   2.25 <rect>         2.25 empt
+                                                                                       dial                                            gadget body
+
+
+                 input corpus            learned library
+
+
+Fig. 14. A selection of evaluated programs from each of the domains in the 2d cad dataset, along with
+a selection of functions that babble learns within the first ten rounds for each domain. Bolded functions
+represent learned abstractions. Note this figure uses the concrete syntax from the 2d cad dataset; it is similar
+to the simplified form shown in the overview. We named the learned functions and their parameters for
+                 ->   ->
+                       ->   ->
+                            -> ->   ->
+
+
+
+
+clarity.
+Learning Better Abstractions with E-Graphs and Anti-Unification                                    25
+
+
+DreamCoder. DreamCoder [Ellis et al. 2021] is a program synthesizer that learns a library
+of abstractions from solutions to a set of related synthesis tasks. The library is intended to be
+used for solving other similar synthesis tasks. DreamCoder uses version spaces [Lau et al. 2001;
+Mitchell 1977] to compactly store a large set of programs and leverages ideas from e-graphs (such
+as e-matching) but only for exploring the space of refactorings of the original program using the
+candidate libraries, not for making library learning robust to syntactic variation. Our evaluation
+shows that babble can find more optimal abstractions faster than DreamCoder.
+   DreamCoder has sparked several direction of follow-up work that attempt to improve the
+efficiency of its library learning procedure and the quality of the learned abstractions. One of them
+is by Wong et al. [2021], which uses natural language annotations and a neural network to guide
+library learning. Another one is Stitch [Bowers et al. 2023], which was developed concurrently
+with this work and is the most closely related to babble; we discuss Stitch in some detail below.
+Stitch. The core difference between the two approaches is that Stitch focuses on improving
+efficiency of purely syntactic library learning, whereas babble attempts to improve its expressiveness
+by adding equational theories. While babble separates library learning into two phases—candidate
+generation via anti-unification and candidate selection via e-graph extraction—the Stitch algo-
+rithm interleaves the generation and selection phases in a branch-and-bound top-down search.
+Starting from the “top” pattern 𝑋 , Stitch gradually refines it until further refinement does not
+pay off. To quickly prune suboptimal candidate patterns, Stitch computes an upper bound on
+their compression by summing up the compression at each match of this pattern in the corpus
+(this bound is imprecise because it does not take into account that matches might overlap). For
+candidates that are not pruned this way, Stitch computes their true compression by searching
+for the optimal subset of matches to rewrite, a so-called “rewrite strategy”. babble’s extraction
+algorithm can be seen as a generalization of Stitch’s rewrite strategy: while the former searches
+over both subsets of patterns and how to apply them to the corpus at the same time, the latter
+considers a single pattern at a time and only searches for the best way to apply it. Since the search
+space in the former case is much larger, babble uses a beam search approximation, while in Stitch
+the rewrite strategy is precise. To sum up, the main pros and cons of the two approaches are:
+     • babble can learn libraries modulo equational theories, while Stitch cannot;
+     • Stitch provides optimality guarantees for learning a single best abstraction at a time, while
+       babble can learn multiple abstractions at once, but sacrifices theoretical optimality.
+Other Library Learning Techniques. Knorf [Dumancic et al. 2021] is a library learning tool for
+logic programs, which, like babble, proceeds in two phases. Their candidate generation phase is
+similar to the upper bound computation in Stitch, while their selection phase uses an off-the-shelf
+constraint solver. It would be interesting to explore whether their constraint-based technique can
+be generalized beyond logic programs.
+   Other work develops limited forms of library learning, where only certain kinds of sub-terms
+can be abstracted. For example, ShapeMod [Jones et al. 2021] learns macros for 3D shapes repre-
+sented in a DSL called ShapeAssembly, and only supports abstracting over numeric parameters,
+like dimensions of shapes. Our own prior work [Wang et al. 2021] extracts common structure
+from graphical programs, but only supports abstracting over primitive shapes and applying the
+abstraction at the top level of the program. Such restrictions make the library learning problem
+more computationally tractable, but limit the expressiveness of the learned abstractions.
+   There are several neural program synthesis tools [Dechter et al. 2013; Iyer et al. 2019; Lázaro-
+Gredilla et al. 2018; Shin et al. 2019] that learn programming idioms using statistical techniques.
+Some of these tools have used “explore-compress” algorithms [Dechter et al. 2013] to iteratively
+enumerate a set of programs from a grammar and find a solution that exposes abstractions that make
+26                                        Cao, D., Kunkel, R., Nandi, C., Willsey, M., Tatlock Z., Polikarpova, N.
+
+
+the set of programs maximally compressible. This is similar to common subexpression elimination
+which babble uses for guiding extraction.
+Loop rerolling. Loop rerolling is related to library learning in that it also aims to discover hidden
+structure in a program, except that this structure is in the form of loops. A variety of domains have
+used loop rerolling to infer abstractions from flat input programs. In hardware, loop rerolling is
+used to optimize programs for code size [Rocha et al. 2022; Stiff and Vahid 2005; Su et al. 1984]. In
+many of these tools, the compiler first unrolls a loop, applies optimizations, then rerolls it — the
+compiler therefore has structural information about the loop that can be used for rerolling [Rocha
+et al. 2022]. The graphics domain has used loop-rerolling to discover latent structure from low-
+level representations. CSGNet [Sharma et al. 2017] and Shape2Prog [Tian et al. 2019] used neural
+program generators to discover for loops from pixel- and voxel-based input representations. [Ellis
+et al. 2017] used program synthesis and machine learning to infer loops from hand-drawn images.
+Szalinski [Nandi et al. 2020] used equality saturation to automatically learn loops in the form of
+maps and folds from flat 3D CAD programs that are synthesized by mesh decompilation tools [Nandi
+et al. 2018]. WebRobot [Dong et al. 2022] has used speculative rewriting for inferring loops from
+traces of web interactions. Similar to babble (and unlike Szalinski), WebRobot finds abstractions
+over multiple input traces.
+Applications of Anti-Unification. Anti-unification is a well-established technique for discovering
+common structure in programs. It is the core idea behind bottom-up Inductive Logic Program-
+ming [Cropper and Dumancic 2022], and has also been used for software clone detection [Bulychev
+et al. 2010], programming by example [Raza et al. 2014], and learning repetitive code edits [Meng
+et al. 2013; Rolim et al. 2017]. It is possible that these applications could also benefit from bab-
+ble’s notion of anti-unification over e-graphs to make them more robust to semantics-preserving
+transformations.
+Synthesis and Optimization using E-graphs. While traditionally e-graphs have been used
+in SMT solvers for facilatiting communication between different theories, several tools have
+demonstrated their use for optimization and synthesis. Tate et al. [2009] first used e-graphs for
+equality saturation: a rewrite-driven technique for optimizing Java programs with loops. Since
+then, several tools have used equality saturation for finding programs equivalent to, but better
+than, some input program [Nandi et al. 2020; Panchekha et al. 2015; VanHattum et al. 2021; Wang
+et al. 2020; Willsey et al. 2021; Wu et al. 2019; Yang et al. 2021]. babble uses an anti-unification
+algorithm on e-graphs (together with domain specific rewrites), which prior work has not shown.
+Additionally, prior work has either used greedy or ILP-based extraction strategies, whereas babble
+uses a new targeted common subexpression elimination approach which we believe can be used in
+many other applications of equality saturation, especially given its amenability to approximation
+via beam search.
+
+8    CONCLUSION AND FUTURE WORK
+We presented library learning modulo theory (LLMT), a technique for learning abstractions from a
+corpus of programs modulo a user-provided equational theory. We implemented LLMT in babble.
+Our evaluation showed that babble achieves better compression orders of magnitude faster than
+the state of the art. On a larger benchmark suite of 2d cad programs, babble learns sensible
+functions that compress a dataset that was—until now—too large for library learning techniques.
+  LLMT and babble present many avenues for future work. First, our evaluation showed that
+equational theories are important for achieving high compression, but these must be provided
+by domain experts. Recent work in automated theory synthesis like Ruler [Nandi et al. 2021] or
+TheSy [Singher and Itzhaky 2021] could aid the user in this task. Second, LLMT uses e-graph
+Learning Better Abstractions with E-Graphs and Anti-Unification                                                          27
+
+
+anti-unification to generate promising abstraction candidates, but this approach is incomplete and
+misses some patterns that could achieve better compression. An exciting direction for future work
+is to combine LLMT with more efficient top-down search from Stitch [Bowers et al. 2023]. This is
+challenging because Stitch crucially relies on the ability to quickly compute an upper bound on
+the compression of a given pattern by summing up the local compression at each of its matches in
+the corpus. This upper bound does not straightforwardly extend to e-graphs because in an e-graph
+different matches of a pattern may come from different syntactic variants of the corpus, and one
+needs to trade-off the compression from abstractions against the size difference between different
+syntactic variants.
+
+ACKNOWLEDGMENTS
+We are grateful to the anonymous reviewers for their insightful comments. We would like to thank
+Matthew Bowers for many helpful discussions and especially for publishing the DreamCoder
+compression benchmark: we know it was a lot of work to assemble! This work has been supported
+by the National Science Foundation under Grants No. 1911149 and 1943623.
+
+REFERENCES
+Matt Bowers. 2022. DreamCoder Compression Benchmark. https://github.com/mlb2251/compression_benchmark
+Matthew Bowers, Theo X. Olausson, Catherine Wong, Gabriel Grand, Joshua B. Tenenbaum, Kevin Ellis, and Armando
+   Solar-Lezama. 2023. Top-Down Synthesis For Library Learning. Proceedings of the ACM on Programming Languages 7,
+   POPL (2023). https://doi.org/10.1145/3571234
+Peter E. Bulychev, Egor V. Kostylev, and Vladimir A. Zakharov. 2010. Anti-unification Algorithms and Their Applications in
+   Program Analysis. In Perspectives of Systems Informatics, Amir Pnueli, Irina Virbitskaite, and Andrei Voronkov (Eds.).
+   Springer Berlin Heidelberg, Berlin, Heidelberg, 413–423.
+Andrew Cropper and Sebastijan Dumancic. 2022. Inductive Logic Programming At 30: A New Introduction. J. Artif. Intell.
+   Res. 74 (2022), 765–850. https://doi.org/10.1613/jair.1.13507
+Eyal Dechter, Jon Malmaud, Ryan P. Adams, and Joshua B. Tenenbaum. 2013. Bootstrap Learning via Modular Concept
+   Discovery. In Proceedings of the Twenty-Third International Joint Conference on Artificial Intelligence (Beijing, China)
+   (IJCAI ’13). AAAI Press, 1302–1309.
+Rui Dong, Zhicheng Huang, Ian Iong Lam, Yan Chen, and Xinyu Wang. 2022. WebRobot: Web Robotic Process Automation
+   Using Interactive Programming-by-Demonstration. In Proceedings of the 43rd ACM SIGPLAN International Conference
+   on Programming Language Design and Implementation (San Diego, CA, USA) (PLDI 2022). Association for Computing
+   Machinery, New York, NY, USA, 152–167. https://doi.org/10.1145/3519939.3523711
+Sebastijan Dumancic, Tias Guns, and Andrew Cropper. 2021. Knowledge Refactoring for Inductive Program Synthesis. In
+   Thirty-Fifth AAAI Conference on Artificial Intelligence, AAAI 2021, Thirty-Third Conference on Innovative Applications of
+   Artificial Intelligence, IAAI 2021, The Eleventh Symposium on Educational Advances in Artificial Intelligence, EAAI 2021,
+   Virtual Event, February 2-9, 2021. AAAI Press, 7271–7278. https://ojs.aaai.org/index.php/AAAI/article/view/16893
+Kevin Ellis, Daniel Ritchie, Armando Solar-Lezama, and Joshua B. Tenenbaum. 2017. Learning to Infer Graphics Programs
+   from Hand-Drawn Images. https://doi.org/10.48550/ARXIV.1707.09627
+Kevin Ellis, Catherine Wong, Maxwell I. Nye, Mathias Sablé-Meyer, Lucas Morales, Luke B. Hewitt, Luc Cary, Armando
+   Solar-Lezama, and Joshua B. Tenenbaum. 2021. DreamCoder: bootstrapping inductive program synthesis with wake-
+   sleep library learning. In PLDI ’21: 42nd ACM SIGPLAN International Conference on Programming Language Design and
+   Implementation, Virtual Event, Canada, June 20–25, 2021, Stephen N. Freund and Eran Yahav (Eds.). ACM, 835–850.
+   https://doi.org/10.1145/3453483.3454080
+Srinivasan Iyer, Alvin Cheung, and Luke Zettlemoyer. 2019. Learning Programmatic Idioms for Scalable Semantic Parsing.
+   https://doi.org/10.48550/ARXIV.1904.09086
+R. Kenny Jones, David Charatan, Paul Guerrero, Niloy J. Mitra, and Daniel Ritchie. 2021. ShapeMOD: Macro Operation
+   Discovery for 3D Shape Programs. ACM Trans. Graph. 40, 4, Article 153 (jul 2021), 16 pages. https://doi.org/10.1145/
+   3450626.3459821
+Tessa Lau, Steven A. Wolfman, Pedro Domingos, and Daniel S. Weld. 2001. Programming By Demonstration Using Version
+   Space Algebra.
+Miguel Lázaro-Gredilla, Dianhuan Lin, J. Swaroop Guntupalli, and Dileep George. 2018. Beyond imitation: Zero-shot task
+   transfer on robots by learning concepts as cognitive programs. https://doi.org/10.48550/ARXIV.1812.02788
+28                                                   Cao, D., Kunkel, R., Nandi, C., Willsey, M., Tatlock Z., Polikarpova, N.
+
+
+Na Meng, Miryung Kim, and Kathryn S. McKinley. 2013. Lase: Locating and applying systematic edits by learning from
+   examples. In 2013 35th International Conference on Software Engineering (ICSE). 502–511. https://doi.org/10.1109/ICSE.
+   2013.6606596
+Tom Michael Mitchell. 1977. Version Spaces: A Candidate Elimination Approach to Rule Learning. In IJCAI.
+Chandrakana Nandi, James R. Wilcox, Pavel Panchekha, Taylor Blau, Dan Grossman, and Zachary Tatlock. 2018. Functional
+   Programming for Compiling and Decompiling Computer-Aided Design. Proc. ACM Program. Lang. 2, ICFP, Article 99
+   (jul 2018), 31 pages. https://doi.org/10.1145/3236794
+Chandrakana Nandi, Max Willsey, Adam Anderson, James R. Wilcox, Eva Darulova, Dan Grossman, and Zachary Tatlock.
+   2020. Synthesizing structured CAD models with equality saturation and inverse transformations. In Proceedings of the 41st
+   ACM SIGPLAN International Conference on Programming Language Design and Implementation, PLDI 2020, London, UK,
+   June 15–20, 2020, Alastair F. Donaldson and Emina Torlak (Eds.). ACM, 31–44. https://doi.org/10.1145/3385412.3386012
+Chandrakana Nandi, Max Willsey, Amy Zhu, Yisu Remy Wang, Brett Saiki, Adam Anderson, Adriana Schulz, Dan Grossman,
+   and Zachary Tatlock. 2021. Rewrite Rule Inference Using Equality Saturation. Proc. ACM Program. Lang. 5, OOPSLA,
+   Article 119 (oct 2021), 28 pages. https://doi.org/10.1145/3485496
+Pavel Panchekha, Alex Sanchez-Stern, James R. Wilcox, and Zachary Tatlock. 2015. Automatically Improving Accuracy for
+   Floating Point Expressions. SIGPLAN Not. 50, 6 (jun 2015), 1–11. https://doi.org/10.1145/2813885.2737959
+Gordon Plotkin. 1970. Lattice Theoretic Properties of Subsumption. Edinburgh University, Department of Machine Intelligence
+   and Perception. https://books.google.com/books?id=2p09cgAACAAJ
+Mohammad Raza, Natasa Milic-Frayling, and Sumit Gulwani. 2014. Programming by Example using Least General
+   Generalizations. AAAI - Association for the Advancement of Artificial Intelligence. https://www.microsoft.com/en-
+   us/research/publication/programming-by-example-using-least-general-generalizations/
+John C. Reynolds. 1969. Transformational systems and the algebraic structure of atomic formulas.
+Rodrigo C. O. Rocha, Pavlos Petoumenos, Björn Franke, Pramod Bhatotia, and Michael O’Boyle. 2022. Loop Rolling for
+   Code Size Reduction. In 2022 IEEE/ACM International Symposium on Code Generation and Optimization (CGO), Jae W. Lee,
+   Sebastian Hack, and Tatiana Shpeisman (Eds.). IEEE, 217–229. https://doi.org/10.1109/CGO53902.2022.9741256
+Reudismam Rolim, Gustavo Soares, Loris D’Antoni, Oleksandr Polozov, Sumit Gulwani, Rohit Gheyi, Ryo Suzuki, and Björn
+   Hartmann. 2017. Learning Syntactic Program Transformations from Examples. In Proceedings of the 39th International
+   Conference on Software Engineering (Buenos Aires, Argentina) (ICSE ’17). IEEE Press, 404–415. https://doi.org/10.1109/
+   ICSE.2017.44
+Gopal Sharma, Rishabh Goyal, Difan Liu, Evangelos Kalogerakis, and Subhransu Maji. 2017. CSGNet: Neural Shape Parser
+   for Constructive Solid Geometry. https://doi.org/10.48550/ARXIV.1712.08290
+Eui Chul Shin, Miltiadis Allamanis, Marc Brockschmidt, and Alex Polozov. 2019. Program Synthesis and Semantic Parsing
+   with Learned Code Idioms. In Advances in Neural Information Processing Systems, H. Wallach, H. Larochelle, A. Beygelzimer,
+   F. d'Alché-Buc, E. Fox, and R. Garnett (Eds.), Vol. 32. Curran Associates, Inc. https://proceedings.neurips.cc/paper/2019/
+   file/cff34ad343b069ea6920464ad17d4bcf-Paper.pdf
+Eytan Singher and Shachar Itzhaky. 2021. Theory Exploration Powered by Deductive Synthesis. In Computer Aided
+   Verification, Alexandra Silva and K. Rustan M. Leino (Eds.). Springer International Publishing, Cham, 125–148.
+G. Stiff and F. Vahid. 2005. New Decompilation Techniques for Binary-Level Co-Processor Generation. In Proceedings of the
+   2005 IEEE/ACM International Conference on Computer-Aided Design (San Jose, CA) (ICCAD ’05). IEEE Computer Society,
+   USA, 547–554.
+Bogong Su, Shiyuan Ding, and Lan Jin. 1984. An Improvement of Trace Scheduling for Global Microcode Compaction.
+   SIGMICRO Newsl. 15, 4 (dec 1984), 78–85. https://doi.org/10.1145/384281.808217
+Ross Tate, Michael Stepp, Zachary Tatlock, and Sorin Lerner. 2009. Equality Saturation: A New Approach to Optimization.
+   In Proceedings of the 36th annual ACM SIGPLAN-SIGACT Symposium on Principles of Programming Languages. 264–276.
+Yonglong Tian, Andrew Luo, Xingyuan Sun, Kevin Ellis, William T. Freeman, Joshua B. Tenenbaum, and Jiajun Wu. 2019.
+   Learning to Infer and Execute 3D Shape Programs. https://doi.org/10.48550/ARXIV.1901.02875
+Alexa VanHattum, Rachit Nigam, Vincent T. Lee, James Bornholt, and Adrian Sampson. 2021. Vectorization for Digital Signal
+   Processors via Equality Saturation. In Proceedings of the 26th ACM International Conference on Architectural Support for
+   Programming Languages and Operating Systems (Virtual, USA) (ASPLOS 2021). Association for Computing Machinery,
+   New York, NY, USA, 874–886. https://doi.org/10.1145/3445814.3446707
+Haoliang Wang, Nadia Polikarpova, and Judith E. Fan. 2021. Learning part-based abstractions for visual object concepts. In
+   Proceedings of the Annual Meeting of the Cognitive Science Society, Vol. 43. https://escholarship.org/uc/item/9009w415
+Yisu Remy Wang, Shana Hutchison, Jonathan Leang, Bill Howe, and Dan Suciu. 2020. SPORES: Sum-Product Optimization
+   via Relational Equality Saturation for Large Scale Linear Algebra. Proc. VLDB Endow. 13, 12 (jul 2020), 1919–1932.
+   https://doi.org/10.14778/3407790.3407799
+Max Willsey, Chandrakana Nandi, Yisu Remy Wang, Oliver Flatt, Zachary Tatlock, and Pavel Panchekha. 2021. Egg: Fast
+   and Extensible Equality Saturation. Proceedings of the ACM on Programming Languages 5, POPL (2021), 1–29.
+Learning Better Abstractions with E-Graphs and Anti-Unification                                                        29
+
+
+Catherine Wong, Kevin Ellis, Joshua B. Tenenbaum, and Jacob Andreas. 2021. Leveraging Language to Learn Program
+   Abstractions and Search Heuristics. https://doi.org/10.48550/ARXIV.2106.11053
+Catherine Wong, William P. McCarthy, Gabriel Grand, Yoni Friedman, Joshua B. Tenenbaum, Jacob Andreas, Robert D.
+   Hawkins, and Judith E. Fan. 2022. Identifying concept libraries from language about object structure. In Proceedings of
+   the Annual Meeting of the Cognitive Science Society.
+Chenming Wu, Haisen Zhao, Chandrakana Nandi, Jeffrey I. Lipton, Zachary Tatlock, and Adriana Schulz. 2019. Carpentry
+   Compiler. ACM Trans. Graph. 38, 6, Article 195 (nov 2019), 14 pages. https://doi.org/10.1145/3355089.3356518
+Yichen Yang, Phitchaya Phothilimthana, Yisu Wang, Max Willsey, Sudip Roy, and Jacques Pienaar. 2021. Equality Saturation
+   for Tensor Graph Superoptimization. In Proceedings of Machine Learning and Systems, A. Smola, A. Dimakis, and I. Stoica
+   (Eds.), Vol. 3. 255–268. https://proceedings.mlsys.org/paper/2021/file/65ded5353c5ee48d0b7d48c591b8f430-Paper.pdf
+30                                                 Cao, D., Kunkel, R., Nandi, C., Willsey, M., Tatlock Z., Polikarpova, N.
+
+
+A     PROOFS
+     Proposition A.1. The language of compressed terms is strongly normalizing.
+   Proof. Consider evaluating 𝑡ˆ in applicative order (leftmost innermost). In this case, any left-hand
+size of a 𝛽-reduction has no inner 𝛽-redexes. Since in our language a 𝜆-abstraction can only be on
+the left-hand side of a 𝛽-redex, it means that expression being reduced has no inner 𝜆-abstractions.
+For that reason, the number of 𝜆-abstractions in an expression strictly decreases with every 𝛽-step
+(the sole one in the reduced redex disappears, and all other 𝜆-abstractions are outside of the reduced
+redex, and hence unchanged).                                                                          □
+                                       𝜅 (𝑝 ′ )
+ Lemma A.2. Given a 𝜅-step 𝑡ˆ1 →1                 𝑡ˆ2 if a pattern 𝑝 has 𝑁 matches in 𝑡ˆ2 , it also has at least 𝑁
+matches in 𝑡ˆ1 .
+     Proof. There are four cases for what 𝑝 can match in 𝑡ˆ2 :
+      • a subterm that does not overlap with the newly introduced 𝛽-redex: in this case, the match is
+        unaffected by the 𝜅-step;
+      • a subterm inside an actual argument of the 𝛽-redex: this actual argument becomes a sub-term
+        of 𝑡ˆ1 ;
+      • a sub-term inside the body of the 𝛽-redex: 𝑡ˆ1 has a sub-term that is more specific than the
+        body, and hence still matches 𝑝;
+      • a sub-term that includes the entire 𝛽-redex inside: since 𝑝 is first order, it cannot mention the
+        redex, so the redex must be contained entirely inside the substitution; hence again the match
+        is unaffected by the 𝜅-step.
+                                                                                                        □
+   Theorem A.3 (Soundness and Completeness of Pattern-Based Library Learning). For any
+term 𝑡 ∈ T (Σ) and compressed term 𝑡ˆ ∈ T̂ (Σ, X):
+(Soundness) If 𝑡 compresses into 𝑡ˆ, then 𝑡ˆ evaluates to 𝑡: ∀P.𝑡 →𝜅 ( P) 𝑡ˆ =⇒ 𝑡ˆ →𝛽 𝑡.
+(Completeness) If 𝑡ˆ is a solution to the (global) library learning problem, then 𝑡 compresses into 𝑡ˆ
+      using only patterns that have a match in 𝑡: 𝑡ˆ ∈ arg min𝑡ˆ′ →𝛽 𝑡 size(𝑡ˆ′) =⇒ 𝑡 →𝜅 ( P) 𝑡ˆ, where
+      P = {𝑝 ∈ T (Σ, X) | 𝑡 ′ ∈ subterms(𝑡), 𝑡 ′ ⊑ 𝑝}.
+
+   Proof. The soundness is trivial because inverting any 𝜅-rewrite gives a valid 𝛽-reduction.
+   The other direction (completeness) is more involved. First let us prove that 𝑡ˆ can be obtain by any
+compression, regardless of whether the patterns occur in 𝑡. This is non-trivial because inverting a
+𝛽-reduction (𝜆𝑋  𝑡ˆ1 ) 𝑡ˆ2 →1 𝑡ˆ′ does not always correspond to a well-form 𝜅-step, for two reasons:
+                                𝛽
+
+(a) 𝑡ˆ1 itself contains 𝜆-abstractions (and hence does not correspond to a pattern); (b) 𝑋 ≠ vars(𝑡ˆ1 ).
+To overcome point (a), note that in an applicative evaluation, both 𝑡ˆ1 and 𝑡ˆ2 contain no 𝛽-redexes
+(and hence no 𝜆-abstractions). Hence 𝑡ˆ1 is a valid pattern.
+   For point (b), there are two cases: either (1) vars(𝑡ˆ1 ) ⊊ 𝑋 or (2) vars(𝑡ˆ1 ) ⊋ 𝑋 . Consider case (1).
+In this case, the compressed term 𝑡ˆ has 𝜆-bindings that are not used in their bodies. Such a term
+cannot possibly be minimal. Removing unused bindings makes each individual 𝛽-redex smaller
+and cannot remove sharing, so it always makes the overall term smaller as well.
+   Now consider case (2). This means that 𝜆𝑋  𝑡ˆ1 has free variables, which must be defined in
+outer 𝜆-abstractions. However, using such a 𝜆-abstraction contradicts the assumption that we are
+only interested in global library learning.
+   Finally, let us prove that all patterns used in the compression have a match in 𝑡. Consider a
+                           𝜅 (𝑝 )         𝜅 (𝑝 )
+compression 𝑡 = 𝑡ˆ0 →1 1 𝑡ˆ1 . . . →1 𝑛 𝑡ˆ𝑛 = 𝑡ˆ. Clearly, each pattern 𝑝𝑖 has a match in the
+Learning Better Abstractions with E-Graphs and Anti-Unification                                       31
+
+
+(compressed) term 𝑡ˆ𝑖−1 , by definition of the 𝜅-rewrite. Hence, it also occurs in 𝑡, by induction using
+Lemma A.2.                                                                                             □
+32                                                                                             Cao, D., Kunkel, R., Nandi, C., Willsey, M., Tatlock Z., Polikarpova, N.
+
+
+B                     ADDITIONAL EXPERIMENTS
+
+                                                                                        Babble r=2                                                                                            Babble r=2
+                                                                                        Babble r=10                                                                                           Babble r=10
+                                                                                                                                   103
+                                                                                        Babble r=20                                                                                           Babble r=20
+                                                                                        DreamCoder                                                                                            DreamCoder
+
+                 102
+
+
+
+
+Time (seconds)                                                                                                    Time (seconds)
+                                                                                                                                   102
+
+                 101
+
+
+
+
+                 100                                                                                                               101
+
+
+                          1.0   1.1        1.2          1.3                             1.4                                                 1.0   1.2     1.4      1.6    1.8     2.0   2.2      2.4    2.6
+                                        Compression Ratio                                                                                                         Compression Ratio
+
+
+
+                                 (a) List domain                                                                                                        (b) Physics domain
+                      3
+                 10                                                                     Babble r=2
+                                                                                        Babble r=10
+                                                                                        Babble r=20
+                                                                                        DreamCoder
+                                                                                                                                   103
+                 102
+
+
+
+
+Time (seconds)                                                                                                    Time (seconds)
+                                                                                                                                                                                              Babble r=2
+                                                                                                                                                                                              Babble r=10
+                                                                                                                                        2
+                 101                                                                                                               10                                                         Babble r=20
+                                                                                                                                                                                              DreamCoder
+
+
+
+
+                 100                                                                                                               101
+
+
+
+
+                          1.0     1.1            1.2                              1.3               1.4                                           1.1           1.2          1.3        1.4            1.5
+                                        Compression Ratio                                                                                                         Compression Ratio
+
+
+                                 (c) Text domain                                                                                                          (d) Logo domain
+
+                                                                   103
+
+
+
+
+                                                                   102
+
+
+
+
+                                                 Time (seconds)
+                                                                                                                                                    Babble r=2
+                                                                                                                                                    Babble r=10
+                                                                        1
+                                                                   10                                                                               Babble r=20
+                                                                                                                                                    DreamCoder
+
+
+
+                                                                   100
+
+
+
+
+                                                                  10−1
+
+                                                                            1.0               1.2            1.4            1.6                         1.8
+                                                                                                          Compression Ratio
+
+
+                                                                                              (e) Towers domain
+
+Fig. 15. babble’s default configuration runs for 20 rounds (r=20) to learn additional library functions. This
+plot shows the data from Fig. 12, but with additional babble configuration running fewer rounds. With fewer
+rounds, babble runs faster but compresses worse.
+

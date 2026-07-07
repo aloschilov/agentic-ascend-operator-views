@@ -9,6 +9,8 @@ decks=(
   "agentic_ascend_operator_views_overview.en"
   "agentic_ascend_operator_views_survey.ru"
   "agentic_ascend_operator_views_survey.en"
+  "babble_pyasc_applicability.ru"
+  "babble_pyasc_applicability.en"
 )
 
 mkdir -p "${out_dir}"

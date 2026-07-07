@@ -10,14 +10,18 @@ The central hypothesis is that AI agents should not optimize raw AscendC source 
 
 - [`docs/problem-statement.md`](docs/problem-statement.md) — cleaned research/problem statement.
 - [`docs/initial-prompt-commentary.ru.md`](docs/initial-prompt-commentary.ru.md) — Russian translation and critique of the original formulation.
+- [`docs/visual-roadmaps.md`](docs/visual-roadmaps.md) — high-level Russian visual maps for the harness, bottom-up programming-model induction, and CuTe-like algebraic DSL discovery.
 - [`bibliography/reading-list.md`](bibliography/reading-list.md) — human-readable linked bibliography.
 - [`bibliography/articles.yaml`](bibliography/articles.yaml) — structured metadata for linked articles and docs.
+- [`bibliography/programming-model-induction.yaml`](bibliography/programming-model-induction.yaml) — structured links for bottom-up programming-model induction and algebraic programming-model discovery.
 - [`publications/README.md`](publications/README.md) — instructions for local-only downloaded copies of linked publications.
 - [`notes/01-ascend-npu.md`](notes/01-ascend-npu.md) — Ascend/NPU-specific sources.
 - [`notes/02-agentic-kernel-optimization.md`](notes/02-agentic-kernel-optimization.md) — LLM/agentic kernel optimization sources.
 - [`notes/03-compiler-ir-autotuning.md`](notes/03-compiler-ir-autotuning.md) — compiler IR, tensor IR, scheduling, autotuning.
 - [`notes/04-program-analysis.md`](notes/04-program-analysis.md) — static analysis, dependence graphs, dataflow, abstract interpretation.
 - [`notes/05-ascend-toolchain-views.md`](notes/05-ascend-toolchain-views.md) — candidate AI-facing compiler/toolchain views.
+- [`notes/06-target-grounded-bottom-up-programming-model-induction.md`](notes/06-target-grounded-bottom-up-programming-model-induction.md) — target-grounded bottom-up programming-model induction with LLMs.
+- [`notes/07-algebraic-programming-model-induction.md`](notes/07-algebraic-programming-model-induction.md) — automatic discovery of a CuTe-like algebraic programming model.
 - [`presentations/agentic_ascend_operator_views_overview.en.marp.md`](presentations/agentic_ascend_operator_views_overview.en.marp.md) — English overview Marp deck for compiler-derived operator views and agentic AscendC optimization.
 - [`presentations/agentic_ascend_operator_views_overview.ru.marp.md`](presentations/agentic_ascend_operator_views_overview.ru.marp.md) — Russian overview Marp deck (same content in Russian).
 - [`presentations/agentic_ascend_operator_views_overview_speech.en.md`](presentations/agentic_ascend_operator_views_overview_speech.en.md) — English spoken-talk script for the overview deck.
@@ -28,6 +32,12 @@ The central hypothesis is that AI agents should not optimize raw AscendC source 
 - [`presentations/agentic_ascend_operator_views_survey_speech.ru.md`](presentations/agentic_ascend_operator_views_survey_speech.ru.md) — Russian spoken-talk script for the survey deck.
 - [`templates/article-note.md`](templates/article-note.md) — template for per-paper notes.
 - [`roadmap.md`](roadmap.md) — next steps for turning the topic into a concrete research artifact.
+
+## Visual roadmaps
+
+- [Harness for AI Agentic Operator Code Analysis & Programming Model](docs/visual-roadmaps.md#1-harness-for-ai-agentic-operator-code-analysis--programming-model)
+- [Bottom-up programming-model induction with LLMs](docs/visual-roadmaps.md#2-bottom-up-programming-model-induction-with-llms)
+- [Automatic discovery of a CuTe-level algebraic programming model](docs/visual-roadmaps.md#3-automatic-discovery-of-a-cute-level-algebraic-programming-model)
 
 ## Short positioning
 
@@ -46,7 +56,7 @@ AscendC source / operator spec / compiler IR
 
 ## What is stored here
 
-This repository stores links, metadata, working notes, and vendored PDF copies of the linked publications (listed below). A few sources are only available as HTML pages (Cousot 1977, StableHLO spec, Triton 2019); those, plus the download manifest, remain local-only and are not committed.
+This repository stores links, metadata, working notes, and vendored PDF copies of the linked publications (listed below). A few sources are only available as HTML pages (Cousot 1977, StableHLO spec, Triton 2019, AlphaDev 2023); those, plus the download manifest, remain local-only and are not committed.
 
 To (re)download everything for local offline reading, run:
 
@@ -75,6 +85,33 @@ Agentic kernel optimization:
 - [Geak: Triton Kernel AI Agent & Evaluation Benchmarks](publications/files/geak-2025.pdf)
 - [CompilerGPT: LLMs for Analyzing and Acting on Compiler Optimization Reports](publications/files/compilergpt-2025.pdf)
 - [Language Models for Code Optimization: Survey, Challenges and Future Directions](publications/files/codeopt-survey-2025.pdf)
+
+Programming-model induction:
+
+- [DreamCoder: Growing generalizable, interpretable knowledge with wake-sleep Bayesian program learning](publications/files/dreamcoder-2020.pdf)
+- [Stitch: Top-Down Synthesis for Library Learning](publications/files/stitch-2022.pdf)
+- [LILO: Learning Interpretable Libraries by Compressing and Documenting Code](publications/files/lilo-2023.pdf)
+- [Babble: Learning Better Abstractions with E-Graphs and Anti-Unification](publications/files/babble-2022.pdf)
+- [AutoDSL: Automated Domain-Specific Language Design](publications/files/autodsl-2024.pdf)
+- [Grammar Prompting for Domain-Specific Language Generation with LLMs](publications/files/grammar-prompting-2023.pdf)
+- [HYSYNTH: LLM-guided surrogate grammars for program synthesis](publications/files/hysynth-2024.pdf)
+- [Mathematical discoveries from program search with large language models (FunSearch)](publications/files/funsearch-2023.pdf)
+- [Evolution through Large Models](publications/files/evolution-through-large-models-2022.pdf)
+- [AlphaEvolve: A coding agent for scientific and algorithmic discovery](publications/files/alphaevolve-2025.pdf)
+- [Voyager: An Open-Ended Embodied Agent with Large Language Models](publications/files/voyager-2023.pdf)
+- [Code as Policies: Language Model Programs for Embodied Control](publications/files/code-as-policies-2022.pdf)
+- [Do As I Can, Not As I Say: Grounding Language in Robotic Affordances](publications/files/saycan-2022.pdf)
+- [Eureka: Human-Level Reward Design via Coding Large Language Models](publications/files/eureka-2023.pdf)
+- [MimIR: Extensible and type-safe IR with typed axioms and plugins](publications/files/mimir-2024.pdf)
+
+Algebraic programming-model induction:
+
+- [CuTe Layout Representation and Algebra](publications/files/cute-layout-algebra-2026.pdf)
+- [Categorical Foundations for CuTe Layouts](publications/files/cute-categorical-foundations-2026.pdf)
+- [Modeling Layout Abstractions Using Integer Set Relations](publications/files/integer-set-layout-abstractions-2025.pdf)
+- [egg: Fast and Extensible Equality Saturation](publications/files/egg-2020.pdf)
+- [STOKE: Stochastic Superoptimization](publications/files/stoke-2012.pdf)
+- [ARISE: Automatic RISC-V Instruction Set Extension](publications/files/arise-2025.pdf)
 
 Compiler IR, scheduling, autotuning:
 

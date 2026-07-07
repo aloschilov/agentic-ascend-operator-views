@@ -1,0 +1,127 @@
+\section{Old Intro}
+
+When creating software, programmers normally choose not to place their
+entire program in a single function; instead, programmers will often abstract
+out common functionality into helper functions, which can be reused and composed
+to make more complex functionality.
+%
+\emph{Library learning} is the problem of how to automate this process: creating
+an algorithmic approach which, when given an input set of programs, can
+identify common structure and learn new functions/abstractions.
+%
+The most obvious use-case for a tool which could tackle this problem is
+for automated code refactoring: automatically learning a set of functions
+in order to reduce code size as much as possible.
+%
+One prior example of this is Szalinski, which rewrites programs representing
+CAD models with the goal of compressing them and making them easily editable
+later on \cite{szalinski}.
+
+However, library learning also has many other use cases,
+several of which have been documented in prior literature.
+%
+One possible use case for library learning is as a component in a larger
+program synthesis loop.
+%
+When faced with the task of synthesizing a program which can correctly solve
+a task, many program synthesis approaches rely on having a set of known
+library functions which can be composed to create solution programs.
+%
+This set of library functions is normally hard-coded by the programmer.
+%
+However, with the addition of a library learning algorithm, a program synthesis
+procedure would be able to first synthesize solutions to a set of tasks,
+then learn common functions which are used across those solutions,
+and finally use those new common functions in synthesizing solutions for other
+tasks.
+%
+By introducing an intermediate library learning step in between synthesis
+stages, the system can learn fundamental operations like map and fold and
+synthesize progressively more complex programs, without user intervention.
+%
+This approach to program synthesis was pioneered by DreamCoder,
+which demonstrated that this iterative method was able to learn these
+fundamental abstractions and use them to synthesize complex programs
+which could solve a variety of tasks across several different domains
+\cite{dreamcoder}.
+
+Another use case for algorithmic library learning is to model how humans can
+intuitively recognize abstract visual common structure.
+%
+For instance, humans are naturally able to recognize smiley faces, regardless
+of the actual level of detail of the smiley faces themselves.
+%
+Figuring out how to get computers to solve the same task and recognize common
+visual structure can serve as a useful proxy to model how humans can
+instinctively accomplish the same task.
+%
+This cognitive science-focused use case for library learning has been explored
+in \cite{cogsci-smiley}.
+
+\mypara{Shortcomings of the existing state-of-the-art}
+As we've shown, finding a general, efficient, and effective approach to
+library learning can have ramifications across a wide variety of different
+domains.
+%
+However, \TODO{existing approaches can't do this}.
+%
+Of the prior work discussed, DreamCoder's library learning approach is the
+most general and can apply to a wide variety of domains.
+%
+This approach relies on \TODO{``inverse-beta reduction'': 
+essentially poking random holes in programs to guess-and-check where
+function abstractions should go, then picking the best learned function
+one-at-a-time}.
+%
+\TODO{This approach, while general, doesn't satisfy the efficient or effective
+conditions.}
+%
+One shortcoming of this approach is its efficiency. One part of this is how
+candidate abstractions are \emph{proposed}. Since DreamCoder's library learning
+algorithm works by randomly choosing function bodies and randomly choosing
+which parts of those expressions should become function arguments, the choice
+of what expressions should be abstracted over and where function arguments
+should be placed are decided in a random, undirected way, and enumerating over
+all possible function bodies and argument places across all input programs would
+be prohibitively costly.
+\TODO{%
+    idk how DreamCoder actually deals with this issue in practice but
+    i wanna say somethin like:
+    In practice, for efficiency's sake, DreamCoder limits its proposed function
+    candidates to some expression size or some number of arguments, which can
+    cause it to potentially miss out on useful abstractions.
+}
+%
+The other part of DreamCoder's efficiency problem is in how it selects the
+optimal set of library functions to use to refactor a set of input programs.
+In particular, DreamCoder's library learning approach simply iterates over
+all abstraction candidates and chooses the best candidate one-at-a-time.
+%
+This approach is inefficient but also doesn't take into account how
+combining multiple libraries can potentially reduce cost more than
+just a set of individually picked library functions.
+\TODO{%
+    basically i'm tryna say the one-at-a-time approach doesn't take
+    into account if you have two libs which, when picked together,
+    compress more than if u were to just pick the top two libs which,
+    on their own, compress the best%
+}
+
+Another shortcoming of this approach is that, while it's a general way of
+recognizing common syntactic structure (where different programs look the same
+syntactically), it fails at recognizing common semantic structure (where
+different programs have similar output behavior).
+%
+For instance, in the domain of smiley faces described above, if two programs
+produced identical smiley faces with circular eyes, but one program had rotated
+the eyes by 90 degrees, DreamCoder's approach would be unable to find the common
+smiley face structure between the two programs, since it wouldn't be able to
+\TODO{tell} that circles are rotationally symmetric.
+\TODO{this para is very handwavy}
+
+\TODO{%
+    Discuss the other library learning approaches?
+    Are we tryna frame this just as ``improved DreamCoder'', or as
+    ``DreamCoder's generality combined with
+    others' efficiency and domain-specificity''?%
+}

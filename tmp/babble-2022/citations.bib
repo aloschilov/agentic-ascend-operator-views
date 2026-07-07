@@ -1,0 +1,606 @@
+@inproceedings{dreamcoder,
+  author    = {Kevin Ellis and
+               Catherine Wong and
+               Maxwell I. Nye and
+               Mathias Sabl{\'{e}}{-}Meyer and
+               Lucas Morales and
+               Luke B. Hewitt and
+               Luc Cary and
+               Armando Solar{-}Lezama and
+               Joshua B. Tenenbaum},
+  editor    = {Stephen N. Freund and
+               Eran Yahav},
+  title     = {DreamCoder: bootstrapping inductive program synthesis with wake-sleep
+               library learning},
+  booktitle = {{PLDI} '21: 42nd {ACM} {SIGPLAN} International Conference on Programming
+               Language Design and Implementation, Virtual Event, Canada, June 20--25,
+               2021},
+  pages     = {835--850},
+  publisher = {{ACM}},
+  year      = {2021},
+  url       = {https://doi.org/10.1145/3453483.3454080},
+  doi       = {10.1145/3453483.3454080},
+  timestamp = {Sat, 09 Apr 2022 12:37:29 +0200},
+  biburl    = {https://dblp.org/rec/conf/pldi/EllisWNSMHCST21.bib},
+  bibsource = {dblp computer science bibliography, https://dblp.org}
+}
+
+@inproceedings{vsa1,
+  title={Version Spaces: A Candidate Elimination Approach to Rule Learning},
+  author={Tom Michael Mitchell},
+  booktitle={IJCAI},
+  year={1977}
+}
+
+@MISC{vsa2,
+    author = {Tessa Lau and Steven A. Wolfman and Pedro Domingos and Daniel S. Weld},
+    title = {Programming By Demonstration Using Version Space Algebra},
+    year = {2001}
+}
+
+@misc{laps,
+  doi = {10.48550/ARXIV.2106.11053},
+  url = {https://arxiv.org/abs/2106.11053},
+  author = {Wong, Catherine and Ellis, Kevin and Tenenbaum, Joshua B. and Andreas, Jacob},
+  keywords = {Machine Learning (cs.LG), Artificial Intelligence (cs.AI), Computation and Language (cs.CL), FOS: Computer and information sciences, FOS: Computer and information sciences},
+  title = {Leveraging Language to Learn Program Abstractions and Search Heuristics},
+  publisher = {arXiv},
+  year = {2021},
+  copyright = {Creative Commons Attribution 4.0 International}
+}
+
+
+@article{reincarnate,
+author = {Nandi, Chandrakana and Wilcox, James R. and Panchekha, Pavel and Blau, Taylor and Grossman, Dan and Tatlock, Zachary},
+title = {Functional Programming for Compiling and Decompiling Computer-Aided Design},
+year = {2018},
+issue_date = {September 2018},
+publisher = {Association for Computing Machinery},
+address = {New York, NY, USA},
+volume = {2},
+number = {ICFP},
+url = {https://doi.org/10.1145/3236794},
+doi = {10.1145/3236794},
+abstract = {Desktop-manufacturing techniques like 3D printing are increasingly popular because they reduce the cost and complexity of producing customized objects on demand. Unfortunately, the vibrant communities of early adopters, often referred to as "makers," are not well-served by currently available software pipelines. Users today must compose idiosyncratic sequences of tools which are typically repurposed variants of proprietary software originally designed for expert specialists. This paper proposes fundamental programming-languages techniques to bring improved rigor, reduced complexity, and new functionality to the computer-aided design (CAD) software pipeline for applications like 3D-printing. Compositionality, denotational semantics, compiler correctness, and program synthesis all play key roles in our approach, starting from the perspective that solid geometry is a programming language. Specifically, we define a purely functional language for CAD called LambdaCAD and a polygon surface-mesh intermediate representation. We then define denotational semantics of both languages to 3D solids and a compiler from CAD to mesh accompanied by a proof of semantics preservation. We illustrate the utility of this foundation by developing a novel synthesis algorithm based on evaluation contexts to "reverse compile" difficult-to-edit meshes downloaded from online maker communities back to more-editable CAD programs. All our prototypes have been implemented in OCaml to enable further exploration of functional programming for desktop manufacturing.},
+journal = {Proc. ACM Program. Lang.},
+month = {jul},
+articleno = {99},
+numpages = {31},
+keywords = {3D printing, language design, denotational semantics, program synthesis}
+}
+
+
+@inproceedings{szalinski,
+  author    = {Chandrakana Nandi and
+               Max Willsey and
+               Adam Anderson and
+               James R. Wilcox and
+               Eva Darulova and
+               Dan Grossman and
+               Zachary Tatlock},
+  editor    = {Alastair F. Donaldson and
+               Emina Torlak},
+  title     = {Synthesizing structured {CAD} models with equality saturation and
+               inverse transformations},
+  booktitle = {Proceedings of the 41st {ACM} {SIGPLAN} International Conference on
+               Programming Language Design and Implementation, {PLDI} 2020, London,
+               UK, June 15--20, 2020},
+  pages     = {31--44},
+  publisher = {{ACM}},
+  year      = {2020},
+  url       = {https://doi.org/10.1145/3385412.3386012},
+  doi       = {10.1145/3385412.3386012},
+  timestamp = {Sat, 09 Apr 2022 12:37:29 +0200},
+  biburl    = {https://dblp.org/rec/conf/pldi/NandiWAWDGT20.bib},
+  bibsource = {dblp computer science bibliography, https://dblp.org}
+}
+
+@inproceedings{cogsci-smiley,
+  author    = {Haoliang Wang and
+               Nadia Polikarpova and
+               Judith E. Fan},
+  title     = {Learning part-based abstractions for visual object concepts},
+  booktitle = {Proceedings of the Annual Meeting of the Cognitive Science Society},
+  volume    = {43},
+  year      = {2021},
+  url       = {https://escholarship.org/uc/item/9009w415},
+  timestamp = {Sat, 09 Apr 2022 12:37:29 +0200}
+}
+
+@inproceedings{cogsci-dataset,
+  author    = {Catherine Wong and 
+               William P. McCarthy and 
+               Gabriel Grand and 
+               Yoni Friedman and 
+               Joshua B. Tenenbaum and 
+               Jacob Andreas and 
+               Robert D. Hawkins and 
+               Judith E. Fan},
+  title     = {Identifying concept libraries from language about object structure},
+  booktitle = {Proceedings of the Annual Meeting of the Cognitive Science Society},
+  year      = {2022}
+}
+
+@article{shapemod,
+  author     = {Jones, R. Kenny and Charatan, David and Guerrero, Paul and Mitra, Niloy J. and Ritchie, Daniel},
+  title      = {ShapeMOD: Macro Operation Discovery for 3D Shape Programs},
+  year       = {2021},
+  issue_date = {August 2021},
+  publisher  = {Association for Computing Machinery},
+  address    = {New York, NY, USA},
+  volume     = {40},
+  number     = {4},
+  issn       = {0730-0301},
+  url        = {https://doi.org/10.1145/3450626.3459821},
+  doi        = {10.1145/3450626.3459821},
+  journal    = {ACM Trans. Graph.},
+  month      = {jul},
+  articleno  = {153},
+  numpages   = {16},
+  keywords   = {deep learning, shape analysis, generative models, shape synthesis, neurosymbolic models, procedural modeling}
+}
+
+@book{plotkin1970lattice,
+  title     = {Lattice Theoretic Properties of Subsumption},
+  author    = {Gordon Plotkin},
+  url       = {https://books.google.com/books?id=2p09cgAACAAJ},
+  year      = {1970},
+  publisher = {Edinburgh University, Department of Machine Intelligence and Perception}
+}
+
+@article{willsey2021egg,
+  title     = {Egg: Fast and Extensible Equality Saturation},
+  author    = {Willsey, Max and Nandi, Chandrakana and Wang, Yisu Remy and Flatt, Oliver and Tatlock, Zachary and Panchekha, Pavel},
+  journal   = {Proceedings of the ACM on Programming Languages},
+  volume    = {5},
+  number    = {POPL},
+  pages     = {1--29},
+  year      = {2021},
+  publisher = {ACM New York, NY, USA}
+}
+
+@article{stitch,
+  title     = {Top-Down Synthesis For Library Learning},
+  author    = {Bowers, Matthew and Olausson, Theo X. and Wong, Catherine and Grand, Gabriel and Tenenbaum, Joshua B. and Ellis, Kevin and Solar-Lezama, Armando},
+  journal   = {Proceedings of the ACM on Programming Languages},
+  volume    = {7},
+  number    = {POPL},
+  year      = {2023},
+  publisher = {ACM New York, NY, USA},
+  doi       = {10.1145/3571234}
+}
+
+@inproceedings{knorf,
+  author    = {Sebastijan Dumancic and
+               Tias Guns and
+               Andrew Cropper},
+  title     = {Knowledge Refactoring for Inductive Program Synthesis},
+  booktitle = {Thirty-Fifth {AAAI} Conference on Artificial Intelligence, {AAAI}
+               2021, Thirty-Third Conference on Innovative Applications of Artificial
+               Intelligence, {IAAI} 2021, The Eleventh Symposium on Educational Advances
+               in Artificial Intelligence, {EAAI} 2021, Virtual Event, February 2-9,
+               2021},
+  pages     = {7271--7278},
+  publisher = {{AAAI} Press},
+  year      = {2021},
+  url       = {https://ojs.aaai.org/index.php/AAAI/article/view/16893},
+  timestamp = {Wed, 02 Jun 2021 18:09:11 +0200},
+  biburl    = {https://dblp.org/rec/conf/aaai/DumancicGC21.bib},
+  bibsource = {dblp computer science bibliography, https://dblp.org}
+}
+
+@article{ruler,
+  author     = {Nandi, Chandrakana and Willsey, Max and Zhu, Amy and Wang, Yisu Remy and Saiki, Brett and Anderson, Adam and Schulz, Adriana and Grossman, Dan and Tatlock, Zachary},
+  title      = {Rewrite Rule Inference Using Equality Saturation},
+  year       = {2021},
+  issue_date = {October 2021},
+  publisher  = {Association for Computing Machinery},
+  address    = {New York, NY, USA},
+  volume     = {5},
+  number     = {OOPSLA},
+  url        = {https://doi.org/10.1145/3485496},
+  doi        = {10.1145/3485496},
+  journal    = {Proc. ACM Program. Lang.},
+  month      = {oct},
+  articleno  = {119},
+  numpages   = {28}
+}  
+
+@inproceedings{tate2009equality,
+  title     = {{Equality Saturation: A New Approach to Optimization}},
+  author    = {Tate, Ross and Stepp, Michael and Tatlock, Zachary and Lerner, Sorin},
+  booktitle = {Proceedings of the 36th annual ACM SIGPLAN-SIGACT Symposium on Principles of Programming Languages},
+  pages     = {264--276},
+  year      = {2009}
+}
+
+@misc{compression-bench,
+  title  = {\dc Compression Benchmark},
+  author = {Matt Bowers},
+  url    = {https://github.com/mlb2251/compression\_benchmark},
+  year   = {2022}
+}
+
+@inproceedings{tensat,
+  author    = {Yang, Yichen and Phothilimthana, Phitchaya and Wang, Yisu and Willsey, Max and Roy, Sudip and Pienaar, Jacques},
+  booktitle = {Proceedings of Machine Learning and Systems},
+  editor    = {A. Smola and A. Dimakis and I. Stoica},
+  pages     = {255--268},
+  title     = {Equality Saturation for Tensor Graph Superoptimization},
+  url       = {https://proceedings.mlsys.org/paper/2021/file/65ded5353c5ee48d0b7d48c591b8f430-Paper.pdf},
+  volume    = {3},
+  year      = {2021}
+}
+
+@inproceedings{thesy,
+  author    = {Singher, Eytan
+               and Itzhaky, Shachar},
+  editor    = {Silva, Alexandra
+               and Leino, K. Rustan M.},
+  title     = {Theory Exploration Powered by Deductive Synthesis},
+  booktitle = {Computer Aided Verification},
+  year      = {2021},
+  publisher = {Springer International Publishing},
+  address   = {Cham},
+  pages     = {125--148},
+  abstract  = {This paper presents a symbolic method for automatic theorem generation based on deductive inference. Many software verification and reasoning tasks require proving complex logical properties; coping with this complexity is generally done by declaring and proving relevant sub-properties. This gives rise to the challenge of discovering useful sub-properties that can assist the automated proof process. This is known as the theory exploration problem, and so far, predominant solutions that emerged rely on evaluation using concrete values. This limits the applicability of these theory exploration techniques to complex programs and properties.},
+  isbn      = {978-3-030-81688-9}
+}
+
+@inproceedings{Reynolds1969TransformationalSA,
+  title={Transformational systems and the algebraic structure of atomic formulas},
+  author={John C. Reynolds},
+  year={1969}
+}
+
+@misc{csgnet,
+  doi = {10.48550/ARXIV.1712.08290},
+  url = {https://arxiv.org/abs/1712.08290},
+  author = {Sharma, Gopal and Goyal, Rishabh and Liu, Difan and Kalogerakis, Evangelos and Maji, Subhransu},
+  keywords = {Computer Vision and Pattern Recognition (cs.CV), Artificial Intelligence (cs.AI), FOS: Computer and information sciences, FOS: Computer and information sciences},
+  title = {CSGNet: Neural Shape Parser for Constructive Solid Geometry},
+  publisher = {arXiv},
+  year = {2017},
+  copyright = {arXiv.org perpetual, non-exclusive license}
+}
+
+@misc{shape2prog,
+  doi = {10.48550/ARXIV.1901.02875},
+  url = {https://arxiv.org/abs/1901.02875},
+  author = {Tian, Yonglong and Luo, Andrew and Sun, Xingyuan and Ellis, Kevin and Freeman, William T. and Tenenbaum, Joshua B. and Wu, Jiajun},
+  keywords = {Computer Vision and Pattern Recognition (cs.CV), Artificial Intelligence (cs.AI), Graphics (cs.GR), Machine Learning (cs.LG), FOS: Computer and information sciences, FOS: Computer and information sciences},
+  title = {Learning to Infer and Execute 3D Shape Programs},
+  publisher = {arXiv},
+  year = {2019},
+  copyright = {arXiv.org perpetual, non-exclusive license}
+}
+
+@misc{handdrawn,
+  doi = {10.48550/ARXIV.1707.09627},
+  url = {https://arxiv.org/abs/1707.09627},
+  author = {Ellis, Kevin and Ritchie, Daniel and Solar-Lezama, Armando and Tenenbaum, Joshua B.},
+  keywords = {Artificial Intelligence (cs.AI), FOS: Computer and information sciences, FOS: Computer and information sciences, 68T05},
+  title = {Learning to Infer Graphics Programs from Hand-Drawn Images},
+  publisher = {arXiv},
+  year = {2017},
+  copyright = {arXiv.org perpetual, non-exclusive license}
+}
+
+
+@inproceedings{hardware1,
+title = "Loop Rolling for Code Size Reduction",
+abstract = "Code size is critical for resource-constrained devices, where memory and storage are limited. Compilers, therefore, should offer optimizations aimed at code reduction. One such optimization is loop rerolling, which transforms a partially unrolled loop into a fully rolled one. However, existing techniques are limited and rarely applicable to real-world programs. They are incapable of handling partial rerolling or straight-line code. In this paper, we propose RoLAG, a novel code-size optimization that creates loops out of straight-line code. It identifies isomorphic code by aligning SSA graphs in a bottom-up fashion. The aligned code is later rolled into a loop. In addition, we propose several optimizations that increase the amount of aligned code by identifying specific patterns of code. Finally, an analysis is used to estimate the profitability of the rolled loop before deciding which version should be kept in the code.Our evaluation of RoLAG on full programs from MiBench and SPEC 2017 show absolute reductions of up to 88 KB while LLVM{\textquoteright}s technique is hardly distinguishable from the baseline with no rerolling. Finally, our results show that RoLAG is highly applicable to real-world code extracted from popular GitHub repositories. RoLAG is triggered several orders of magnitude more often than LLVM{\textquoteright}s rerolling, resulting in meaningful reductions on real-world functions.",
+keywords = "Code-Size Reduction, Loop Optimization, Loop Rerolling, LLVM, Compiler Optimization",
+author = "Rocha, {Rodrigo C. O.} and Pavlos Petoumenos and Bj{\"o}rn Franke and Pramod Bhatotia and Michael O{\textquoteright}Boyle",
+year = "2022",
+month = mar,
+day = "29",
+doi = "10.1109/CGO53902.2022.9741256",
+language = "English",
+isbn = "978-1-6654-0585-0",
+pages = "217--229",
+editor = "Lee, {Jae W.} and Sebastian Hack and Tatiana Shpeisman",
+booktitle = "2022 IEEE/ACM International Symposium on Code Generation and Optimization (CGO)",
+publisher = "IEEE",
+url = "https://conf.researchr.org/home/cgo-2022",
+}
+
+@inproceedings{hardware2,
+author = {Stiff, G. and Vahid, F.},
+title = {New Decompilation Techniques for Binary-Level Co-Processor Generation},
+year = {2005},
+isbn = {078039254X},
+publisher = {IEEE Computer Society},
+address = {USA},
+abstract = {Existing ASIPs (application-specific instruction-set processors) and compiler-based co-processor synthesis approaches meet the increasing performance requirements of embedded applications while consuming less power than high-performance gigahertz microprocessors. However, existing approaches place restrictions on software languages and compilers. Binary-level co-processor generation has previously been proposed as a complementary approach to reduce impact on tool restrictions, supporting all languages and compilers, at the cost of some decrease in performance. In a binary-level approach, decompilation recovers much of the high-level information, like loops and arrays, needed for effective synthesis, and in many cases yields hardware similar to that of a compiler-based approach. However, previous binary-level approaches have not considered the effects of software compiler optimizations on the resulting hardware. In this paper, we introduce two new decompilation techniques, strength promotion and loop rerolling, and show that they are necessary to synthesize an efficient custom hardware coprocessor from a binary in the presence of software compiler optimizations. In addition, unlike previous approaches, we show the robustness of binary-level co-processor generation by achieving order of magnitude speedups for binaries generated for three different instruction sets, MIPS, ARM, and MicroBlaze, using two different levels of compiler optimizations.},
+booktitle = {Proceedings of the 2005 IEEE/ACM International Conference on Computer-Aided Design},
+pages = {547--554},
+numpages = {8},
+location = {San Jose, CA},
+series = {ICCAD '05}
+}
+
+@inproceedings{10.1145/800016.808217,
+author = {Su, Bogong and Ding, Shiyuan and Jin, Lan},
+title = {An Improvement of Trace Scheduling for Global Microcode Compaction},
+year = {1984},
+publisher = {IEEE Press},
+url = {https://doi.org/10.1145/800016.808217},
+doi = {10.1145/800016.808217},
+abstract = {Fisher's trace scheduling procedure for global compaction has proven to be able to produce significant reduction in execution time of compacted microcode, however extra space may be sometimes required during bookkeeping, and the efficacy of compaction of microprogram loop is lower than that of hand compaction.This paper introduces an improved trace scheduling compaction algorithm to mitigate the drawbacks mentioned above. The improved algorithm is based on a modified menu of moving microoperations, an improved trace scheduling algorithm, and a special loop compaction algorithm. Preliminary tests indicate that this global compaction algorithm gives shorter execution time and less space requirement in comparison with Fisher's algorithm.},
+booktitle = {Proceedings of the 17th Annual Workshop on Microprogramming},
+pages = {78--85},
+numpages = {8},
+series = {MICRO 17}
+}
+
+  
+
+@article{hardware3,
+author = {Su, Bogong and Ding, Shiyuan and Jin, Lan},
+title = {An Improvement of Trace Scheduling for Global Microcode Compaction},
+year = {1984},
+issue_date = {Dec. 1984},
+publisher = {Association for Computing Machinery},
+address = {New York, NY, USA},
+volume = {15},
+number = {4},
+issn = {1050-916X},
+url = {https://doi.org/10.1145/384281.808217},
+doi = {10.1145/384281.808217},
+abstract = {Fisher's trace scheduling procedure for global compaction has proven to be able to produce significant reduction in execution time of compacted microcode, however extra space may be sometimes required during bookkeeping, and the efficacy of compaction of microprogram loop is lower than that of hand compaction.This paper introduces an improved trace scheduling compaction algorithm to mitigate the drawbacks mentioned above. The improved algorithm is based on a modified menu of moving microoperations, an improved trace scheduling algorithm, and a special loop compaction algorithm. Preliminary tests indicate that this global compaction algorithm gives shorter execution time and less space requirement in comparison with Fisher's algorithm.},
+journal = {SIGMICRO Newsl.},
+month = {dec},
+pages = {78--85},
+numpages = {8}
+}
+
+@inproceedings{webrobot,
+author = {Dong, Rui and Huang, Zhicheng and Lam, Ian Iong and Chen, Yan and Wang, Xinyu},
+title = {WebRobot: Web Robotic Process Automation Using Interactive Programming-by-Demonstration},
+year = {2022},
+isbn = {9781450392655},
+publisher = {Association for Computing Machinery},
+address = {New York, NY, USA},
+url = {https://doi.org/10.1145/3519939.3523711},
+doi = {10.1145/3519939.3523711},
+abstract = {It is imperative to democratize robotic process automation (RPA), as RPA has become a main driver of the digital transformation but is still technically very demanding to construct, especially for non-experts. In this paper, we study how to automate an important class of RPA tasks, dubbed web RPA, which are concerned with constructing software bots that automate interactions across data and a web browser. Our main contributions are twofold. First, we develop a formal foundation which allows semantically reasoning about web RPA programs and formulate its synthesis problem in a principled manner. Second, we propose a web RPA program synthesis algorithm based on a new idea called speculative rewriting. This leads to a novel speculate-and-validate methodology in the context of rewrite-based program synthesis, which has also shown to be both theoretically simple and practically efficient for synthesizing programs from demonstrations. We have built these ideas in a new interactive synthesizer called WebRobot and evaluate it on 76 web RPA benchmarks. Our results show that WebRobot automated a majority of them effectively. Furthermore, we show that WebRobot compares favorably with a conventional rewrite-based synthesis baseline implemented using egg. Finally, we conduct a small user study demonstrating WebRobot is also usable.},
+booktitle = {Proceedings of the 43rd ACM SIGPLAN International Conference on Programming Language Design and Implementation},
+pages = {152--167},
+numpages = {16},
+keywords = {Human-in-the-loop, Robotic Process Automation, Web Automation, Programming by Demonstration, Program Synthesis, Rewrite-based Synthesis},
+location = {San Diego, CA, USA},
+series = {PLDI 2022}
+}
+
+@inproceedings{10.1145/2737924.2737959,
+author = {Panchekha, Pavel and Sanchez-Stern, Alex and Wilcox, James R. and Tatlock, Zachary},
+title = {Automatically Improving Accuracy for Floating Point Expressions},
+year = {2015},
+isbn = {9781450334686},
+publisher = {Association for Computing Machinery},
+address = {New York, NY, USA},
+url = {https://doi.org/10.1145/2737924.2737959},
+doi = {10.1145/2737924.2737959},
+abstract = {Scientific and engineering applications depend on floating point arithmetic to approximate real arithmetic. This approximation introduces rounding error, which can accumulate to produce unacceptable results. While the numerical methods literature provides techniques to mitigate rounding error, applying these techniques requires manually rearranging expressions and understanding the finer details of floating point arithmetic. We introduce Herbie, a tool which automatically discovers the rewrites experts perform to improve accuracy. Herbie's heuristic search estimates and localizes rounding error using sampled points (rather than static error analysis), applies a database of rules to generate improvements, takes series expansions, and combines improvements for different input regions. We evaluated Herbie on examples from a classic numerical methods textbook, and found that Herbie was able to improve accuracy on each example, some by up to 60 bits, while imposing a median performance overhead of 40%. Colleagues in machine learning have used Herbie to significantly improve the results of a clustering algorithm, and a mathematical library has accepted two patches generated using Herbie.},
+booktitle = {Proceedings of the 36th ACM SIGPLAN Conference on Programming Language Design and Implementation},
+pages = {1--11},
+numpages = {11},
+keywords = {program rewriting, numerical accuracy, Floating point},
+location = {Portland, OR, USA},
+series = {PLDI '15}
+}
+
+@article{herbie,
+author = {Panchekha, Pavel and Sanchez-Stern, Alex and Wilcox, James R. and Tatlock, Zachary},
+title = {Automatically Improving Accuracy for Floating Point Expressions},
+year = {2015},
+issue_date = {June 2015},
+publisher = {Association for Computing Machinery},
+address = {New York, NY, USA},
+volume = {50},
+number = {6},
+issn = {0362-1340},
+url = {https://doi.org/10.1145/2813885.2737959},
+doi = {10.1145/2813885.2737959},
+abstract = {Scientific and engineering applications depend on floating point arithmetic to approximate real arithmetic. This approximation introduces rounding error, which can accumulate to produce unacceptable results. While the numerical methods literature provides techniques to mitigate rounding error, applying these techniques requires manually rearranging expressions and understanding the finer details of floating point arithmetic. We introduce Herbie, a tool which automatically discovers the rewrites experts perform to improve accuracy. Herbie's heuristic search estimates and localizes rounding error using sampled points (rather than static error analysis), applies a database of rules to generate improvements, takes series expansions, and combines improvements for different input regions. We evaluated Herbie on examples from a classic numerical methods textbook, and found that Herbie was able to improve accuracy on each example, some by up to 60 bits, while imposing a median performance overhead of 40%. Colleagues in machine learning have used Herbie to significantly improve the results of a clustering algorithm, and a mathematical library has accepted two patches generated using Herbie.},
+journal = {SIGPLAN Not.},
+month = {jun},
+pages = {1--11},
+numpages = {11},
+keywords = {Floating point, numerical accuracy, program rewriting}
+}
+
+@inproceedings{diospyros,
+author = {VanHattum, Alexa and Nigam, Rachit and Lee, Vincent T. and Bornholt, James and Sampson, Adrian},
+title = {Vectorization for Digital Signal Processors via Equality Saturation},
+year = {2021},
+isbn = {9781450383172},
+publisher = {Association for Computing Machinery},
+address = {New York, NY, USA},
+url = {https://doi.org/10.1145/3445814.3446707},
+doi = {10.1145/3445814.3446707},
+abstract = {Applications targeting digital signal processors (DSPs) benefit from fast implementations of small linear algebra kernels. While existing auto-vectorizing compilers are effective at extracting performance from large kernels, they struggle to invent the complex data movements necessary to optimize small kernels. To get the best performance, DSP engineers must hand-write and tune specialized small kernels for a wide spectrum of applications and architectures. We present Diospyros, a search-based compiler that automatically finds efficient vectorizations and data layouts for small linear algebra kernels. Diospyros combines symbolic evaluation and equality saturation to vectorize computations with irregular structure. We show that a collection of Diospyros-compiled kernels outperform implementations from existing DSP libraries by 3.1\texttimes{} on average, that Diospyros can generate kernels that are competitive with expert-tuned code, and that optimizing these small kernels offers end-to-end speedup for a DSP application.},
+booktitle = {Proceedings of the 26th ACM International Conference on Architectural Support for Programming Languages and Operating Systems},
+pages = {874--886},
+numpages = {13},
+keywords = {DSPs, Vectorization, Equality Saturation, Program Synthesis},
+location = {Virtual, USA},
+series = {ASPLOS 2021}
+}
+
+@article{spores,
+author = {Wang, Yisu Remy and Hutchison, Shana and Leang, Jonathan and Howe, Bill and Suciu, Dan},
+title = {SPORES: Sum-Product Optimization via Relational Equality Saturation for Large Scale Linear Algebra},
+year = {2020},
+issue_date = {August 2020},
+publisher = {VLDB Endowment},
+volume = {13},
+number = {12},
+issn = {2150-8097},
+url = {https://doi.org/10.14778/3407790.3407799},
+doi = {10.14778/3407790.3407799},
+abstract = {Machine learning algorithms are commonly specified in linear algebra (LA). LA expressions can be rewritten into more efficient forms, by taking advantage of input properties such as sparsity, as well as program properties such as common subexpressions and fusible operators. The complex interaction among these properties' impact on the execution cost poses a challenge to optimizing compilers. Existing compilers resort to intricate heuristics that complicate the codebase and add maintenance cost, but fail to search through the large space of equivalent LA expressions to find the cheapest one. We introduce a general optimization technique for LA expressions, by converting the LA expressions into Relational Algebra (RA) expressions, optimizing the latter, then converting the result back to (optimized) LA expressions. The rewrite rules we design in this approach are complete, meaning that any equivalent LA expression is covered in the search space. The challenge is the major size of the search space, and we address this by adopting and extending a technique used in compilers, called equality saturation. Our optimizer, SPORES, uses rule sampling to quickly cover vast portions of the search space; it then uses a constraint solver to extract the optimal plan from the covered space, or alternatively uses a greedy algorithm to shorten compile time. We integrate SPORES into SystemML and validate it empirically across a spectrum of machine learning tasks; SPORES can derive all existing hand-coded optimizations in SystemML, and perform new optimizations that lead to up to 10X speedup.},
+journal = {Proc. VLDB Endow.},
+month = {jul},
+pages = {1919--1932},
+numpages = {14}
+}
+
+@article{cc1,
+author = {Wu, Chenming and Zhao, Haisen and Nandi, Chandrakana and Lipton, Jeffrey I. and Tatlock, Zachary and Schulz, Adriana},
+title = {Carpentry Compiler},
+year = {2019},
+issue_date = {December 2019},
+publisher = {Association for Computing Machinery},
+address = {New York, NY, USA},
+volume = {38},
+number = {6},
+issn = {0730-0301},
+url = {https://doi.org/10.1145/3355089.3356518},
+doi = {10.1145/3355089.3356518},
+abstract = {Traditional manufacturing workflows strongly decouple design and fabrication phases. As a result, fabrication-related objectives such as manufacturing time and precision are difficult to optimize in the design space, and vice versa. This paper presents HL-HELM, a high-level, domain-specific language for expressing abstract, parametric fabrication plans; it also introduces LL-HELM, a low-level language for expressing concrete fabrication plans that take into account the physical constraints of available manufacturing processes. We present a new compiler that supports the real-time, unoptimized translation of high-level, geometric fabrication operations into concrete, tool-specific fabrication instructions; this gives users immediate feedback on the physical feasibility of plans as they design them. HELM offers novel optimizations to improve accuracy and reduce fabrication time as well as material costs. Finally, optimized low-level plans can be interpreted as step-by-step instructions for users to actually fabricate a physical product. We provide a variety of example fabrication plans in the carpentry domain that are designed using our high-level language, show how the compiler translates and optimizes these plans to generate concrete low-level instructions, and present the final physical products fabricated in wood.},
+journal = {ACM Trans. Graph.},
+month = {nov},
+articleno = {195},
+numpages = {14},
+keywords = {CAD, programming languages, design for manufacturing, hardware abstractions}
+}
+
+@article{cc2,
+author = {Zhao, Haisen and Willsey, Max and Zhu, Amy and Nandi, Chandrakana and Tatlock, Zachary and Solomon, Justin and Schulz, Adriana},
+title = {Co-Optimization of Design and Fabrication Plans for Carpentry},
+year = {2022},
+issue_date = {June 2022},
+publisher = {Association for Computing Machinery},
+address = {New York, NY, USA},
+volume = {41},
+number = {3},
+issn = {0730-0301},
+url = {https://doi.org/10.1145/3508499},
+doi = {10.1145/3508499},
+abstract = {Past work on optimizing fabrication plans given a carpentry design can provide Pareto-optimal plans trading off between material waste, fabrication time, precision, and other considerations. However, when developing fabrication plans, experts rarely restrict to a single design, instead considering families of design variations, sometimes adjusting designs to simplify fabrication. Jointly exploring the design and fabrication plan spaces for each design is intractable using current techniques. We present a new approach to jointly optimize design and fabrication plans for carpentered objects. To make this bi-level optimization tractable, we adapt recent work from program synthesis based on equality graphs (e-graphs), which encode sets of equivalent programs. Our insight is that subproblems within our bi-level problem share significant substructures. By representing both designs and fabrication plans in a new bag of parts (BOP) e-graph, we amortize the cost of optimizing design components shared among multiple candidates. Even using BOP e-graphs, the optimization space grows quickly in practice. Hence, we also show how a feedback-guided search strategy dubbed Iterative Contraction and Expansion on E-graphs (ICEE) can keep the size of the e-graph manageable and direct the search towards promising candidates. We illustrate the advantages of our pipeline through examples from the carpentry domain.},
+journal = {ACM Trans. Graph.},
+month = {mar},
+articleno = {32},
+numpages = {13},
+keywords = {Fabrication, programming languages}
+}
+
+@misc{srini,
+  doi = {10.48550/ARXIV.1904.09086},
+  url = {https://arxiv.org/abs/1904.09086},
+  author = {Iyer, Srinivasan and Cheung, Alvin and Zettlemoyer, Luke},
+  keywords = {Computation and Language (cs.CL), FOS: Computer and information sciences, FOS: Computer and information sciences},
+  title = {Learning Programmatic Idioms for Scalable Semantic Parsing},
+  publisher = {arXiv},
+  year = {2019},
+  copyright = {arXiv.org perpetual, non-exclusive license}
+}
+
+@inproceedings{polozov,
+ author = {Shin, Eui Chul and Allamanis, Miltiadis and Brockschmidt, Marc and Polozov, Alex},
+ booktitle = {Advances in Neural Information Processing Systems},
+ editor = {H. Wallach and H. Larochelle and A. Beygelzimer and F. d\textquotesingle Alch\'{e}-Buc and E. Fox and R. Garnett},
+ pages = {},
+ publisher = {Curran Associates, Inc.},
+ title = {Program Synthesis and Semantic Parsing with Learned Code Idioms},
+ url = {https://proceedings.neurips.cc/paper/2019/file/cff34ad343b069ea6920464ad17d4bcf-Paper.pdf},
+ volume = {32},
+ year = {2019}
+}
+
+@inproceedings{learner,
+author = {Dechter, Eyal and Malmaud, Jon and Adams, Ryan P. and Tenenbaum, Joshua B.},
+title = {Bootstrap Learning via Modular Concept Discovery},
+year = {2013},
+isbn = {9781577356332},
+publisher = {AAAI Press},
+abstract = {Suppose a learner is faced with a domain of problems about which it knows nearly nothing. It does not know the distribution of problems, the space of solutions is not smooth, and the reward signal is uninformative, providing perhaps a few bits of information but not enough to steer the learner effectively. How can such a learner ever get off the ground? A common intuition is that if the solutions to these problems share a common structure, and the learner can solve some simple problems by brute force, it should be able to extract useful components from these solutions and, by composing them, explore the solution space more efficiently. Here, we formalize this intuition, where the solution space is that of typed functional programs and the gained information is stored as a stochastic grammar over programs. We propose an iterative procedure for exploring such spaces: in the first step of each iteration, the learner explores a finite subset of the domain, guided by a stochastic grammar; in the second step, the learner compresses the successful solutions from the first step to estimate a new stochastic grammar. We test this procedure on symbolic regression and Boolean circuit learning and show that the learner discovers modular concepts for these domains. Whereas the learner is able to solve almost none of the posed problems in the procedure's first iteration, it rapidly becomes able to solve a large number by gaining abstract knowledge of the structure of the solution space.},
+booktitle = {Proceedings of the Twenty-Third International Joint Conference on Artificial Intelligence},
+pages = {1302--1309},
+numpages = {8},
+location = {Beijing, China},
+series = {IJCAI '13}
+}
+
+@misc{gredilla,
+  doi = {10.48550/ARXIV.1812.02788},
+  url = {https://arxiv.org/abs/1812.02788},
+  author = {L\'azaro-Gredilla, Miguel and Lin, Dianhuan and Guntupalli, J. Swaroop and George, Dileep},
+  keywords = {Artificial Intelligence (cs.AI), Machine Learning (cs.LG), FOS: Computer and information sciences, FOS: Computer and information sciences},
+  title = {Beyond imitation: Zero-shot task transfer on robots by learning concepts as cognitive programs},
+  publisher = {arXiv},
+  year = {2018},
+  copyright = {arXiv.org perpetual, non-exclusive license}
+}
+
+@inproceedings{refaser,
+author = {Rolim, Reudismam and Soares, Gustavo and D'Antoni, Loris and Polozov, Oleksandr and Gulwani, Sumit and Gheyi, Rohit and Suzuki, Ryo and Hartmann, Bj\"{o}rn},
+title = {Learning Syntactic Program Transformations from Examples},
+year = {2017},
+isbn = {9781538638682},
+publisher = {IEEE Press},
+url = {https://doi.org/10.1109/ICSE.2017.44},
+doi = {10.1109/ICSE.2017.44},
+abstract = {Automatic program transformation tools can be valuable for programmers to help them with refactoring tasks, and for Computer Science students in the form of tutoring systems that suggest repairs to programming assignments. However, manually creating catalogs of transformations is complex and time-consuming. In this paper, we present Refazer, a technique for automatically learning program transformations. Refazer builds on the observation that code edits performed by developers can be used as input-output examples for learning program transformations. Example edits may share the same structure but involve different variables and subexpressions, which must be generalized in a transformation at the right level of abstraction. To learn transformations, Refazer leverages state-of-the-art programming-by-example methodology using the following key components: (a) a novel domain-specific language (DSL) for describing program transformations, (b) domain-specific deductive algorithms for efficiently synthesizing transformations in the DSL, and (c) functions for ranking the synthesized transformations.We instantiate and evaluate Refazer in two domains. First, given examples of code edits used by students to fix incorrect programming assignment submissions, we learn program transformations that can fix other students' submissions with similar faults. In our evaluation conducted on 4 programming tasks performed by 720 students, our technique helped to fix incorrect submissions for 87% of the students. In the second domain, we use repetitive code edits applied by developers to the same project to synthesize a program transformation that applies these edits to other locations in the code. In our evaluation conducted on 56 scenarios of repetitive edits taken from three large C# open-source projects, Refazer learns the intended program transformation in 84% of the cases using only 2.9 examples on average.},
+booktitle = {Proceedings of the 39th International Conference on Software Engineering},
+pages = {404--415},
+numpages = {12},
+keywords = {refactoring, tutoring systems, program synthesis, program transformation},
+location = {Buenos Aires, Argentina},
+series = {ICSE '17}
+}
+
+@INPROCEEDINGS{lase,
+  author={Meng, Na and Kim, Miryung and McKinley, Kathryn S.},
+  booktitle={2013 35th International Conference on Software Engineering (ICSE)}, 
+  title={Lase: Locating and applying systematic edits by learning from examples}, 
+  year={2013},
+  volume={},
+  number={},
+  pages={502-511},
+  doi={10.1109/ICSE.2013.6606596}
+}
+
+@InProceedings{Bulychev10,
+author="Bulychev, Peter E.
+and Kostylev, Egor V.
+and Zakharov, Vladimir A.",
+editor="Pnueli, Amir
+and Virbitskaite, Irina
+and Voronkov, Andrei",
+title="Anti-unification Algorithms and Their Applications in Program Analysis",
+booktitle="Perspectives of Systems Informatics",
+year="2010",
+publisher="Springer Berlin Heidelberg",
+address="Berlin, Heidelberg",
+pages="413--423",
+isbn="978-3-642-11486-1"
+}
+
+@inproceedings{raza2014programming,
+author = {Raza, Mohammad and Milic-Frayling, Natasa and Gulwani, Sumit},
+title = {Programming by Example using Least General Generalizations},
+year = {2014},
+month = {July},
+publisher = {AAAI - Association for the Advancement of Artificial Intelligence},
+url = {https://www.microsoft.com/en-us/research/publication/programming-by-example-using-least-general-generalizations/},
+}
+
+@article{ilp,
+  author    = {Andrew Cropper and
+               Sebastijan Dumancic},
+  title     = {Inductive Logic Programming At 30: {A} New Introduction},
+  journal   = {J. Artif. Intell. Res.},
+  volume    = {74},
+  pages     = {765--850},
+  year      = {2022},
+  url       = {https://doi.org/10.1613/jair.1.13507},
+  doi       = {10.1613/jair.1.13507},
+  timestamp = {Fri, 24 Jun 2022 12:49:26 +0200},
+  biburl    = {https://dblp.org/rec/journals/jair/CropperD22.bib},
+  bibsource = {dblp computer science bibliography, https://dblp.org}
+}
+  
+

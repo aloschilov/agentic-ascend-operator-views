@@ -1,0 +1,150 @@
+# Structured links for bottom-up programming-model induction and CuTe-like algebra discovery.
+# This file is additive: it can coexist with bibliography/articles.yaml.
+
+bottom_up_programming_model_induction:
+  library_learning_and_abstraction_invention:
+    - id: dreamcoder-2020
+      title: "DreamCoder: Growing generalizable, interpretable knowledge with wake-sleep Bayesian program learning"
+      year: 2020
+      url: "https://arxiv.org/abs/2006.08381"
+      relevance: "Learns reusable symbolic abstractions and expands the language from solved programs."
+    - id: stitch-2022
+      title: "Stitch: Top-Down Synthesis for Library Learning"
+      year: 2022
+      url: "https://arxiv.org/abs/2211.16605"
+      relevance: "Extracts reusable functions from corpora; useful as a compression engine for programming-model basis candidates."
+    - id: lilo-2023
+      title: "LILO: Learning Interpretable Libraries by Compressing and Documenting Code"
+      year: 2023
+      url: "https://arxiv.org/abs/2310.19791"
+      relevance: "Combines LLM-guided synthesis, symbolic compression, and automatic documentation of learned abstractions."
+    - id: babble-2022
+      title: "Babble: Learning Better Abstractions with E-Graphs and Anti-Unification"
+      year: 2022
+      url: "https://arxiv.org/abs/2212.04596"
+      relevance: "Learns abstractions modulo equivalence rules; relevant for algebraic DSL discovery."
+
+  dsl_and_grammar_induction:
+    - id: autodsl-2024
+      title: "AutoDSL: Automated Domain-Specific Language Design for Structural Representation of Procedures with Constraints"
+      year: 2024
+      url: "https://arxiv.org/abs/2406.12324"
+      relevance: "Automated DSL design with syntactic and semantic constraints."
+    - id: grammar-prompting-2023
+      title: "Grammar Prompting for Domain-Specific Language Generation with Large Language Models"
+      year: 2023
+      url: "https://arxiv.org/abs/2305.19234"
+      relevance: "Uses grammars as an LLM-facing constraint layer for DSL generation."
+    - id: hysynth-2024
+      title: "HYSYNTH: LLM-guided surrogate grammars for program synthesis"
+      year: 2024
+      url: "https://arxiv.org/abs/2405.15880"
+      relevance: "Uses LLM completions to learn task-specific context-free surrogate models for synthesis."
+
+  evolutionary_program_discovery:
+    - id: funsearch-2023
+      title: "FunSearch: Discovering new mathematics and algorithms using large language models"
+      year: 2023
+      url: "https://www.nature.com/articles/s41586-023-06924-6"
+      relevance: "Uses LLM plus evaluator-driven evolutionary search over programs."
+    - id: evolution-through-large-models-2022
+      title: "Evolution through Large Models"
+      year: 2022
+      url: "https://arxiv.org/abs/2206.08896"
+      relevance: "Uses LLMs as mutation operators in evolutionary program search."
+    - id: alphaevolve-2025
+      title: "AlphaEvolve: A coding agent for scientific and algorithmic discovery"
+      year: 2025
+      url: "https://arxiv.org/abs/2506.13131"
+      relevance: "Large-scale evaluator-driven evolution of code; useful as an outer loop for accepting/rejecting abstractions."
+
+  skill_libraries_over_known_targets:
+    - id: voyager-2023
+      title: "Voyager: An Open-Ended Embodied Agent with Large Language Models"
+      year: 2023
+      url: "https://arxiv.org/abs/2305.16291"
+      relevance: "Builds an ever-growing library of executable skills over a known environment API."
+    - id: code-as-policies-2022
+      title: "Code as Policies: Language Model Programs for Embodied Control"
+      year: 2022
+      url: "https://arxiv.org/abs/2209.07753"
+      relevance: "LLMs compose available perception/control APIs into policy code."
+    - id: saycan-2022
+      title: "Do As I Can, Not As I Say: Grounding Language in Robotic Affordances"
+      year: 2022
+      url: "https://arxiv.org/abs/2204.01691"
+      relevance: "Constrains LLM planning by low-level skill affordances."
+    - id: eureka-2023
+      title: "Eureka: Human-Level Reward Design via Coding Large Language Models"
+      year: 2023
+      url: "https://arxiv.org/abs/2310.12931"
+      relevance: "Evolves reward programs that lower into learned control policies."
+
+  compiler_ir_and_lowering_substrate:
+    - id: mlir-2020
+      title: "MLIR: A Compiler Infrastructure for the End of Moore's Law"
+      year: 2020
+      url: "https://research.google/pubs/mlir-scaling-compiler-infrastructure-for-domain-specific-computation/"
+      relevance: "Extensible dialect infrastructure, typed operations, verifiers, and progressive lowering."
+    - id: mimir-2024
+      title: "MimIR: Extensible and type-safe IR with typed axioms and plugins"
+      year: 2024
+      url: "https://arxiv.org/abs/2411.07443"
+      relevance: "A useful model for turning induced abstractions into typed IR constructs with lowering support."
+    - id: ascendcraft-2026
+      title: "AscendCraft: Automatic Ascend NPU Kernel Generation via DSL-Guided Transcompilation"
+      year: 2026
+      url: "https://arxiv.org/abs/2601.22760"
+      relevance: "Shows the value of an Ascend-specific DSL and structured lowering to AscendC."
+    - id: ascendoptimizer-2026
+      title: "AscendOptimizer: Episodic Agent for Ascend NPU Operator Optimization"
+      year: 2026
+      url: "https://arxiv.org/abs/2603.23566"
+      relevance: "Uses profiling feedback and experience/motif accumulation for Ascend operator optimization."
+
+algebraic_programming_model_induction:
+  cute_like_layout_algebra:
+    - id: cute-layout-algebra-2026
+      title: "CuTe Layout Representation and Algebra"
+      year: 2026
+      url: "https://arxiv.org/abs/2603.02298"
+      relevance: "Formalizes CuTe-style layout representation and layout algebra operations."
+    - id: cute-categorical-foundations-2026
+      title: "Categorical Foundations for CuTe Layouts"
+      year: 2026
+      url: "https://arxiv.org/abs/2601.05972"
+      relevance: "Gives a mathematical/categorical account of CuTe layout structures."
+    - id: integer-set-layout-abstractions-2025
+      title: "Modeling Layout Abstractions Using Integer Set Relations"
+      year: 2025
+      url: "https://arxiv.org/abs/2511.10374"
+      relevance: "Models layout abstractions such as CuTe/Triton layouts using integer set relations."
+
+  equality_and_rewrite_systems:
+    - id: egg-2020
+      title: "egg: Fast and Extensible Equality Saturation"
+      year: 2020
+      url: "https://arxiv.org/abs/2004.03082"
+      relevance: "E-graph engine for representing and searching equivalence classes of expressions."
+    - id: babble-2022
+      title: "Babble: Learning Better Abstractions with E-Graphs and Anti-Unification"
+      year: 2022
+      url: "https://arxiv.org/abs/2212.04596"
+      relevance: "Connects abstraction learning with equivalence theories and e-graphs."
+
+  isa_and_low_level_basis_discovery:
+    - id: stoke-2012
+      title: "STOKE: Stochastic Superoptimization"
+      year: 2012
+      url: "https://arxiv.org/abs/1211.0557"
+      relevance: "Searches target-ISA instruction sequences under correctness and performance costs."
+    - id: alphadev-2023
+      title: "AlphaDev: Faster sorting algorithms discovered using deep reinforcement learning"
+      year: 2023
+      url: "https://www.nature.com/articles/s41586-023-06004-9"
+      relevance: "Discovers low-level algorithms and lifts them into library-level implementations."
+    - id: arise-2025
+      title: "ARISE: Automatic RISC-V Instruction Set Extension"
+      year: 2025
+      url: "https://arxiv.org/abs/2508.07725"
+      relevance: "Infers candidate ISA extensions from recurring assembly patterns and metrics."

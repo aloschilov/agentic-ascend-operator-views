@@ -1,0 +1,180 @@
+\begin{figure}
+\begin{lstlisting}[
+    basicstyle=\footnotesize\ttfamily,
+    xleftmargin=2.5em,
+    numbers=left]
+# Extracts a set of $n$ learned abstractions.
+# $E$ is an e-graph containing the set of programs with
+# all possible function definitions and applications
+# $r$ is the e-class id of the root node of the e-graph
+# $n$ is number of libraries to learn at a time
+def choose_abstraction($E, r, n$):
+    # $CS$ maps e-classes IDs to CostSets
+    $CS$ = $\{\}$
+    # run till fixpoint
+    for $C$ in $E$.e-classes:
+        for $N$ in $C$.e-nodes:
+            $CS[N]$ = cs-prune(cs-unify(cs-union($CS[N]$, cs-node($N$))))
+    best = $min_{full-cost}(CS[r])$
+    return best.libs
+
+\end{lstlisting}
+\caption{The extraction algorithm of \babble.}
+\label{fig:algo-extract}
+\end{figure}
+
+\begin{figure}
+  \centering
+  \begin{subfigure}{\textwidth}
+\begin{lstlisting}[
+    basicstyle=\footnotesize\ttfamily,
+    xleftmargin=2.5em,
+    numbers=left]
+# The cost of an expression, e, can be expressed by a LibrarySelection,
+# which is the set of libraries used in e, along with their associated costs.
+# e's cost is then its AST size, not including the size of the libraries used within it.
+# We define an ordering between library selections:
+# comparing library selection $a$ and $b$ is defined as first comparing
+# $a$.cost to $b$.cost, then comparing full_cost($a$) to full_cost(b).
+datatype LibrarySelection:
+    cost: int
+    libs: (abstraction * cost) set
+
+# This function computes the cost of the expression a library selection corresponds to,
+# where abstraction definitions are only counted once.
+# $l$ is a library selection.
+def full_cost($l$):
+    return $l$.cost + sum([$c$ | _, $c$ in $l$.libs])
+
+# A CostSet is a set of possible library selections that can be used at a particular e-class.
+# The set must be sorted in ascending order.
+datatype CostSet:
+    cost_set: LibrarySelection set
+\end{lstlisting}
+\end{subfigure}
+
+\begin{subfigure}{\textwidth}
+\begin{lstlisting}[
+    basicstyle=\footnotesize\ttfamily,
+    xleftmargin=2.5em,
+    numbers=left]
+# Performs partial order reduction over a CostSet, $a$.
+def cs-unify($a$):
+    i = 0
+    while i < len($a$):
+        j = i + 1
+        while j < len($a$):
+            if $a$[i].libs is subset of $a$[j].libs:
+                remove $a$[j]
+            else:
+                j += 1
+        i += 1
+    return $a$
+\end{lstlisting}
+\end{subfigure}
+
+\begin{subfigure}{\textwidth}
+\begin{lstlisting}[
+    basicstyle=\footnotesize\ttfamily,
+    xleftmargin=2.5em,
+    numbers=left]
+# Performs a product between two cost sets, such that paired library selections
+# have their libraries combined (via union) and their expression costs added.
+# This operation is performed when an e-node has multiple children e-classes;
+# the component libraries from each e-class
+# must be combined via union, and their expression costs must be included.
+# $a$ and $b$ are two input CostSets
+  def cs-product($a, b$):
+    result = $\{\}$
+    for a-sel in $a$:
+        for b-sel in $b$:
+            # the union preserves lowest cost of abstraction
+            new-libs = a-sel.libs $\cup$ b-sel.libs
+            new-cost = a-sel.cost + b-sel.cost
+            results.insert(new-libs, new-cost)
+    return cs-unify(result)
+
+\end{lstlisting}
+\end{subfigure}
+\caption{Helper functions for extraction in \babble.}
+\label{fig:helper1}
+\end{figure}
+
+\begin{figure}
+\begin{lstlisting}[
+    basicstyle=\footnotesize\ttfamily,
+    xleftmargin=2.5em,
+    numbers=left]
+# A variant of cost set products used when encountering an e-node that defines
+# an abstraction. In this case, a product must be performed which adds an
+# abstraction to all library selections in the resulting cost set.
+# a is the CostSet of the abstraction definition e-class.
+# e is an identifier for the abstraction.
+# b is the CostSet of the rest of the expression.
+def cs-add-lib($a, e, b$):
+    result = $\{\}$
+    for a-sel in $a$:
+        for b-sel in $b$:
+            # the union preserves lowest cost of abstraction
+            a-size = min([ls-full-cost(l) | l in a-sel])
+            new-libs = union(a-sel.libs, b-sel.libs, [($e$, a-size)])
+            new-cost = b-sel.cost
+            result.insert(new-libs, new-cost)
+    # returns the modified cost set product of a and b
+    return cs-unify(result)
+
+# Performs a union between two CostSets while maintaining the sorted invariant.
+# $a$ and $b$ are CostSet
+def cs-union($a, b$):
+    result = $a$
+    ix = 0
+    for b-elem in $b$:
+        while ix < len($a$) and elem >= $a$[ix]:
+            ix += 1
+        result.insert(b-elem)
+        ix += 1
+    return result
+\end{lstlisting}
+\caption{Helper functions for extraction in \babble.}
+\label{fig:helper2}
+\end{figure}
+
+\begin{figure}
+\begin{lstlisting}[
+    basicstyle=\footnotesize\ttfamily,
+    xleftmargin=2.5em,
+    numbers=left]
+// TODO: Not sure I follow this.
+# $s$ is the input e-node and $CS$ the current map from e-class ids to CostSet.
+def cs-node($s, CS$):
+    ($a_0, ..., a_i$) = children($s$)
+    if len(children(s)) == 0:
+        return [($\{\}$, 1)]
+    # if $s$ introduces a library function
+    elif form($s$).matches()
+    let f = \x. abs in body
+
+        if there exists a non-empty cost set for the e-classes for abs and body:
+            return cs-add-lib(f, CS[abs], CS[body])
+    else:
+        if there exists a non-empty cost set for each of a_0, ..., a_i in CS:
+            let s_0, ..., s_i = CS[a_0, ..., a_i]
+            return [(ls, c + 1) | ls, c in cs-product(s_0, ..., s_i)]
+    return $\{\}$
+
+# Returns at most M library selections.
+# Removes all library selections containing more than $n$ libraries.
+# $a$ is the input CostSet
+# $M$ is the maximum size of a CostSet
+# $n$ is the number of libraries to learn at a time
+def cs-prune($a, M, n$):
+    sort_by(a.libs, full-cost)
+    for a-sel in $a$:
+       if len(a.libs) >= n:
+          a.remove(a-sel)
+    retain($a$, M)
+    return sort($a$)
+\end{lstlisting}
+\caption{Helper functions for extraction in \babble.}
+\label{fig:helper3}
+\end{figure}

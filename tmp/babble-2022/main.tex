@@ -1,0 +1,164 @@
+% \documentclass[acmsmall,10pt,screen,anonymous,review]{acmart}
+% \documentclass[acmsmall,10pt,screen]{acmart}
+% \settopmatter{printfolios=true,printccs=false,printacmref=false}
+% for arxiv
+\documentclass[acmsmall,screen,nonacm,review=false,timestamp=false]{acmart}
+
+% \pdfoutput=1
+
+\usepackage{afterpage}
+\usepackage{amsmath}
+\usepackage[inline,shortlabels]{enumitem}
+\usepackage{booktabs}
+\usepackage{graphicx}
+\usepackage{xspace}
+\usepackage[T1]{fontenc}
+% \usepackage[inference]{semantic}
+\usepackage{listings}
+\usepackage[scaled=0.75]{beramono}
+\usepackage[textsize=tiny]{todonotes}
+\usepackage{stmaryrd}
+\usepackage{caption}
+% \usepackage{mathabx}
+\usepackage{subcaption}
+
+% Tech report
+\newif\iflong
+% \longtrue
+\longfalse
+
+\input{defs}
+
+%%% The following is specific to POPL '23 and the paper
+%%% 'babble: Learning Better Abstractions with E-Graphs and Anti-unification'
+%%% by David Cao, Rose Kunkel, Chandrakana Nandi, Max Willsey, Zachary Tatlock, and Nadia Polikarpova.
+%%%
+% \setcopyright{rightsretained}
+% \acmPrice{}
+% \acmDOI{10.1145/3571207}
+% \acmYear{2023}
+% \copyrightyear{2023}
+% \acmSubmissionID{popl23main-p94-p}
+% \acmJournal{PACMPL}
+% \acmVolume{7}
+% \acmNumber{POPL}
+% \acmArticle{14}
+% \acmMonth{1}
+% \received{2022-07-07}
+% \received[accepted]{2022-11-07}
+
+%% Bibliography style
+\bibliographystyle{ACM-Reference-Format}
+\citestyle{acmauthoryear}   %% For author/year citations
+
+\begin{document}
+
+%% Title information
+\title{\tool: Learning Better Abstractions with E-Graphs and Anti-Unification}
+\renewcommand{\shorttitle}{Learning Better Abstractions with E-Graphs and Anti-Unification}
+
+%% Author with single affiliation.
+\author{David Cao}
+\authornote{Equal contribution}
+\affiliation{
+  \institution{UC San Diego}
+ \country{USA}
+}
+\email{dmcao@ucsd.edu}
+
+\author{Rose Kunkel}
+\authornotemark[1]
+\affiliation{
+  \institution{UC San Diego}
+ \country{USA}
+}
+\email{rkunkel@eng.ucsd.edu}
+
+\author{Chandrakana Nandi}
+\affiliation{
+ \institution{Certora, Inc.}
+ \country{USA}
+}
+\email{chandra@certora.com}
+
+\author{Max Willsey}
+\affiliation{
+  \institution{University of Washington}
+ \country{USA}
+}
+\email{mwillsey@cs.washington.edu}
+
+\author{Zachary Tatlock}
+\affiliation{
+  \institution{University of Washington}
+ \country{USA}
+}
+\email{ztatlock@cs.washington.edu}
+
+\author{Nadia Polikarpova}
+\affiliation{
+  \institution{UC San Diego}            %% \institution is required
+ \country{USA}
+}
+\email{npolikarpova@eng.ucsd.edu}          %% \email is recommended
+
+\renewcommand{\shortauthors}{Cao, D., Kunkel, R., Nandi, C., Willsey, M., Tatlock Z., Polikarpova, N.}
+
+\input{abstract}
+
+\begin{CCSXML}
+  <ccs2012>
+     <concept>
+         <concept_id>10011007.10011006.10011008.10011009.10011012</concept_id>
+         <concept_desc>Software and its engineering~Functional languages</concept_desc>
+         <concept_significance>500</concept_significance>
+     </concept>
+     <concept>
+         <concept_id>10011007.10011074.10011092.10011782</concept_id>
+         <concept_desc>Software and its engineering~Automatic programming</concept_desc>
+         <concept_significance>500</concept_significance>
+      </concept>
+   </ccs2012>
+\end{CCSXML}
+  
+\ccsdesc[500]{Software and its engineering~Functional languages}
+\ccsdesc[500]{Software and its engineering~Automatic programming}
+  
+%% Keywords
+%% comma separated list
+\keywords{library learning, e-graphs, anti-unification}
+
+\maketitle
+
+
+
+\input{intro}
+\input{overview}
+\input{au}
+\input{egraphs}
+\input{beam}
+\input{eval}
+\input{related}
+\input{conclusion}
+
+\begin{acks}
+  We are grateful to the anonymous reviewers for their insightful comments.
+  %
+  We would like to thank Matthew Bowers for many helpful discussions
+  and especially for publishing the \dc compression benchmark:
+  we know it was a lot of work to assemble!
+  %
+  This work has been supported by the National Science Foundation under Grants No. 1911149 and 1943623.
+\end{acks}
+  
+
+
+\bibliography{citations.bib}
+
+% \iflong
+\clearpage
+\appendix
+\input{appendix}
+% \fi
+
+\end{document}

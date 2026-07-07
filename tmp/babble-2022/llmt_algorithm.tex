@@ -1,0 +1,41 @@
+\begin{figure}
+\begin{lstlisting}[
+    commentstyle=\small\ttfamily\textcolor{gray},
+    basicstyle=\small\ttfamily,
+    xleftmargin=2.5em,
+    numbers=left]
+# Original term $t$, set of equational rewrite rules $\ruleset_\semeq$, maximum library size $N$
+def LLMT($t$, $R_\semeq$, $N$):
+    # EqSat phase:
+    $\mathcal{G}$ = egraph($t$)                            # initialize with a single term $t$
+    $\mathcal{G}$ = eqSat($\mathcal{G}, \ruleset_\semeq$)  # $\mathcal{G}$ represents all terms that are $\semeq t$
+
+    # candidate generation phase:
+    $\patset$ = AU($\mathcal{G}$)                          # generate candidate patterns by anti-unification
+    $\ruleset_\kappa$ = $\{\kappa(p) \mid p \in \patset\}$ # construct a compression rule from every pattern
+    $\mathcal{G}'$ = eqSat($\mathcal{G}, \ruleset_\kappa$) # $\mathcal{G}'$ represents all ways to compress $\mathcal{G}$
+
+    # candidate selection phase:
+    $\ruleset'$ = select_library($\mathcal{G}', N$)        # select the best $N$ rules from $\ruleset_\kappa$ using beam search
+    $\mathcal{G}''$  = eqSat($\mathcal{G}, R'$)            # $\mathcal{G}''$ represents all ways to compress $\mathcal{G}$ using the optimal library          
+    return extract($\mathcal{G}''$)                        # extract the smallest compressed term from $\mathcal{G}''$
+\end{lstlisting}
+  \caption{The top-level LLMT algorithm.}
+\label{fig:algo-llmt}
+\end{figure}
+
+%\begin{figure}
+%\begin{lstlisting}[
+%    basicstyle=\normalsize\ttfamily,
+%    xleftmargin=2.5em,
+%    numbers=left]
+%def anti-unify:
+%    input: E: an e-graph containing the set of programs to anti-unify
+%    output: R: a set of rewrites which introduces function definitions and applications
+%               at the point of use
+%
+%    # TODO: i forgot how this works lmao
+%\end{lstlisting}
+%\caption{The antiunification algorithm of \babble.}
+%\label{fig:algo-au}
+%\end{figure}

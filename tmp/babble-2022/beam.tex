@@ -1,0 +1,321 @@
+\section{Candidate Selection via E-Graph Extraction}\label{sec:beam}
+
+
+After generating candidate abstractions,
+  the \T{LLMT} algorithm invokes \T{select_library} to pick the subset of candidate patterns
+  that can best be used to compress the input corpus.
+%
+This section describes our approach to selecting the optimal library dubbed
+  \emph{targeted common subexpression elimination}.
+
+%In this section we describe \emph{beam extraction},
+%  our e-graph based approach to selecting a
+%  library from the set of candidate abstractions.
+
+%\subsection{Library Selection as E-Graph Extraction}
+\mypara{Library Selection as E-Graph Extraction}
+%
+% At this stage (lines 6--12 in~\autoref{fig:algo-llmt}),
+%   LLMT has initialized the e-graph $\mathcal{G}$
+%     with the original input corpus,
+%   run equality saturation on $\mathcal{G}$
+%     using the given equational theory,
+%   and has identified candidate abstractions
+%     as a set of patterns $P$ via
+%     e-graph anti-unification.
+% For each candidate pattern $p \in P$
+%   with parameters $\many{X}$,
+%   we introduce the rewrite rule
+%   $\kappa(p) \triangleq p \Rightarrow (\lambda \many{X} \bnd p)\ \many{X}$
+%   as defined in \autoref{sec:au}.
+%   % introduce a new rewrite rule
+%   % $p \Rightarrow \T{let}\ f_p =
+%   %   \lambda \many{X} \bnd p\ \T{in}\ f_p\ \many{X}$.
+% LLMT uses these rewrite rules for
+%   equality saturation on $\mathcal{G}$ to explore
+%   all the ways the corpus may be (re-)expressed
+%   using different combinations of
+%   the candidate library functions (L13).
+% We now desribe the next step in the algorithm which selects
+%   the optimal abstractions and uses them to
+%   rewrite the original corpus (L15 - L20).
+Recall that candidate selection starts with an e-graph $\mathcal{G}'$,
+  which represents all the ways of compressing the initial corpus and its equivalent terms
+  using the candidate patterns $\patset$.
+%  
+We will refer to a subset $\libset \subset \patset$ as a \emph{library}.
+%
+The optimal size of an e-class $c$ compressed with $\libset$
+  can be computed as the sum of the sizes of
+  (1) the smallest term $t\in \denot{c}$
+      using only the library functions in $\libset$ and
+      where $\lambda$-abstractions 
+      do not count toward the size of $t$, and
+  (2) the smallest version of each $p \in \libset$.
+      % (recall that $\lambda$-bodies themselves can be compressed using other patterns).
+Note that
+  the cost of defining an abstraction
+  in $\libset$ is only counted once, and
+  that abstractions in $\libset$ can be used
+  to compress other abstractions in $\libset$.
+%
+Our goal is to find $\libset$ such that the root e-class compressed with $\libset$
+  has the smallest size.
+
+Given a \emph{particular} library,
+  we can find the size of the smallest term
+  via a relatively straightforward top-down traversal of the e-graph.
+%
+Hence, a na\"ive approach to library selection
+  would be to enumerate all subsets of $\patset$
+  and pick the one that produces the smallest term at the root. 
+%
+Unfortunately, this approach becomes intractable as the size of $\patset$ grows.
+  % $\T{minSize}(c)$
+%   represented by each e-class $c$
+%   with a fixpoint approach:
+%   if e-node $s() \in c$
+%     (i.e., $s$ is a leaf with no children),
+%     then $\T{minSize}(c) = 1$;
+%   otherwise,
+%     $\T{minSize}(c) = \T{min}(
+%       \{1 + m_1 + \ldots + m_k |\ s(c_1, \ldots, c_k) \in c,\ m_i = \T{minSize}(c_i)\})$.
+% %  if we let $T$ be
+% %    $\{s(t_1, \ldots, t_k)\ |\ s(c_1, \ldots, c_k) \in c,\ t_i \in \T{minSize}(c_i)\}$
+% %    then $\T{minSize}(c)$ is
+% %    the subset of $T$ with minimal size.
+% Because size never decreases,
+%   this process terminates.
+% Finding the minimal library is thus naively decidable
+%   with a top-down approach:
+%   simply enumerate all subsets of $\patset$,
+%   compute their library cost, and
+%   take the smallest.
+% However, this top-down approach becomes intractable
+%   once $\patset$ is moderately sized as it will have
+%   exponentially many subsets.
+
+\begin{figure}
+  \textbf{E-node cost set} $\cs_N(n)$
+  $$
+  \begin{array}{rl}
+    \cs_N(s()) &= \{ (\emptyset, 1) \} \\
+    \cs_N(s(\many{a_i})) &= \{ (\libset, u + 1) \mid (\libset, u) \in \mathsf{cross}(\many{a_i}) \} \\
+    % \cs_N(\T{let}\ s = \lambda \many{X} \bnd a\ \T{in}\ b) &= \mathsf{addlib}(s, \cs(a), \cs(b)) \\
+    \cs_N((\lambda \many{X} \bnd a)\ b) &= \mathsf{addlib}(a, \cs(a), \cs(b)) \\
+    \end{array}
+  $$
+
+  \textbf{E-class cost set} $\cs(a)$
+  $$
+  \begin{array}{rl}
+    \cs(\{ \many{n_j} \}) &= \sfprune(\sfunify(\bigcup \many{\cs_N(n_j)})) \\
+  \end{array}
+  $$
+
+  \textbf{Auxiliary definitions} $\mathsf{cross}$, $\mathsf{addlib}$, $\sfunify$, $\sfprune$
+  $$
+  \begin{array}{rl}
+    \mathsf{cross}(z_1, z_2) &= \sfprune(\sfunify(\{ (\libset_1 \cup \libset_2, u_1 + u_2) \mid (\libset_1, u_1) \in z_1, (\libset_2, u_2) \in z_2 \})) \\
+    \mathsf{addlib}(a, z_1, z_2) &= \sfprune(\sfunify(\{ (\libset_1 \cup \libset_2 \cup \{ a \}, u_2) \mid (\libset_1, u_1) \in z_1, (\libset_2, u_2) \in z_2 \})) \\
+    \sfunify(z) &= \{ (\libset_1, u_1) \in z \mid \forall (\libset_2, u_2) \in z \setminus (\libset_1, u_1).\ \libset_1 \subset \libset_2 \lor u_1 < u_2 \} \\
+    \sfprune(N, K, z) &=  \sftopk(\{(\libset, u) \in z \mid |\libset| \leq N \}, K)\\
+  \end{array}
+  $$
+\caption{Cost set propagation, defined as two mutually
+  recursive functions. Blue text corresponds to the partial order
+  reduction optimization and red text corresponds to the beam approximation.
+  $\sftopk(S, K)$ is a helper function that returns top $K$
+  elements from the sorted set $S$.}
+  \label{fig:costset}
+\end{figure}
+
+
+
+\mypara{Exploiting Partial Shared Structure}
+%
+Instead, \tool selects the optimal library using a bottom-up dynamic programming algorithm.
+%
+To this end, it associates each e-node and e-class with a \emph{cost set},
+which is a set of pairs $(\libset, u)$
+  where $\libset$ is a library and $u$ is the \emph{use cost} of this library,
+  \ie the size of the smallest term represented by the e-node / e-class if it is allowed to use $\libset$
+  (excluding the size of $\libset$ itself).
+%
+Cost sets are propagated up the e-graph using the rules shown in \autoref{fig:costset}.
+%
+The base case is a nullary e-node $s()$,
+  which cannot use any library functions and whose size is always $1$.
+%
+For an e-node that has children,
+\babble computes the $\mathsf{cross}$ product over the cost sets of all its child \eclasses.
+%
+Finally, for an application e-node $(\lambda \many{X} \bnd a)\ b$,
+  the cost set \emph{must include} the library function $a$
+  (in addition to some combination of libraries from the cost sets of $a$ and $b$);
+  note that the use cost of the abstraction node only includes the use cost of $b$,
+  since abstraction bodies are excluded from the use cost.
+% Here, in addition to the cross-product between the child cost sets,
+%   we need to consider the option of adding the current $\lambda$-abstraction to the children's libraries.
+
+To compute the cost set of an e-class,
+  \babble takes the union of the cost sets of all its e-nodes.
+%
+However, doing this naively would result in the size of the cost set growing exponentially.
+%
+To mitigate this, we define a \emph{partial order reduction} ($\sfunify$),
+which only prunes provably sub-optimal cost sets.
+%
+Given two pairs $(\libset_1, u_1)$ and $(\libset_2, u_2)$ in the cost set of an e-class, 
+if $\libset_1 \subset \libset_2$ and $u_1 \leq u_2$, 
+then $\libset_2$ is subsumed by $\libset_1$ and can be removed from the cost set,
+intuitively because $\libset_1$ can compress this e-class even better and with fewer library functions.
+%
+In practice this optimization prunes libraries with redundant abstraction,
+where two different abstractions can be used to compress the same subterms.
+% In practice, this optimization removes all abstraction
+% subsets in which an abstraction isn't applied in every
+% possible subterm.
+
+
+% To efficiently identify a minimal-cost library, \tool determines
+%   the final learned library \emph{bottom-up} during extraction,
+%   rather than enumerating candidate libraries and evaluating
+%   each of their costs.
+% %
+% Compression rewrites always introduce
+%   an application of an $\lambda$-abstraction,
+%   so we can derive the set of libraries used in
+%   a term solely from $\lambda$ expressions it uses,
+%   and thus we do not need to consider all subsets of $\patset$
+%   when recursively extracting from each e-class.
+% %
+% Each e-class cost set contains every selection of
+% libraries used by its terms, and the cost of each
+% minimal term in that e-class assuming those libraries.
+
+% \autoref{fig:costset} shows our algorithm for propagating
+% the \emph{cost set} of an e-node or e-class, which represents
+% the subsets of abstractions that can be
+% used at the \enode or \eclass
+% together with the corresponding term size in the presence of each
+% subset.
+% %
+% The \emph{cost set} function $\cs(a)$ works similarly to $\T{minSize}$,
+% with the difference being that $\cs(a)$ computes used subsets of
+% abstractions on-the-fly for each smallest term, rather than setting
+% it top-down.
+% As shown in \autoref{fig:costset},
+%   to compute the cost set
+%   for an \enode that has children,
+%   \babble computes the $\mathsf{cross}$ product over the libraries of all
+%   children \eclasses.
+% This returns a cost set by unioning the libraries
+%   and adding the costs.
+% There is a special case for \enodes that represent
+%   an abstraction ($(\lambda \many{X} \bnd a) b$).
+% To compute the cost set for these \enodes,
+%   we similarly compute a cross product between the cost sets of the
+%   abstraction definition and body.
+% However, in this case, we also
+%   add this abstraction itself to each library in the resulting cost set
+%   and use the term costs of the body as the representative term costs in this \enode's cost set.
+
+% let f = def in body
+% 
+% libraries(def) = {(l1, c1)}
+% libraries(body) = {(l2, c2), (l4, c4)}
+% 
+% libraries_N(let f = def in body) = {(union(l1, l2, (f, c1)), c2), (union(l1, l4, (f, c1)), c4)}
+
+% TODO: we could delete the para starting with \autoref{fig:costset}
+% and uncomment this one instead
+% Instead we can propagate information about which abstractions
+% an e-node uses and its corresponding term size in the presence
+% of these abstractions bottom-up, as detailed in \autoref{fig:costset}.
+%
+% Below we describe how \babble uses  $\cs(a)$ to
+% extract the optimal set of abstractions and
+% re-expresses the original term corpus in terms of this optimal set.
+
+% First, the \verb|select_library|
+% procedure from \autoref{fig:algo-llmt} finds the library selection
+% with the smallest overall cost (minimizing combined library and term size)
+% from the cost set of the root e-class.
+% %
+% \verb|select_library|
+% returns a subset of the abstraction introducing rewrite rules
+% %returned by anti-unification
+% corresponding to the optimal library selection.
+% %
+% \babble uses these rewrite rules to perform
+%   equality saturation (L17, \autoref{fig:algo-llmt}) which
+%   introduces only the optimal set of abstractions to $\mathcal{G}$.
+% Then, \verb|extract| extracts a term from the root e-class of $\mathcal{G}''$
+%  which uses these abstractions,
+%  breaking cycles between e-classes if needed.
+% %\todo{incredibly handwavy lmao}
+% This bottom-up propagation is still exponential,
+% since it must track every abstraction subset used in
+% a term and its subterms.
+% %
+% To mitigate this, we define a partial order reduction on
+% cost sets, listed as $\sfunify$ in \autoref{fig:costset}.
+% %
+% Given two library selections $a$ and $b$ in the cost set
+% of an e-class, if the libraries used in $a$ are a superset
+% of those in $b$, but $a$ leads to a higher term cost than
+% $b$, $a$ can be removed from the cost set.
+% %
+% In practice, this optimization removes all abstraction
+% subsets in which an abstraction isn't applied in every
+% possible subterm.
+
+\mypara{Beam Approximation}
+%
+Even with the partial order reduction,
+  calculating the cost set for every e-node and e-class
+  can blow up exponentially.
+%Even with the partial order reduction, calculating the cost
+%set for every e-node and e-class in an e-graph representing a large
+%program can result in exponential blowup.
+%
+To mitigate this,
+  \tool provides the option to limit
+  both the \emph{size of each library} inside a cost set
+  and the \emph{size of the cost set} stored for each e-class.
+%
+This results in a \emph{beam-search} style algorithm,
+where the cost set of each e-class is $\sfprune$ed, as shown in \autoref{fig:costset}.
+%
+This pruning operation first filters out libraries that have more than $N$ patterns,
+then ranks the rest by the total cost (\ie the sum of use cost and the size of the library),
+and finally returns the top $K$ libraries from that set.
+  
+  % limits the number of candidate libraries
+  % (\ie a \emph{beam size})
+  % and the size of each library considered at each e-class,
+  % resulting in a novel beam search approach
+  % to efficient, sharing-aware, e-graph extraction.
+%
+% This \emph{pruning} operation is listed as $\sfprune$
+%   in \autoref{fig:costset}.
+% It first prunes out libraries that have more than $\mathsf{n}$ abstractions,
+%   then ranks the rest by the combined
+%   cost of the abstractions and the term they appear in, and finally
+%   returns the top $\mathsf{m}$ from that set.
+
+%In practice, \tool provides multiple parameters which limit the number
+%of candidate libraries at each e-class (\ie the \emph{beam size}),
+%as well as the size of each library.
+% As the next section shows, this technique is effective
+%   in practice.
+
+%def cs-prune($a, M, n$):
+%    sort_by(a.libs, full-cost)
+%    for a-sel in $a$:
+%       if len(a.libs) >= n:
+%          a.remove(a-sel)
+%    retain($a$, M)
+%    return sort($a$)
+%\input{extract_algorithm}

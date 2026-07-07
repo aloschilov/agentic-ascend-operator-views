@@ -1,0 +1,288 @@
+\section{Candidate Selection vis E-Graph Extraction}\label{sec:beam}
+
+In this section we formalize \emph{beam extraction}, our approach
+to selecting an optimal subset of abstractions
+from a wider set of candidate abstractions in the presence of an e-graph.
+
+\subsection{Library Selection as E-Graph Extraction}
+
+Having generated potential candidates for learned abstractions
+through e-graph anti-unification, the problem of LLMT now becomes
+\emph{candidate selection}: which subset of learned abstractions
+should we use to optimally rewrite our target term?
+%
+In the presence of e-graphs, this answer to this question is
+non-trivial. As mentioned in \autoref{sec:egraphs}, not only can
+$\denot{\mathcal{G}}$ be potentially infinite, making enumerating terms in
+$\mathcal{G}$ impractical, but the choice of which subset of abstractions
+is optimal depends on the concrete term itself.
+
+To tackle this problem, we reduce the problem of library selection to
+that of extracting a single, optimal concrete term from an e-graph.
+%
+Similarly to how we define a correspondence between patterns and
+compression rules, which rewrite an expression into an application
+of an abstraction,
+we can also define a correspondence between patterns and
+\emph{library rules}, which rewrite an expression into a combined
+abstraction definition and application.
+%
+For a given \T{let}-binding $\T{let}\ P = \lambda \many{X} \to p$,
+let its library rule $\libpat(P, \many{X}, p)$ be the rewrite rule
+$p \Rightarrow \T{let}\ P = \lambda \many{X} \to p\ \T{in}\ P\ \many{X}$.
+%
+As an example, $\libpat(P, X, X + 1)$ corresponds to the rewrite rule
+$X + 1\Rightarrow \T{let}\ P = \lambda X \to X + 1\ \T{in}\ P\ X$.
+%
+By generating a rewrite $\libpat(P_i, \fv(p_i), p_i)$ for every pattern
+$p_i$ generated during e-graph anti-unification of an e-graph $\mathcal{G}$,
+and applying these rewrites via equality saturation to $\mathcal{G}$, we
+obtain an e-graph $\mathcal{G}'$ in which every possible application to a new
+learned abstraction is included in the e-graph, always accompanied by an associated
+abstraction definition at every application.
+%
+Because every application of a learned abstraction in any subterm of
+any $t \in \denot{\mathcal{G}'}$ must be accompanied by a corresponding
+\T{let}-binding, the subset of abstractions used in $t$ can be determined
+solely by its \T{let}-bindings. Thus, finding the optimal set of libraries
+to use for $\mathcal{G}'$ can be found by extracting the smallest term in
+$\mathcal{G}'$, where ``smallest'' is given by a cost function $\cs$
+which only counts the definitions of \T{let}-bindings once.
+%
+The set of abstractions which are \T{let}-bound in this term will be
+the optimal subset of libraries to use for the programs represented by
+$\mathcal{G}'$.
+
+% \TODO{Now that we have all these abstraction definitions in our e-graph,
+% every term that we can extract. We know that if an abstraction is used, it
+% MUST be let-bound, the only way we can introduce an abstraction is through
+% $\libpat$, which also introduces a let binding. Thus, every term in this
+% new e-graph corresponds to a set of libraries based on what's let-bound in the
+% term. From here, finding the best set of libraries is just e-graph term extraction:
+% we find the smallest term, given that we only count let definitions once, then
+% look at what's let bound. And that's our answer!}
+
+\subsection{Optimal Extraction with Partial Shared Structure}
+
+Having reduced library subset selection to the problem of extracting
+a term from an e-graph in the presence of shared structure, the problem
+now becomes defining a cost function $\cs$ which can simultaneously
+account for common \T{let}-defined sub-expressions while also allowing
+for efficient optimal term extraction.
+%
+Traditional e-graph term extraction won't work in this context, since
+this cost function cannot be \TODO{not monotonic but another word
+goes here}, and greedy term extraction
+inherently relies on having a \TODO{same} cost function.
+%
+For instance, consider the following e-graph with eight e-classes,
+corresponding to the term $f(g(a, 1, a), g(b, 1, a), g(c, 1, c))$
+after the library rewrite $\libpat(l, x, g(x, 1, x))$ has been applied:
+%
+\begin{align*}
+c_0&\colon \{ a \},\ c_1\colon \{ b \},\ c_2\colon \{ c \},\ c_3\colon \{ 1 \} \\
+c_4&\colon \{ g(c_0, c_3, c_0), \T{let}\ l = \lambda x \to g(x, 1, x)\ \T{in}\ l(c_0) \} \\
+c_5&\colon \{ g(c_1, c_3, c_1), \T{let}\ l = \lambda x \to g(x, 1, x)\ \T{in}\ l(c_1) \} \\
+c_6&\colon \{ g(c_2, c_3, c_2), \T{let}\ l = \lambda x \to g(x, 1, x)\ \T{in}\ l(c_2) \} \\
+c_7&\colon \{ f(c_4, c_5, c_6) \} \\
+\end{align*}
+%
+A purely greedy extraction approach based on AST size would dictate that
+$g(a, 1, a)$ should be the selected subterm at $c_4$, since it has the smallest
+AST size of all the expressions in this e-class.
+%
+However, when used in the context of $c_7$, if the definition of $f$
+is shared, then $\T{let}\ l = \lambda x \to g(x, 1, x)\ \T{in}\ l(a)$
+should be selected, since the cost of the extra \T{let}-binding
+can be amortized by its later use in $c_7$.
+%
+Indeed, in general, greedy extraction would \emph{never} extract a
+use of an abstraction, since the cost of defining and applying
+an abstraction always exceeds the cost of \TODO{the expression
+itself} at the point of definition;
+this cost only becomes \TODO{worth it} if the abstraction is
+used at differet parts of the e-graph, which \TODO{a greedy
+extraction algorithm wouldn't be able to surmise}.
+
+Because our common sub-expression extraction problem is
+inherently limited---only definitions in a \T{let}-binding are
+considered shared---we can define a cost function which keeps track
+of \T{let}-defined symbols and counts them once, while counting all
+other subterms without regard for common sub-expressions.
+%
+By separating common sub-expression cost from \TODO{regular node?}
+cost, we can \TODO{find the true cost of a term by finding
+the sum of libs and expr cost.}
+
+\begin{figure}
+  \textbf{E-node cost set} $\cs_N(n)$
+  $$
+  \begin{array}{rl}
+    \cs_N(s()) &= \{ (\emptyset, 1) \} \\
+    \cs_N(s(a)) &= \{ (l, c + 1) \mid (l, c) \in \cs(a) \} \\
+    \cs_N(s(\many{a_i})) &= \mathsf{cross}(\many{\cs(a_i)}) \\
+    \cs_N(\T{let}\ s = \lambda \many{X} \to a\ \T{in}\ b) &= \{ (l, c + 1) \mid (l, c) \in \mathsf{clib}(s, \cs(a), \cs(b)) \} \\
+    \end{array}
+  $$
+
+  \textbf{E-class cost set} $\cs(a)$
+  $$
+  \begin{array}{rl}
+    \cs(\{ \many{n_j} \}) &= \bigcup \many{\cs_N(n_j)} \\
+  \end{array}
+  $$
+
+  \textbf{Argument cost set combination} $\mathsf{cross}$
+  $$
+  \begin{array}{rl}
+    \mathsf{cross}(z_1, z_2) &= \{ (l_1 \cup l_2, c_1 + c_2) \mid (l_1, c_1) \in z_1, (l_2, c_2) \in z_2 \} \\
+  \end{array}
+  $$
+
+  \textbf{Abstraction cost set combination} $\mathsf{clib}$
+  $$
+  \begin{array}{rl}
+    \mathsf{clib}(s, z_1, z_2) &= \{ (l_1 \cup l_2 \cup \{ (s, c_1) \}, c_2) \mid (l_1, c_1) \in z_1, (l_2, c_2) \in z_2 \} \\
+  \end{array}
+  $$
+\caption{\TODO{caption for costset def}}\label{fig:costset}
+\end{figure}
+
+\autoref{fig:costset} describes the cost function calculation for
+e-nodes and e-classes.
+%
+Every e-node and e-class has a corresponding \emph{cost set},
+which represents a set of possible library selections for all terms
+represented by the e-node or e-class:
+a choice of a set of abstractions, their associated cost, and the
+size of the rewritten term using these abstractions.
+%
+These cost sets are propagated bottom-up through the e-graph.
+
+To justify our cost function definition, we revisit our previous
+example, \TODO{in which greedy extraction would not have worked}.
+%
+For the e-class $c_0$, there is only one possible selection
+of abstractions and one possible rewritten term cost for all the
+terms in each e-class: the empty set of abstractions with term cost $1$.
+%
+This cost set, $\{ (\emptyset, 1) \}$, is the same as that of $c_1$,
+$c_2$, and $c_3$.
+%
+To find the cost set for $c_4$, we must first find the cost set
+calculations for each of its e-nodes.
+%
+Finding the cost set of the expression $g(c_0, c_3, c_0)$ requires
+us to combine the cost sets of the argument e-classes $c_0$
+and $c_3$;
+in our formalization, this is performed by the $\mathsf{cross}$
+operation.
+%
+The possible library subsets which can be used to rewrite $g(c_0, c_3, c_0)$
+consists of any subset which can be used for $c_0$ combined
+with any subset which can be used for $c_3$; the corresponding
+term cost in each case is simply the term costs of $c_0$ and $c_3$ added
+together (since this outer expression includes the subterms for $c_0$
+and $c_3$) and incremented, to account for the $+$ AST node.
+%
+In this case, since the cost sets of $c_0$ and $c_3$ only contain one
+element each, the cost set of $c_0 + c_3$ consists of one element:
+$\{ (\emptyset \cup \emptyset, 1 + 1 + 1)\} = \{ (\emptyset, 3) \}$.
+%
+This corresponds to the intuition that the term $a + 1$ can be
+expressed with the empty set of libraries, in which case it has term
+size $3$.
+%
+For an e-node with three or more arguments, the $\mathsf{cross}$
+operation is performed as a fold over the arguments of the e-node.
+
+Finding the cost set for the other e-node in $c_4$,
+$\T{let}\ f = \lambda x \to x + 1\ \T{in}\ f(c_0)$,
+requires first finding the cost set for the application, $f(c_0)$.
+%
+The cost set of a unary e-node is equal to the cost set of
+its argument, where all term costs have been incremented,
+so this application would have a cost set of
+$\{ (\emptyset, 2) \}$.
+%
+To find the cost set of this expression as a whole, we must
+add the abstraction $f$ and its associated cost into every
+possibility represented by the cost set of the \T{let}-binding's
+body.
+%
+One complication with this is that the definition of the
+abstraction itself is an e-class which can include applications
+to other learned abstractions, and thus has its own cost set.
+%
+For the sake of simplicity, we assume the body of $f$ contains
+one possible term, $\lambda x \to x + 1$, which would have
+a cost set of $\{ (\emptyset, 3) \}$.
+%
+In this case, we see that the cost set of this expression should
+be $\{ (\{ (f, 3) \}, 2) \}$, representing the fact that
+this e-node can be expressed with term size 2 given an abstraction
+$f$ of term size 3.
+%
+In general, this is handled by the $\mathsf{clib}$ operation,
+which performs a similar function as $\mathsf{cross}$: for every
+possible definition of an abstraction (and thus every possible
+abstraction subset and term size it can have), it must be
+combined with every possible abstraction and term size of the
+\T{let}-binding's body.
+%
+In this case, ``combined'' means that all abstraction definitions,
+including the \T{let}-bound abstraction itself and any other
+abstractions it might use, are \TODO{unioned} together,
+while the term sizes of the body are kept constant.
+%
+With the cost sets of these two e-nodes calculated, we can now
+find the cost set for the e-class $c_4$ as a whole.
+%
+The cost set of an e-class is defined as the union of the cost sets
+of its e-nodes;
+the possible selections of library subsets in an e-class is equal to
+all of the possible selections of library subsets of any of its
+constituent e-nodes.
+%
+In this case, this means that
+$\cs(c_4) = \{ (\emptyset, 3), (\{ (f, 3) \}, 2) \}\}$.
+%
+In other words, a term $t \in \denot{c_4}$ can have AST
+size 3 if rewritten with no abstractions, or term size 2
+if rewritten with the abstraction $f$ of size 3..
+%
+The cost sets of $c_5$ and $c_6$ are the same as $c_4$, and
+the cost set for $c_7$ can be found in a similar fashion,
+resulting in a final cost set:
+
+\begin{align*}
+\cs(c_7) = \{ &(\emptyset, 10), (\{ (f, 3) \}, 9), (\{ (f, 3) \}, 9), (\{ (f, 3) \}, 9), \\
+&(\{ (f, 3) \}, 8), (\{ (f, 3) \}, 8), (\{ (f, 3) \}, 8), (\{ (f, 3) \}, 7) \}
+\end{align*}
+
+Library subset extraction is performed by examining the root
+e-class and finding the library subset selection which results
+in the lowest \emph{full cost}: the sum of the costs of the
+shared expressions, the abstraction definitions, combined with
+the term cost.
+%
+In this case, \TODO{that lowest is given by this.
+Thus, the optimal library is this. Woo!}
+
+\mypara{Partial Order Reduction}
+%
+The size of the cost set of an e-node is exponential with respect
+to the number of arguments it has.
+\TODO{This is not very performant. But we can prune a bunch of redundant
+things. Consider the cost set from this last example, in which we define
+a lib but never actually use it. we can remove this possibility completely!}
+
+\mypara{From Optimal to Beam Extraction}
+%
+Even in the presence of partial order reduction, calculating this cost
+set for every e-node and e-class in an e-graph representing a large
+program can still be prohibitively expensive.
+%
+In practice, \tool provides multiple parameters which limit the number
+of candidate libraries at each node (the \emph{beam size}),
+as well as the size of each library.

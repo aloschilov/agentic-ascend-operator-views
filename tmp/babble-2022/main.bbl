@@ -1,0 +1,640 @@
+%%% -*-BibTeX-*-
+%%% Do NOT edit. File created by BibTeX with style
+%%% ACM-Reference-Format-Journals [18-Jan-2012].
+
+\begin{thebibliography}{39}
+
+%%% ====================================================================
+%%% NOTE TO THE USER: you can override these defaults by providing
+%%% customized versions of any of these macros before the \bibliography
+%%% command.  Each of them MUST provide its own final punctuation,
+%%% except for \shownote{}, \showDOI{}, and \showURL{}.  The latter two
+%%% do not use final punctuation, in order to avoid confusing it with
+%%% the Web address.
+%%%
+%%% To suppress output of a particular field, define its macro to expand
+%%% to an empty string, or better, \unskip, like this:
+%%%
+%%% \newcommand{\showDOI}[1]{\unskip}   % LaTeX syntax
+%%%
+%%% \def \showDOI #1{\unskip}           % plain TeX syntax
+%%%
+%%% ====================================================================
+
+\ifx \showCODEN    \undefined \def \showCODEN     #1{\unskip}     \fi
+\ifx \showDOI      \undefined \def \showDOI       #1{#1}\fi
+\ifx \showISBNx    \undefined \def \showISBNx     #1{\unskip}     \fi
+\ifx \showISBNxiii \undefined \def \showISBNxiii  #1{\unskip}     \fi
+\ifx \showISSN     \undefined \def \showISSN      #1{\unskip}     \fi
+\ifx \showLCCN     \undefined \def \showLCCN      #1{\unskip}     \fi
+\ifx \shownote     \undefined \def \shownote      #1{#1}          \fi
+\ifx \showarticletitle \undefined \def \showarticletitle #1{#1}   \fi
+\ifx \showURL      \undefined \def \showURL       {\relax}        \fi
+% The following commands are used for tagged output and should be
+% invisible to TeX
+\providecommand\bibfield[2]{#2}
+\providecommand\bibinfo[2]{#2}
+\providecommand\natexlab[1]{#1}
+\providecommand\showeprint[2][]{arXiv:#2}
+
+\bibitem[Bowers(2022)]%
+        {compression-bench}
+\bibfield{author}{\bibinfo{person}{Matt Bowers}.}
+  \bibinfo{year}{2022}\natexlab{}.
+\newblock \bibinfo{title}{\dc Compression Benchmark}.
+\newblock
+\newblock
+\urldef\tempurl%
+\url{https://github.com/mlb2251/compression\_benchmark}
+\showURL{%
+\tempurl}
+
+
+\bibitem[Bowers et~al\mbox{.}(2023)]%
+        {stitch}
+\bibfield{author}{\bibinfo{person}{Matthew Bowers}, \bibinfo{person}{Theo~X.
+  Olausson}, \bibinfo{person}{Catherine Wong}, \bibinfo{person}{Gabriel Grand},
+  \bibinfo{person}{Joshua~B. Tenenbaum}, \bibinfo{person}{Kevin Ellis}, {and}
+  \bibinfo{person}{Armando Solar-Lezama}.} \bibinfo{year}{2023}\natexlab{}.
+\newblock \showarticletitle{Top-Down Synthesis For Library Learning}.
+\newblock \bibinfo{journal}{\emph{Proceedings of the ACM on Programming
+  Languages}} \bibinfo{volume}{7}, \bibinfo{number}{POPL}
+  (\bibinfo{year}{2023}).
+\newblock
+\urldef\tempurl%
+\url{https://doi.org/10.1145/3571234}
+\showDOI{\tempurl}
+
+
+\bibitem[Bulychev et~al\mbox{.}(2010)]%
+        {Bulychev10}
+\bibfield{author}{\bibinfo{person}{Peter~E. Bulychev}, \bibinfo{person}{Egor~V.
+  Kostylev}, {and} \bibinfo{person}{Vladimir~A. Zakharov}.}
+  \bibinfo{year}{2010}\natexlab{}.
+\newblock \showarticletitle{Anti-unification Algorithms and Their Applications
+  in Program Analysis}. In \bibinfo{booktitle}{\emph{Perspectives of Systems
+  Informatics}}, \bibfield{editor}{\bibinfo{person}{Amir Pnueli},
+  \bibinfo{person}{Irina Virbitskaite}, {and} \bibinfo{person}{Andrei
+  Voronkov}} (Eds.). \bibinfo{publisher}{Springer Berlin Heidelberg},
+  \bibinfo{address}{Berlin, Heidelberg}, \bibinfo{pages}{413--423}.
+\newblock
+\showISBNx{978-3-642-11486-1}
+
+
+\bibitem[Cropper and Dumancic(2022)]%
+        {ilp}
+\bibfield{author}{\bibinfo{person}{Andrew Cropper} {and}
+  \bibinfo{person}{Sebastijan Dumancic}.} \bibinfo{year}{2022}\natexlab{}.
+\newblock \showarticletitle{Inductive Logic Programming At 30: {A} New
+  Introduction}.
+\newblock \bibinfo{journal}{\emph{J. Artif. Intell. Res.}}
+  \bibinfo{volume}{74} (\bibinfo{year}{2022}), \bibinfo{pages}{765--850}.
+\newblock
+\urldef\tempurl%
+\url{https://doi.org/10.1613/jair.1.13507}
+\showDOI{\tempurl}
+
+
+\bibitem[Dechter et~al\mbox{.}(2013)]%
+        {learner}
+\bibfield{author}{\bibinfo{person}{Eyal Dechter}, \bibinfo{person}{Jon
+  Malmaud}, \bibinfo{person}{Ryan~P. Adams}, {and} \bibinfo{person}{Joshua~B.
+  Tenenbaum}.} \bibinfo{year}{2013}\natexlab{}.
+\newblock \showarticletitle{Bootstrap Learning via Modular Concept Discovery}.
+  In \bibinfo{booktitle}{\emph{Proceedings of the Twenty-Third International
+  Joint Conference on Artificial Intelligence}} (Beijing, China)
+  \emph{(\bibinfo{series}{IJCAI '13})}. \bibinfo{publisher}{AAAI Press},
+  \bibinfo{pages}{1302--1309}.
+\newblock
+\showISBNx{9781577356332}
+
+
+\bibitem[Dong et~al\mbox{.}(2022)]%
+        {webrobot}
+\bibfield{author}{\bibinfo{person}{Rui Dong}, \bibinfo{person}{Zhicheng Huang},
+  \bibinfo{person}{Ian~Iong Lam}, \bibinfo{person}{Yan Chen}, {and}
+  \bibinfo{person}{Xinyu Wang}.} \bibinfo{year}{2022}\natexlab{}.
+\newblock \showarticletitle{WebRobot: Web Robotic Process Automation Using
+  Interactive Programming-by-Demonstration}. In
+  \bibinfo{booktitle}{\emph{Proceedings of the 43rd ACM SIGPLAN International
+  Conference on Programming Language Design and Implementation}} (San Diego,
+  CA, USA) \emph{(\bibinfo{series}{PLDI 2022})}.
+  \bibinfo{publisher}{Association for Computing Machinery},
+  \bibinfo{address}{New York, NY, USA}, \bibinfo{pages}{152--167}.
+\newblock
+\showISBNx{9781450392655}
+\urldef\tempurl%
+\url{https://doi.org/10.1145/3519939.3523711}
+\showDOI{\tempurl}
+
+
+\bibitem[Dumancic et~al\mbox{.}(2021)]%
+        {knorf}
+\bibfield{author}{\bibinfo{person}{Sebastijan Dumancic}, \bibinfo{person}{Tias
+  Guns}, {and} \bibinfo{person}{Andrew Cropper}.}
+  \bibinfo{year}{2021}\natexlab{}.
+\newblock \showarticletitle{Knowledge Refactoring for Inductive Program
+  Synthesis}. In \bibinfo{booktitle}{\emph{Thirty-Fifth {AAAI} Conference on
+  Artificial Intelligence, {AAAI} 2021, Thirty-Third Conference on Innovative
+  Applications of Artificial Intelligence, {IAAI} 2021, The Eleventh Symposium
+  on Educational Advances in Artificial Intelligence, {EAAI} 2021, Virtual
+  Event, February 2-9, 2021}}. \bibinfo{publisher}{{AAAI} Press},
+  \bibinfo{pages}{7271--7278}.
+\newblock
+\urldef\tempurl%
+\url{https://ojs.aaai.org/index.php/AAAI/article/view/16893}
+\showURL{%
+\tempurl}
+
+
+\bibitem[Ellis et~al\mbox{.}(2017)]%
+        {handdrawn}
+\bibfield{author}{\bibinfo{person}{Kevin Ellis}, \bibinfo{person}{Daniel
+  Ritchie}, \bibinfo{person}{Armando Solar-Lezama}, {and}
+  \bibinfo{person}{Joshua~B. Tenenbaum}.} \bibinfo{year}{2017}\natexlab{}.
+\newblock \bibinfo{title}{Learning to Infer Graphics Programs from Hand-Drawn
+  Images}.
+\newblock
+\newblock
+\urldef\tempurl%
+\url{https://doi.org/10.48550/ARXIV.1707.09627}
+\showDOI{\tempurl}
+
+
+\bibitem[Ellis et~al\mbox{.}(2021)]%
+        {dreamcoder}
+\bibfield{author}{\bibinfo{person}{Kevin Ellis}, \bibinfo{person}{Catherine
+  Wong}, \bibinfo{person}{Maxwell~I. Nye}, \bibinfo{person}{Mathias
+  Sabl{\'{e}}{-}Meyer}, \bibinfo{person}{Lucas Morales},
+  \bibinfo{person}{Luke~B. Hewitt}, \bibinfo{person}{Luc Cary},
+  \bibinfo{person}{Armando Solar{-}Lezama}, {and} \bibinfo{person}{Joshua~B.
+  Tenenbaum}.} \bibinfo{year}{2021}\natexlab{}.
+\newblock \showarticletitle{DreamCoder: bootstrapping inductive program
+  synthesis with wake-sleep library learning}. In
+  \bibinfo{booktitle}{\emph{{PLDI} '21: 42nd {ACM} {SIGPLAN} International
+  Conference on Programming Language Design and Implementation, Virtual Event,
+  Canada, June 20--25, 2021}}, \bibfield{editor}{\bibinfo{person}{Stephen~N.
+  Freund} {and} \bibinfo{person}{Eran Yahav}} (Eds.).
+  \bibinfo{publisher}{{ACM}}, \bibinfo{pages}{835--850}.
+\newblock
+\urldef\tempurl%
+\url{https://doi.org/10.1145/3453483.3454080}
+\showDOI{\tempurl}
+
+
+\bibitem[Iyer et~al\mbox{.}(2019)]%
+        {srini}
+\bibfield{author}{\bibinfo{person}{Srinivasan Iyer}, \bibinfo{person}{Alvin
+  Cheung}, {and} \bibinfo{person}{Luke Zettlemoyer}.}
+  \bibinfo{year}{2019}\natexlab{}.
+\newblock \bibinfo{title}{Learning Programmatic Idioms for Scalable Semantic
+  Parsing}.
+\newblock
+\newblock
+\urldef\tempurl%
+\url{https://doi.org/10.48550/ARXIV.1904.09086}
+\showDOI{\tempurl}
+
+
+\bibitem[Jones et~al\mbox{.}(2021)]%
+        {shapemod}
+\bibfield{author}{\bibinfo{person}{R.~Kenny Jones}, \bibinfo{person}{David
+  Charatan}, \bibinfo{person}{Paul Guerrero}, \bibinfo{person}{Niloy~J. Mitra},
+  {and} \bibinfo{person}{Daniel Ritchie}.} \bibinfo{year}{2021}\natexlab{}.
+\newblock \showarticletitle{ShapeMOD: Macro Operation Discovery for 3D Shape
+  Programs}.
+\newblock \bibinfo{journal}{\emph{ACM Trans. Graph.}} \bibinfo{volume}{40},
+  \bibinfo{number}{4}, Article \bibinfo{articleno}{153} (\bibinfo{date}{jul}
+  \bibinfo{year}{2021}), \bibinfo{numpages}{16}~pages.
+\newblock
+\showISSN{0730-0301}
+\urldef\tempurl%
+\url{https://doi.org/10.1145/3450626.3459821}
+\showDOI{\tempurl}
+
+
+\bibitem[Lau et~al\mbox{.}(2001)]%
+        {vsa2}
+\bibfield{author}{\bibinfo{person}{Tessa Lau}, \bibinfo{person}{Steven~A.
+  Wolfman}, \bibinfo{person}{Pedro Domingos}, {and} \bibinfo{person}{Daniel~S.
+  Weld}.} \bibinfo{year}{2001}\natexlab{}.
+\newblock \bibinfo{title}{Programming By Demonstration Using Version Space
+  Algebra}.
+\newblock
+\newblock
+
+
+\bibitem[L\'azaro-Gredilla et~al\mbox{.}(2018)]%
+        {gredilla}
+\bibfield{author}{\bibinfo{person}{Miguel L\'azaro-Gredilla},
+  \bibinfo{person}{Dianhuan Lin}, \bibinfo{person}{J.~Swaroop Guntupalli},
+  {and} \bibinfo{person}{Dileep George}.} \bibinfo{year}{2018}\natexlab{}.
+\newblock \bibinfo{title}{Beyond imitation: Zero-shot task transfer on robots
+  by learning concepts as cognitive programs}.
+\newblock
+\newblock
+\urldef\tempurl%
+\url{https://doi.org/10.48550/ARXIV.1812.02788}
+\showDOI{\tempurl}
+
+
+\bibitem[Meng et~al\mbox{.}(2013)]%
+        {lase}
+\bibfield{author}{\bibinfo{person}{Na Meng}, \bibinfo{person}{Miryung Kim},
+  {and} \bibinfo{person}{Kathryn~S. McKinley}.}
+  \bibinfo{year}{2013}\natexlab{}.
+\newblock \showarticletitle{Lase: Locating and applying systematic edits by
+  learning from examples}. In \bibinfo{booktitle}{\emph{2013 35th International
+  Conference on Software Engineering (ICSE)}}. \bibinfo{pages}{502--511}.
+\newblock
+\urldef\tempurl%
+\url{https://doi.org/10.1109/ICSE.2013.6606596}
+\showDOI{\tempurl}
+
+
+\bibitem[Mitchell(1977)]%
+        {vsa1}
+\bibfield{author}{\bibinfo{person}{Tom~Michael Mitchell}.}
+  \bibinfo{year}{1977}\natexlab{}.
+\newblock \showarticletitle{Version Spaces: A Candidate Elimination Approach to
+  Rule Learning}. In \bibinfo{booktitle}{\emph{IJCAI}}.
+\newblock
+
+
+\bibitem[Nandi et~al\mbox{.}(2018)]%
+        {reincarnate}
+\bibfield{author}{\bibinfo{person}{Chandrakana Nandi},
+  \bibinfo{person}{James~R. Wilcox}, \bibinfo{person}{Pavel Panchekha},
+  \bibinfo{person}{Taylor Blau}, \bibinfo{person}{Dan Grossman}, {and}
+  \bibinfo{person}{Zachary Tatlock}.} \bibinfo{year}{2018}\natexlab{}.
+\newblock \showarticletitle{Functional Programming for Compiling and
+  Decompiling Computer-Aided Design}.
+\newblock \bibinfo{journal}{\emph{Proc. ACM Program. Lang.}}
+  \bibinfo{volume}{2}, \bibinfo{number}{ICFP}, Article \bibinfo{articleno}{99}
+  (\bibinfo{date}{jul} \bibinfo{year}{2018}), \bibinfo{numpages}{31}~pages.
+\newblock
+\urldef\tempurl%
+\url{https://doi.org/10.1145/3236794}
+\showDOI{\tempurl}
+
+
+\bibitem[Nandi et~al\mbox{.}(2020)]%
+        {szalinski}
+\bibfield{author}{\bibinfo{person}{Chandrakana Nandi}, \bibinfo{person}{Max
+  Willsey}, \bibinfo{person}{Adam Anderson}, \bibinfo{person}{James~R. Wilcox},
+  \bibinfo{person}{Eva Darulova}, \bibinfo{person}{Dan Grossman}, {and}
+  \bibinfo{person}{Zachary Tatlock}.} \bibinfo{year}{2020}\natexlab{}.
+\newblock \showarticletitle{Synthesizing structured {CAD} models with equality
+  saturation and inverse transformations}. In
+  \bibinfo{booktitle}{\emph{Proceedings of the 41st {ACM} {SIGPLAN}
+  International Conference on Programming Language Design and Implementation,
+  {PLDI} 2020, London, UK, June 15--20, 2020}},
+  \bibfield{editor}{\bibinfo{person}{Alastair~F. Donaldson} {and}
+  \bibinfo{person}{Emina Torlak}} (Eds.). \bibinfo{publisher}{{ACM}},
+  \bibinfo{pages}{31--44}.
+\newblock
+\urldef\tempurl%
+\url{https://doi.org/10.1145/3385412.3386012}
+\showDOI{\tempurl}
+
+
+\bibitem[Nandi et~al\mbox{.}(2021)]%
+        {ruler}
+\bibfield{author}{\bibinfo{person}{Chandrakana Nandi}, \bibinfo{person}{Max
+  Willsey}, \bibinfo{person}{Amy Zhu}, \bibinfo{person}{Yisu~Remy Wang},
+  \bibinfo{person}{Brett Saiki}, \bibinfo{person}{Adam Anderson},
+  \bibinfo{person}{Adriana Schulz}, \bibinfo{person}{Dan Grossman}, {and}
+  \bibinfo{person}{Zachary Tatlock}.} \bibinfo{year}{2021}\natexlab{}.
+\newblock \showarticletitle{Rewrite Rule Inference Using Equality Saturation}.
+\newblock \bibinfo{journal}{\emph{Proc. ACM Program. Lang.}}
+  \bibinfo{volume}{5}, \bibinfo{number}{OOPSLA}, Article
+  \bibinfo{articleno}{119} (\bibinfo{date}{oct} \bibinfo{year}{2021}),
+  \bibinfo{numpages}{28}~pages.
+\newblock
+\urldef\tempurl%
+\url{https://doi.org/10.1145/3485496}
+\showDOI{\tempurl}
+
+
+\bibitem[Panchekha et~al\mbox{.}(2015)]%
+        {herbie}
+\bibfield{author}{\bibinfo{person}{Pavel Panchekha}, \bibinfo{person}{Alex
+  Sanchez-Stern}, \bibinfo{person}{James~R. Wilcox}, {and}
+  \bibinfo{person}{Zachary Tatlock}.} \bibinfo{year}{2015}\natexlab{}.
+\newblock \showarticletitle{Automatically Improving Accuracy for Floating Point
+  Expressions}.
+\newblock \bibinfo{journal}{\emph{SIGPLAN Not.}} \bibinfo{volume}{50},
+  \bibinfo{number}{6} (\bibinfo{date}{jun} \bibinfo{year}{2015}),
+  \bibinfo{pages}{1--11}.
+\newblock
+\showISSN{0362-1340}
+\urldef\tempurl%
+\url{https://doi.org/10.1145/2813885.2737959}
+\showDOI{\tempurl}
+
+
+\bibitem[Plotkin(1970)]%
+        {plotkin1970lattice}
+\bibfield{author}{\bibinfo{person}{Gordon Plotkin}.}
+  \bibinfo{year}{1970}\natexlab{}.
+\newblock \bibinfo{booktitle}{\emph{Lattice Theoretic Properties of
+  Subsumption}}.
+\newblock \bibinfo{publisher}{Edinburgh University, Department of Machine
+  Intelligence and Perception}.
+\newblock
+\urldef\tempurl%
+\url{https://books.google.com/books?id=2p09cgAACAAJ}
+\showURL{%
+\tempurl}
+
+
+\bibitem[Raza et~al\mbox{.}(2014)]%
+        {raza2014programming}
+\bibfield{author}{\bibinfo{person}{Mohammad Raza}, \bibinfo{person}{Natasa
+  Milic-Frayling}, {and} \bibinfo{person}{Sumit Gulwani}.}
+  \bibinfo{year}{2014}\natexlab{}.
+\newblock \showarticletitle{Programming by Example using Least General
+  Generalizations}. \bibinfo{publisher}{AAAI - Association for the Advancement
+  of Artificial Intelligence}.
+\newblock
+\urldef\tempurl%
+\url{https://www.microsoft.com/en-us/research/publication/programming-by-example-using-least-general-generalizations/}
+\showURL{%
+\tempurl}
+
+
+\bibitem[Reynolds(1969)]%
+        {Reynolds1969TransformationalSA}
+\bibfield{author}{\bibinfo{person}{John~C. Reynolds}.}
+  \bibinfo{year}{1969}\natexlab{}.
+\newblock \showarticletitle{Transformational systems and the algebraic
+  structure of atomic formulas}.
+\newblock
+
+
+\bibitem[Rocha et~al\mbox{.}(2022)]%
+        {hardware1}
+\bibfield{author}{\bibinfo{person}{{Rodrigo C. O.} Rocha},
+  \bibinfo{person}{Pavlos Petoumenos}, \bibinfo{person}{Bj{\"o}rn Franke},
+  \bibinfo{person}{Pramod Bhatotia}, {and} \bibinfo{person}{Michael
+  O{\textquoteright}Boyle}.} \bibinfo{year}{2022}\natexlab{}.
+\newblock \showarticletitle{Loop Rolling for Code Size Reduction}. In
+  \bibinfo{booktitle}{\emph{2022 IEEE/ACM International Symposium on Code
+  Generation and Optimization (CGO)}}, \bibfield{editor}{\bibinfo{person}{{Jae
+  W.} Lee}, \bibinfo{person}{Sebastian Hack}, {and} \bibinfo{person}{Tatiana
+  Shpeisman}} (Eds.). \bibinfo{publisher}{IEEE}, \bibinfo{pages}{217--229}.
+\newblock
+\showISBNx{978-1-6654-0585-0}
+\urldef\tempurl%
+\url{https://doi.org/10.1109/CGO53902.2022.9741256}
+\showDOI{\tempurl}
+
+
+\bibitem[Rolim et~al\mbox{.}(2017)]%
+        {refaser}
+\bibfield{author}{\bibinfo{person}{Reudismam Rolim}, \bibinfo{person}{Gustavo
+  Soares}, \bibinfo{person}{Loris D'Antoni}, \bibinfo{person}{Oleksandr
+  Polozov}, \bibinfo{person}{Sumit Gulwani}, \bibinfo{person}{Rohit Gheyi},
+  \bibinfo{person}{Ryo Suzuki}, {and} \bibinfo{person}{Bj\"{o}rn Hartmann}.}
+  \bibinfo{year}{2017}\natexlab{}.
+\newblock \showarticletitle{Learning Syntactic Program Transformations from
+  Examples}. In \bibinfo{booktitle}{\emph{Proceedings of the 39th International
+  Conference on Software Engineering}} (Buenos Aires, Argentina)
+  \emph{(\bibinfo{series}{ICSE '17})}. \bibinfo{publisher}{IEEE Press},
+  \bibinfo{pages}{404--415}.
+\newblock
+\showISBNx{9781538638682}
+\urldef\tempurl%
+\url{https://doi.org/10.1109/ICSE.2017.44}
+\showDOI{\tempurl}
+
+
+\bibitem[Sharma et~al\mbox{.}(2017)]%
+        {csgnet}
+\bibfield{author}{\bibinfo{person}{Gopal Sharma}, \bibinfo{person}{Rishabh
+  Goyal}, \bibinfo{person}{Difan Liu}, \bibinfo{person}{Evangelos Kalogerakis},
+  {and} \bibinfo{person}{Subhransu Maji}.} \bibinfo{year}{2017}\natexlab{}.
+\newblock \bibinfo{title}{CSGNet: Neural Shape Parser for Constructive Solid
+  Geometry}.
+\newblock
+\newblock
+\urldef\tempurl%
+\url{https://doi.org/10.48550/ARXIV.1712.08290}
+\showDOI{\tempurl}
+
+
+\bibitem[Shin et~al\mbox{.}(2019)]%
+        {polozov}
+\bibfield{author}{\bibinfo{person}{Eui~Chul Shin}, \bibinfo{person}{Miltiadis
+  Allamanis}, \bibinfo{person}{Marc Brockschmidt}, {and} \bibinfo{person}{Alex
+  Polozov}.} \bibinfo{year}{2019}\natexlab{}.
+\newblock \showarticletitle{Program Synthesis and Semantic Parsing with Learned
+  Code Idioms}. In \bibinfo{booktitle}{\emph{Advances in Neural Information
+  Processing Systems}}, \bibfield{editor}{\bibinfo{person}{H.~Wallach},
+  \bibinfo{person}{H.~Larochelle}, \bibinfo{person}{A.~Beygelzimer},
+  \bibinfo{person}{F.~d\textquotesingle Alch\'{e}-Buc},
+  \bibinfo{person}{E.~Fox}, {and} \bibinfo{person}{R.~Garnett}} (Eds.),
+  Vol.~\bibinfo{volume}{32}. \bibinfo{publisher}{Curran Associates, Inc.}
+\newblock
+\urldef\tempurl%
+\url{https://proceedings.neurips.cc/paper/2019/file/cff34ad343b069ea6920464ad17d4bcf-Paper.pdf}
+\showURL{%
+\tempurl}
+
+
+\bibitem[Singher and Itzhaky(2021)]%
+        {thesy}
+\bibfield{author}{\bibinfo{person}{Eytan Singher} {and}
+  \bibinfo{person}{Shachar Itzhaky}.} \bibinfo{year}{2021}\natexlab{}.
+\newblock \showarticletitle{Theory Exploration Powered by Deductive Synthesis}.
+  In \bibinfo{booktitle}{\emph{Computer Aided Verification}},
+  \bibfield{editor}{\bibinfo{person}{Alexandra Silva} {and}
+  \bibinfo{person}{K.~Rustan~M. Leino}} (Eds.). \bibinfo{publisher}{Springer
+  International Publishing}, \bibinfo{address}{Cham},
+  \bibinfo{pages}{125--148}.
+\newblock
+\showISBNx{978-3-030-81688-9}
+
+
+\bibitem[Stiff and Vahid(2005)]%
+        {hardware2}
+\bibfield{author}{\bibinfo{person}{G. Stiff} {and} \bibinfo{person}{F. Vahid}.}
+  \bibinfo{year}{2005}\natexlab{}.
+\newblock \showarticletitle{New Decompilation Techniques for Binary-Level
+  Co-Processor Generation}. In \bibinfo{booktitle}{\emph{Proceedings of the
+  2005 IEEE/ACM International Conference on Computer-Aided Design}} (San Jose,
+  CA) \emph{(\bibinfo{series}{ICCAD '05})}. \bibinfo{publisher}{IEEE Computer
+  Society}, \bibinfo{address}{USA}, \bibinfo{pages}{547--554}.
+\newblock
+\showISBNx{078039254X}
+
+
+\bibitem[Su et~al\mbox{.}(1984)]%
+        {hardware3}
+\bibfield{author}{\bibinfo{person}{Bogong Su}, \bibinfo{person}{Shiyuan Ding},
+  {and} \bibinfo{person}{Lan Jin}.} \bibinfo{year}{1984}\natexlab{}.
+\newblock \showarticletitle{An Improvement of Trace Scheduling for Global
+  Microcode Compaction}.
+\newblock \bibinfo{journal}{\emph{SIGMICRO Newsl.}} \bibinfo{volume}{15},
+  \bibinfo{number}{4} (\bibinfo{date}{dec} \bibinfo{year}{1984}),
+  \bibinfo{pages}{78--85}.
+\newblock
+\showISSN{1050-916X}
+\urldef\tempurl%
+\url{https://doi.org/10.1145/384281.808217}
+\showDOI{\tempurl}
+
+
+\bibitem[Tate et~al\mbox{.}(2009)]%
+        {tate2009equality}
+\bibfield{author}{\bibinfo{person}{Ross Tate}, \bibinfo{person}{Michael Stepp},
+  \bibinfo{person}{Zachary Tatlock}, {and} \bibinfo{person}{Sorin Lerner}.}
+  \bibinfo{year}{2009}\natexlab{}.
+\newblock \showarticletitle{{Equality Saturation: A New Approach to
+  Optimization}}. In \bibinfo{booktitle}{\emph{Proceedings of the 36th annual
+  ACM SIGPLAN-SIGACT Symposium on Principles of Programming Languages}}.
+  \bibinfo{pages}{264--276}.
+\newblock
+
+
+\bibitem[Tian et~al\mbox{.}(2019)]%
+        {shape2prog}
+\bibfield{author}{\bibinfo{person}{Yonglong Tian}, \bibinfo{person}{Andrew
+  Luo}, \bibinfo{person}{Xingyuan Sun}, \bibinfo{person}{Kevin Ellis},
+  \bibinfo{person}{William~T. Freeman}, \bibinfo{person}{Joshua~B. Tenenbaum},
+  {and} \bibinfo{person}{Jiajun Wu}.} \bibinfo{year}{2019}\natexlab{}.
+\newblock \bibinfo{title}{Learning to Infer and Execute 3D Shape Programs}.
+\newblock
+\newblock
+\urldef\tempurl%
+\url{https://doi.org/10.48550/ARXIV.1901.02875}
+\showDOI{\tempurl}
+
+
+\bibitem[VanHattum et~al\mbox{.}(2021)]%
+        {diospyros}
+\bibfield{author}{\bibinfo{person}{Alexa VanHattum}, \bibinfo{person}{Rachit
+  Nigam}, \bibinfo{person}{Vincent~T. Lee}, \bibinfo{person}{James Bornholt},
+  {and} \bibinfo{person}{Adrian Sampson}.} \bibinfo{year}{2021}\natexlab{}.
+\newblock \showarticletitle{Vectorization for Digital Signal Processors via
+  Equality Saturation}. In \bibinfo{booktitle}{\emph{Proceedings of the 26th
+  ACM International Conference on Architectural Support for Programming
+  Languages and Operating Systems}} (Virtual, USA)
+  \emph{(\bibinfo{series}{ASPLOS 2021})}. \bibinfo{publisher}{Association for
+  Computing Machinery}, \bibinfo{address}{New York, NY, USA},
+  \bibinfo{pages}{874--886}.
+\newblock
+\showISBNx{9781450383172}
+\urldef\tempurl%
+\url{https://doi.org/10.1145/3445814.3446707}
+\showDOI{\tempurl}
+
+
+\bibitem[Wang et~al\mbox{.}(2021)]%
+        {cogsci-smiley}
+\bibfield{author}{\bibinfo{person}{Haoliang Wang}, \bibinfo{person}{Nadia
+  Polikarpova}, {and} \bibinfo{person}{Judith~E. Fan}.}
+  \bibinfo{year}{2021}\natexlab{}.
+\newblock \showarticletitle{Learning part-based abstractions for visual object
+  concepts}. In \bibinfo{booktitle}{\emph{Proceedings of the Annual Meeting of
+  the Cognitive Science Society}}, Vol.~\bibinfo{volume}{43}.
+\newblock
+\urldef\tempurl%
+\url{https://escholarship.org/uc/item/9009w415}
+\showURL{%
+\tempurl}
+
+
+\bibitem[Wang et~al\mbox{.}(2020)]%
+        {spores}
+\bibfield{author}{\bibinfo{person}{Yisu~Remy Wang}, \bibinfo{person}{Shana
+  Hutchison}, \bibinfo{person}{Jonathan Leang}, \bibinfo{person}{Bill Howe},
+  {and} \bibinfo{person}{Dan Suciu}.} \bibinfo{year}{2020}\natexlab{}.
+\newblock \showarticletitle{SPORES: Sum-Product Optimization via Relational
+  Equality Saturation for Large Scale Linear Algebra}.
+\newblock \bibinfo{journal}{\emph{Proc. VLDB Endow.}} \bibinfo{volume}{13},
+  \bibinfo{number}{12} (\bibinfo{date}{jul} \bibinfo{year}{2020}),
+  \bibinfo{pages}{1919--1932}.
+\newblock
+\showISSN{2150-8097}
+\urldef\tempurl%
+\url{https://doi.org/10.14778/3407790.3407799}
+\showDOI{\tempurl}
+
+
+\bibitem[Willsey et~al\mbox{.}(2021)]%
+        {willsey2021egg}
+\bibfield{author}{\bibinfo{person}{Max Willsey}, \bibinfo{person}{Chandrakana
+  Nandi}, \bibinfo{person}{Yisu~Remy Wang}, \bibinfo{person}{Oliver Flatt},
+  \bibinfo{person}{Zachary Tatlock}, {and} \bibinfo{person}{Pavel Panchekha}.}
+  \bibinfo{year}{2021}\natexlab{}.
+\newblock \showarticletitle{Egg: Fast and Extensible Equality Saturation}.
+\newblock \bibinfo{journal}{\emph{Proceedings of the ACM on Programming
+  Languages}} \bibinfo{volume}{5}, \bibinfo{number}{POPL}
+  (\bibinfo{year}{2021}), \bibinfo{pages}{1--29}.
+\newblock
+
+
+\bibitem[Wong et~al\mbox{.}(2021)]%
+        {laps}
+\bibfield{author}{\bibinfo{person}{Catherine Wong}, \bibinfo{person}{Kevin
+  Ellis}, \bibinfo{person}{Joshua~B. Tenenbaum}, {and} \bibinfo{person}{Jacob
+  Andreas}.} \bibinfo{year}{2021}\natexlab{}.
+\newblock \bibinfo{title}{Leveraging Language to Learn Program Abstractions and
+  Search Heuristics}.
+\newblock
+\newblock
+\urldef\tempurl%
+\url{https://doi.org/10.48550/ARXIV.2106.11053}
+\showDOI{\tempurl}
+
+
+\bibitem[Wong et~al\mbox{.}(2022)]%
+        {cogsci-dataset}
+\bibfield{author}{\bibinfo{person}{Catherine Wong}, \bibinfo{person}{William~P.
+  McCarthy}, \bibinfo{person}{Gabriel Grand}, \bibinfo{person}{Yoni Friedman},
+  \bibinfo{person}{Joshua~B. Tenenbaum}, \bibinfo{person}{Jacob Andreas},
+  \bibinfo{person}{Robert~D. Hawkins}, {and} \bibinfo{person}{Judith~E. Fan}.}
+  \bibinfo{year}{2022}\natexlab{}.
+\newblock \showarticletitle{Identifying concept libraries from language about
+  object structure}. In \bibinfo{booktitle}{\emph{Proceedings of the Annual
+  Meeting of the Cognitive Science Society}}.
+\newblock
+
+
+\bibitem[Wu et~al\mbox{.}(2019)]%
+        {cc1}
+\bibfield{author}{\bibinfo{person}{Chenming Wu}, \bibinfo{person}{Haisen Zhao},
+  \bibinfo{person}{Chandrakana Nandi}, \bibinfo{person}{Jeffrey~I. Lipton},
+  \bibinfo{person}{Zachary Tatlock}, {and} \bibinfo{person}{Adriana Schulz}.}
+  \bibinfo{year}{2019}\natexlab{}.
+\newblock \showarticletitle{Carpentry Compiler}.
+\newblock \bibinfo{journal}{\emph{ACM Trans. Graph.}} \bibinfo{volume}{38},
+  \bibinfo{number}{6}, Article \bibinfo{articleno}{195} (\bibinfo{date}{nov}
+  \bibinfo{year}{2019}), \bibinfo{numpages}{14}~pages.
+\newblock
+\showISSN{0730-0301}
+\urldef\tempurl%
+\url{https://doi.org/10.1145/3355089.3356518}
+\showDOI{\tempurl}
+
+
+\bibitem[Yang et~al\mbox{.}(2021)]%
+        {tensat}
+\bibfield{author}{\bibinfo{person}{Yichen Yang}, \bibinfo{person}{Phitchaya
+  Phothilimthana}, \bibinfo{person}{Yisu Wang}, \bibinfo{person}{Max Willsey},
+  \bibinfo{person}{Sudip Roy}, {and} \bibinfo{person}{Jacques Pienaar}.}
+  \bibinfo{year}{2021}\natexlab{}.
+\newblock \showarticletitle{Equality Saturation for Tensor Graph
+  Superoptimization}. In \bibinfo{booktitle}{\emph{Proceedings of Machine
+  Learning and Systems}}, \bibfield{editor}{\bibinfo{person}{A.~Smola},
+  \bibinfo{person}{A.~Dimakis}, {and} \bibinfo{person}{I.~Stoica}} (Eds.),
+  Vol.~\bibinfo{volume}{3}. \bibinfo{pages}{255--268}.
+\newblock
+\urldef\tempurl%
+\url{https://proceedings.mlsys.org/paper/2021/file/65ded5353c5ee48d0b7d48c591b8f430-Paper.pdf}
+\showURL{%
+\tempurl}
+
+
+\end{thebibliography}

@@ -1,0 +1,142 @@
+% Configuring autoref, included by hyperref
+
+\def\sectionautorefname{Sec.}
+\def\subsectionautorefname{Sec.}
+\def\subsectionautorefname{Sec.}
+\def\subsubsectionautorefname{Sec.}
+\def\figureautorefname{Fig.}
+\def\tableautorefname{Tab.}
+\def\equationautorefname{Eq.}
+
+% Text abbreviations
+\newcommand{\etc}{\emph{etc}\xspace}
+\newcommand{\wrt}{\emph{wrt.}\xspace}
+\newcommand{\ie}{\emph{i.e.}\xspace}
+\newcommand{\Ie}{\emph{I.e.}\xspace}
+\newcommand{\eg}{\emph{e.g.}\xspace}
+\newcommand{\Eg}{\emph{E.g.}\xspace}
+\newcommand{\etal}{\emph{et~al.}\xspace}
+\newcommand{\emphbf}[1]{\emph{\textbf{#1}\xspace}}
+\newcommand{\mypara}[1]{\smallskip\noindent\emphbf{#1.}\xspace}
+\newcommand{\setof}[1]{\ensuremath{\{ #1 \}}}
+\newcommand{\sem}[1]{\ensuremath{\llbracket #1 \rrbracket}}
+
+% Egraph related macros
+\newcommand{\Egraph}{E-graph\xspace}
+\newcommand{\Egraphs}{E-graphs\xspace}
+\newcommand{\egraph}{e-graph\xspace}
+\newcommand{\egraphs}{e-graphs\xspace}
+\newcommand{\eclass}{e-class\xspace}
+\newcommand{\eclasses}{e-classes\xspace}
+\newcommand{\Eclass}{E-class\xspace}
+\newcommand{\Eclasses}{E-classes\xspace}
+\newcommand{\enode}{e-node\xspace}
+\newcommand{\enodes}{e-nodes\xspace}
+\newcommand{\Enode}{E-node\xspace}
+\newcommand{\Enodes}{E-nodes\xspace}
+
+% Remarks
+\newif\ifdraft
+\drafttrue
+
+\ifdraft
+\newcommand\authorrnote[3]{\textcolor{#1}{({#2}: {#3})}\xspace}
+\newcommand{\TODO}[1]{{\color{orange!80!black}[\textsl{#1}]}}
+\else
+\newcommand\authorrnote[2]{}
+\newcommand{\TODO}[1]{}
+\fi
+
+\newcommand{\mw}[1]{{\color{blue}MW: #1}}
+
+% Tool names
+\newcommand{\tname}[1]{\textsc{#1}\xspace}
+\newcommand{\babble}{\tname{babble}}
+\newcommand{\tool}{\tname{babble}}
+\newcommand{\dc}{\tname{DreamCoder}}
+\newcommand{\stitch}{\tname{Stitch}}
+\newcommand{\egg}{\tname{egg}}
+
+% Listings
+\lstset{
+  %commentstyle=\sffamily\itshape,
+  commentstyle=\ttfamily\footnotesize\textcolor{gray},
+  basicstyle=\ttfamily\small,
+  columns=fullflexible,
+  showstringspaces=false,
+  escapeinside={(*@}{@*)},
+  morekeywords={let,in},
+  literate=%
+    {->}{$\rightarrow$}2
+    {\\}{$\lambda$}1
+    {pi}{$\pi$}1
+    {==}{$=$}1,
+  mathescape=true
+  xleftmargin=0em,
+  language=Python,
+  morekeywords={loop, let, in, datatype},
+}
+
+\newcommand{\T}[1]{\mbox{\lstinline^#1^}}
+
+\definecolor[named]{darkblue}{cmyk}{1,0.58,0,0.21}
+\definecolor[named]{darkred}{cmyk}{0,1,0.87,0.21}
+
+% math
+\newcommand{\semeq}{\equiv}
+\newcommand{\many}[1]{\overline{#1}}
+\newcommand{\au}{\mathsf{AU}}
+\newcommand{\gau}{\mathsf{AU}}
+\newcommand{\fv}{\mathsf{vars}}
+\newcommand{\sz}{\mathsf{size}}
+\newcommand{\sk}{\mathsf{skeleton}}
+\newcommand{\arity}{\mathsf{arity}}
+\newcommand{\termsof}[1]{\mathcal{T}(#1)}
+\newcommand{\patsof}[2]{\mathcal{T}(#1,#2)}
+\newcommand{\absof}[2]{\hat{\mathcal{T}}(#1,#2)}
+\newcommand{\dom}[1]{\mathsf{dom}(#1)}
+\newcommand{\rng}[1]{\mathsf{range}(#1)}
+\newcommand{\subst}[2]{{#1} \mapsto {#2}}
+\newcommand{\sapp}[2]{{#1}({#2})}
+\newcommand{\sub}{\sqsubseteq}
+\newcommand{\meet}{\sqcap}
+\newcommand{\join}{\sqcup}
+% \newcommand{\bnd}{\ \mathbf{.}\ }
+\newcommand{\bnd}{\ \mathbf{\shortrightarrow}\ }
+\newcommand{\match}[2]{\mathsf{match}(#1,#2)}
+\newcommand{\matches}[2]{\mathsf{matches}(#1,#2)}
+% \newcommand{\betaeq}{\semeq^{\beta}}
+\newcommand{\rwsteps}[1]{\rightarrow^{#1}_1}
+\newcommand{\rewrites}[1]{\rightarrow^{#1}}
+\newcommand{\betared}{\rwsteps{\beta}}
+\newcommand{\evals}{\rewrites{\beta}}
+\newcommand{\appat}{\mathsf{comp}}
+\newcommand{\libpat}{\mathsf{lib}}
+\newcommand{\cs}{\mathsf{costset}} % costset
+\newcommand{\subterms}{\mathsf{subterms}}
+\newcommand{\occ}{\mathsf{occurs}}
+\newcommand{\util}{\Delta}
+\newcommand{\pl}[1]{\mathcal{P}(#1)}
+\newcommand{\plau}[1]{\mathcal{P}^2(#1)}
+\newcommand{\denot}[1]{\llbracket #1 \rrbracket}
+\newcommand{\eqg}{\semeq^{\mathcal{G}}}
+\newcommand{\dominant}{\mathsf{dominant}}
+\newcommand{\extract}{\mathsf{extract}}
+\newcommand{\gramdef}{\ensuremath{\mathrel{\mathord{:}\mathord{:=}}}}
+\newcommand{\contains}[2]{{#1} \prec {#2}}
+\newcommand{\cost}{\mathsf{cost}}
+\DeclareMathOperator*{\argmin}{arg\,min}
+\newcommand{\ecau}[3]{\gau(#1 \vdash #2,#3)}
+\newcommand{\intro}{\sz}
+\newcommand{\emptyseq}{\epsilon}
+\newcommand{\ctx}{\mathcal{C}}
+\newcommand{\ruleset}{\mathcal{R}}
+\newcommand{\patset}{\mathcal{P}}
+\newcommand{\libset}{\mathcal{L}}
+
+\newcommand{\sfunify}{\ensuremath{\textcolor{darkblue}{\mathsf{reduce}}}}
+\newcommand{\sfprune}{\ensuremath{\textcolor{darkred}{\mathsf{prune}}}}
+\newcommand{\sftopk}{\ensuremath{\mathsf{top\_k}}}
+
+\newcommand{\cogsci}{\tname{2d cad}}
+\newcommand{\nuts}{Nuts-and-bolts\xspace}
