@@ -1,0 +1,453 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="1536" height="1024" viewBox="0 0 1536 1024">
+  <defs>
+    <marker id="arrow-blue" viewBox="0 0 10 10" refX="8.5" refY="5" markerWidth="8" markerHeight="8" orient="auto-start-reverse">
+      <path d="M 0 0 L 10 5 L 0 10 z" fill="#1a63c7"/>
+    </marker>
+    <marker id="arrow-gray" viewBox="0 0 10 10" refX="8.5" refY="5" markerWidth="7" markerHeight="7" orient="auto-start-reverse">
+      <path d="M 0 0 L 10 5 L 0 10 z" fill="#56687d"/>
+    </marker>
+    <marker id="arrow-green" viewBox="0 0 10 10" refX="8.5" refY="5" markerWidth="7" markerHeight="7" orient="auto-start-reverse">
+      <path d="M 0 0 L 10 5 L 0 10 z" fill="#1f7f35"/>
+    </marker>
+    <filter id="soft-shadow" x="-6%" y="-6%" width="112%" height="112%">
+      <feDropShadow dx="0" dy="1.2" stdDeviation="1.5" flood-color="#335" flood-opacity="0.10"/>
+    </filter>
+  </defs>
+  <style>
+    .font { font-family: Arial, Helvetica, "DejaVu Sans", sans-serif; }
+    .mono { font-family: Menlo, Consolas, "Liberation Mono", monospace; }
+    .cap { letter-spacing: .2px; }
+  </style>
+  <rect width="1536" height="1024" fill="#ffffff"/>
+  <g class="font">
+
+<text x="768.0" y="34.0" font-size="28.0" fill="#071225" font-weight="900" text-anchor="middle">Harness for AI-Agentic Operator Code Analysis &amp; Programming Model</text>
+<text x="768.0" y="58.0" font-size="14.0" fill="#071225" font-weight="400" text-anchor="middle">Architecture: compiler tools, static analysis, and programming-model constraints for agentic operator tuning</text>
+<rect x="17.0" y="84.0" width="294.0" height="315.0" rx="7.0" fill="#ffffff" stroke="#0b4fb3" stroke-width="1.0"/>
+<rect x="17.0" y="84.0" width="294.0" height="27.0" rx="7.0" fill="#eef5ff" stroke="#0b4fb3" stroke-width="1.0"/>
+<line x1="17.0" y1="111.0" x2="311.0" y2="111.0" stroke="#0b4fb3" stroke-width="1.0" fill="none"/>
+<text x="164.0" y="103.0" font-size="13.0" fill="#0b4fb3" font-weight="900" text-anchor="middle"><tspan x="164.0" dy="0.0">1. GOAL AND KEY TASKS</tspan></text>
+<circle cx="48.0" cy="150.0" r="15.1" fill="none" stroke="#0b4fb3" stroke-width="2.0"/>
+<circle cx="48.0" cy="150.0" r="9.7" fill="none" stroke="#0b4fb3" stroke-width="1.6"/>
+<circle cx="48.0" cy="150.0" r="3.6" fill="#0b4fb3"/>
+<line x1="50.0" y1="148.0" x2="64.2" y2="133.8" stroke="#0b4fb3" stroke-width="1.8" fill="none"/>
+<text x="78.0" y="133.0" font-size="12.0" fill="#0b4fb3" font-weight="900" text-anchor="start">Goal</text>
+<text x="78.0" y="151.0" font-size="9.3" fill="#071225" font-weight="400" text-anchor="start"><tspan x="78.0" dy="0.0">Give the AI agent structured knowledge</tspan><tspan x="78.0" dy="12.4">about the operator and target</tspan><tspan x="78.0" dy="12.4">architecture so it can analyze, modify,</tspan><tspan x="78.0" dy="12.4">and optimize code more effectively and</tspan><tspan x="78.0" dy="12.4">reliably.</tspan></text>
+<rect x="35.0" y="228.0" width="25.0" height="28.0" rx="3.0" fill="none" stroke="#0b4fb3" stroke-width="1.6"/>
+<path d="M 40.0 235.0 l 3 3 l 5 -6" stroke="#0b4fb3" stroke-width="1.4" fill="none"/>
+<line x1="51.0" y1="236.0" x2="57.0" y2="236.0" stroke="#0b4fb3" stroke-width="1.2" fill="none"/>
+<path d="M 40.0 243.0 l 3 3 l 5 -6" stroke="#0b4fb3" stroke-width="1.4" fill="none"/>
+<line x1="51.0" y1="244.0" x2="57.0" y2="244.0" stroke="#0b4fb3" stroke-width="1.2" fill="none"/>
+<path d="M 40.0 251.0 l 3 3 l 5 -6" stroke="#0b4fb3" stroke-width="1.4" fill="none"/>
+<line x1="51.0" y1="252.0" x2="57.0" y2="252.0" stroke="#0b4fb3" stroke-width="1.2" fill="none"/>
+<text x="78.0" y="234.0" font-size="12.0" fill="#0b4fb3" font-weight="900" text-anchor="start">Key tasks</text>
+<text x="67.0" y="254.0" font-size="8.3" fill="#111" font-weight="400" text-anchor="start"><tspan x="67.0" dy="0.0">Extract useful views from compiler and</tspan><tspan x="67.0" dy="11.5">profiler artifacts.</tspan></text>
+<text x="67.0" y="277.0" font-size="8.3" fill="#111" font-weight="400" text-anchor="start"><tspan x="67.0" dy="0.0">Build an AI-friendly IR and legal</tspan><tspan x="67.0" dy="11.5">transformation set.</tspan></text>
+<text x="67.0" y="300.0" font-size="8.3" fill="#111" font-weight="400" text-anchor="start"><tspan x="67.0" dy="0.0">Pass knowledge, context, and constraints to</tspan><tspan x="67.0" dy="11.5">the agent.</tspan></text>
+<text x="67.0" y="323.0" font-size="8.3" fill="#111" font-weight="400" text-anchor="start"><tspan x="67.0" dy="0.0">Let the agent propose code/model changes.</tspan></text>
+<text x="67.0" y="334.5" font-size="8.3" fill="#111" font-weight="400" text-anchor="start"><tspan x="67.0" dy="0.0">Compile, verify correctness, and measure</tspan><tspan x="67.0" dy="11.5">performance.</tspan></text>
+<text x="67.0" y="357.5" font-size="8.3" fill="#111" font-weight="400" text-anchor="start"><tspan x="67.0" dy="0.0">Accumulate reusable experience in a</tspan><tspan x="67.0" dy="11.5">skill/motif bank.</tspan></text>
+<rect x="320.0" y="84.0" width="860.0" height="215.0" rx="7.0" fill="#ffffff" stroke="#0b4fb3" stroke-width="1.0"/>
+<rect x="320.0" y="84.0" width="860.0" height="27.0" rx="7.0" fill="#f7fbff" stroke="#0b4fb3" stroke-width="1.0"/>
+<line x1="320.0" y1="111.0" x2="1180.0" y2="111.0" stroke="#0b4fb3" stroke-width="1.0" fill="none"/>
+<text x="750.0" y="103.0" font-size="13.0" fill="#0b4fb3" font-weight="900" text-anchor="middle"><tspan x="750.0" dy="0.0">2. OVERALL HARNESS ARCHITECTURE</tspan></text>
+<text x="406.0" y="132.0" font-size="9.2" fill="#111" font-weight="900" text-anchor="middle"><tspan x="406.0" dy="0.0">Source artifacts</tspan></text>
+<rect x="395.0" y="166.0" width="26.0" height="31.0" rx="2.0" fill="none" stroke="#56687d" stroke-width="1.4"/>
+<path d="M 415.0 166.0 v 8 h 8" stroke="#56687d" stroke-width="1.2" fill="none"/>
+<line x1="399.0" y1="176.0" x2="417.0" y2="176.0" stroke="#56687d" stroke-width="1.1" fill="none"/>
+<line x1="399.0" y1="182.0" x2="417.0" y2="182.0" stroke="#56687d" stroke-width="1.1" fill="none"/>
+<line x1="399.0" y1="188.0" x2="417.0" y2="188.0" stroke="#56687d" stroke-width="1.1" fill="none"/>
+<text x="334.0" y="222.0" font-size="7.8" fill="#111" font-weight="400" text-anchor="start"><tspan x="334.0" dy="0.0">• C++/AscendC operator code</tspan></text>
+<text x="334.0" y="233.4" font-size="7.8" fill="#111" font-weight="400" text-anchor="start"><tspan x="334.0" dy="0.0">• Host-side tiling code</tspan></text>
+<text x="334.0" y="244.8" font-size="7.8" fill="#111" font-weight="400" text-anchor="start"><tspan x="334.0" dy="0.0">• Operator spec:</tspan><tspan x="334.0" dy="11.4">  shape/dtype/layout</tspan></text>
+<text x="334.0" y="267.6" font-size="7.8" fill="#111" font-weight="400" text-anchor="start"><tspan x="334.0" dy="0.0">• Tests and reference</tspan><tspan x="334.0" dy="11.4">  implementation</tspan></text>
+<line x1="482.0" y1="181.0" x2="510.0" y2="181.0" stroke="#56687d" stroke-width="2.0" fill="none" marker-end="url(#arrow-gray)"/>
+<text x="582.0" y="132.0" font-size="9.2" fill="#111" font-weight="900" text-anchor="middle"><tspan x="582.0" dy="0.0">Compiler pipeline</tspan><tspan x="582.0" dy="11.0">(Ascend toolchain)</tspan></text>
+<rect x="567.0" y="168.0" width="32.0" height="26.0" rx="3.0" fill="none" stroke="#56687d" stroke-width="1.4"/>
+<text x="583.0" y="185.9" font-size="11.4" fill="#56687d" font-weight="800" text-anchor="middle" font-family="Menlo">&lt;/&gt;</text>
+<text x="510.0" y="222.0" font-size="7.8" fill="#111" font-weight="400" text-anchor="start"><tspan x="510.0" dy="0.0">• Compile AscendC/C++</tspan></text>
+<text x="510.0" y="233.4" font-size="7.8" fill="#111" font-weight="400" text-anchor="start"><tspan x="510.0" dy="0.0">• Generate binaries</tspan></text>
+<text x="510.0" y="244.8" font-size="7.8" fill="#111" font-weight="400" text-anchor="start"><tspan x="510.0" dy="0.0">• IR/dumps, logs, diagnostics</tspan></text>
+<line x1="658.0" y1="181.0" x2="686.0" y2="181.0" stroke="#56687d" stroke-width="2.0" fill="none" marker-end="url(#arrow-gray)"/>
+<text x="758.0" y="132.0" font-size="9.2" fill="#111" font-weight="900" text-anchor="middle"><tspan x="758.0" dy="0.0">View extractor</tspan><tspan x="758.0" dy="11.0">(Static &amp; Program Analysis)</tspan></text>
+<line x1="759.0" y1="168.0" x2="747.0" y2="192.0" stroke="#56687d" stroke-width="1.2" fill="none"/>
+<line x1="759.0" y1="168.0" x2="771.0" y2="192.0" stroke="#56687d" stroke-width="1.2" fill="none"/>
+<line x1="747.0" y1="192.0" x2="771.0" y2="192.0" stroke="#56687d" stroke-width="1.2" fill="none"/>
+<circle cx="759.0" cy="168.0" r="4.7" fill="#fff" stroke="#56687d" stroke-width="1.4"/>
+<circle cx="747.0" cy="192.0" r="4.7" fill="#fff" stroke="#56687d" stroke-width="1.4"/>
+<circle cx="771.0" cy="192.0" r="4.7" fill="#fff" stroke="#56687d" stroke-width="1.4"/>
+<text x="686.0" y="222.0" font-size="7.8" fill="#111" font-weight="400" text-anchor="start"><tspan x="686.0" dy="0.0">• Static analysis</tspan></text>
+<text x="686.0" y="233.4" font-size="7.8" fill="#111" font-weight="400" text-anchor="start"><tspan x="686.0" dy="0.0">• Extract IR and graphs</tspan></text>
+<text x="686.0" y="244.8" font-size="7.8" fill="#111" font-weight="400" text-anchor="start"><tspan x="686.0" dy="0.0">• Build AI-friendly views</tspan></text>
+<line x1="834.0" y1="181.0" x2="862.0" y2="181.0" stroke="#56687d" stroke-width="2.0" fill="none" marker-end="url(#arrow-gray)"/>
+<text x="934.0" y="132.0" font-size="9.2" fill="#111" font-weight="900" text-anchor="middle"><tspan x="934.0" dy="0.0">AI agent</tspan><tspan x="934.0" dy="11.0">(analysis and modification)</tspan></text>
+<rect x="921.0" y="171.0" width="28.0" height="29.0" rx="8.0" fill="#f7fbff" stroke="#56687d" stroke-width="1.7"/>
+<line x1="935.0" y1="171.0" x2="935.0" y2="166.0" stroke="#56687d" stroke-width="1.4" fill="none"/>
+<circle cx="935.0" cy="165.5" r="2.4" fill="#56687d"/>
+<circle cx="930.4" cy="183.3" r="2.4" fill="#56687d"/>
+<circle cx="939.6" cy="183.3" r="2.4" fill="#56687d"/>
+<line x1="930.4" y1="189.4" x2="939.6" y2="189.4" stroke="#56687d" stroke-width="1.2" fill="none"/>
+<text x="862.0" y="222.0" font-size="7.8" fill="#111" font-weight="400" text-anchor="start"><tspan x="862.0" dy="0.0">• Understand context</tspan></text>
+<text x="862.0" y="233.4" font-size="7.8" fill="#111" font-weight="400" text-anchor="start"><tspan x="862.0" dy="0.0">• Plan changes</tspan></text>
+<text x="862.0" y="244.8" font-size="7.8" fill="#111" font-weight="400" text-anchor="start"><tspan x="862.0" dy="0.0">• Generate patches/code/DSL</tspan></text>
+<line x1="1010.0" y1="181.0" x2="1038.0" y2="181.0" stroke="#56687d" stroke-width="2.0" fill="none" marker-end="url(#arrow-gray)"/>
+<text x="1110.0" y="132.0" font-size="9.2" fill="#111" font-weight="900" text-anchor="middle"><tspan x="1110.0" dy="0.0">Verification and scoring</tspan></text>
+<line x1="1098.0" y1="194.0" x2="1126.0" y2="194.0" stroke="#56687d" stroke-width="1.3" fill="none"/>
+<rect x="1101.0" y="184.0" width="5.0" height="9.0" rx="1.0" fill="none" stroke="#56687d" stroke-width="1.2"/>
+<rect x="1109.0" y="177.0" width="5.0" height="16.0" rx="1.0" fill="none" stroke="#56687d" stroke-width="1.2"/>
+<rect x="1117.0" y="169.0" width="5.0" height="24.0" rx="1.0" fill="none" stroke="#56687d" stroke-width="1.2"/>
+<path d="M 1099.0 185.0 C 1107.0 177.0, 1111.0 177.0, 1125.0 170.0" stroke="#56687d" stroke-width="1.4" fill="none"/>
+<text x="1038.0" y="222.0" font-size="7.8" fill="#111" font-weight="400" text-anchor="start"><tspan x="1038.0" dy="0.0">• Compile and run</tspan></text>
+<text x="1038.0" y="233.4" font-size="7.8" fill="#111" font-weight="400" text-anchor="start"><tspan x="1038.0" dy="0.0">• Check correctness</tspan></text>
+<text x="1038.0" y="244.8" font-size="7.8" fill="#111" font-weight="400" text-anchor="start"><tspan x="1038.0" dy="0.0">• Profile</tspan></text>
+<text x="1038.0" y="256.2" font-size="7.8" fill="#111" font-weight="400" text-anchor="start"><tspan x="1038.0" dy="0.0">• Score quality of changes</tspan></text>
+<rect x="1194.0" y="84.0" width="324.0" height="410.0" rx="7.0" fill="#ffffff" stroke="#1f7f35" stroke-width="1.0"/>
+<rect x="1194.0" y="84.0" width="324.0" height="27.0" rx="7.0" fill="#edf8ee" stroke="#1f7f35" stroke-width="1.0"/>
+<line x1="1194.0" y1="111.0" x2="1518.0" y2="111.0" stroke="#1f7f35" stroke-width="1.0" fill="none"/>
+<text x="1356.0" y="103.0" font-size="13.0" fill="#1f7f35" font-weight="900" text-anchor="middle"><tspan x="1356.0" dy="0.0">3. AGENT VIEWS</tspan></text>
+<rect x="1213.0" y="132.0" width="16.0" height="21.0" rx="2.0" fill="none" stroke="#1f7f35" stroke-width="1.4"/>
+<path d="M 1223.0 132.0 v 8 h 8" stroke="#1f7f35" stroke-width="1.2" fill="none"/>
+<line x1="1217.0" y1="142.0" x2="1225.0" y2="142.0" stroke="#1f7f35" stroke-width="1.1" fill="none"/>
+<line x1="1217.0" y1="148.0" x2="1225.0" y2="148.0" stroke="#1f7f35" stroke-width="1.1" fill="none"/>
+<line x1="1217.0" y1="154.0" x2="1225.0" y2="154.0" stroke="#1f7f35" stroke-width="1.1" fill="none"/>
+<text x="1240.0" y="139.0" font-size="9.5" fill="#1f7f35" font-weight="900" text-anchor="start">Semantic View</text>
+<text x="1240.0" y="153.0" font-size="7.4" fill="#111" font-weight="400" text-anchor="start"><tspan x="1240.0" dy="0.0">operator type, shapes, layout, semantics,</tspan><tspan x="1240.0" dy="9.2">broadcast, reductions, precision limits</tspan></text>
+<line x1="1194.0" y1="169.0" x2="1518.0" y2="169.0" stroke="#b6dfbd" stroke-width="0.8" fill="none"/>
+<rect x="1211.0" y="184.0" width="18.0" height="21.0" rx="3.0" fill="none" stroke="#1f7f35" stroke-width="1.6"/>
+<path d="M 1216.0 191.0 l 3 3 l 5 -6" stroke="#1f7f35" stroke-width="1.4" fill="none"/>
+<line x1="1227.0" y1="192.0" x2="1226.0" y2="192.0" stroke="#1f7f35" stroke-width="1.2" fill="none"/>
+<path d="M 1216.0 199.0 l 3 3 l 5 -6" stroke="#1f7f35" stroke-width="1.4" fill="none"/>
+<line x1="1227.0" y1="200.0" x2="1226.0" y2="200.0" stroke="#1f7f35" stroke-width="1.2" fill="none"/>
+<path d="M 1216.0 207.0 l 3 3 l 5 -6" stroke="#1f7f35" stroke-width="1.4" fill="none"/>
+<line x1="1227.0" y1="208.0" x2="1226.0" y2="208.0" stroke="#1f7f35" stroke-width="1.2" fill="none"/>
+<text x="1240.0" y="191.0" font-size="9.5" fill="#1f7f35" font-weight="900" text-anchor="start">Tiling View</text>
+<text x="1240.0" y="205.0" font-size="7.4" fill="#111" font-weight="400" text-anchor="start"><tspan x="1240.0" dy="0.0">axes, tile sizes, core split, tail policy,</tspan><tspan x="1240.0" dy="9.2">data volume, local memory</tspan></text>
+<line x1="1194.0" y1="221.0" x2="1518.0" y2="221.0" stroke="#b6dfbd" stroke-width="0.8" fill="none"/>
+<line x1="1229.0" y1="246.0" x2="1233.0" y2="246.0" stroke="#1f7f35" stroke-width="1.6" fill="none"/>
+<line x1="1226.4" y1="252.4" x2="1229.2" y2="255.2" stroke="#1f7f35" stroke-width="1.6" fill="none"/>
+<line x1="1220.0" y1="255.0" x2="1220.0" y2="259.0" stroke="#1f7f35" stroke-width="1.6" fill="none"/>
+<line x1="1213.6" y1="252.4" x2="1210.8" y2="255.2" stroke="#1f7f35" stroke-width="1.6" fill="none"/>
+<line x1="1211.0" y1="246.0" x2="1207.0" y2="246.0" stroke="#1f7f35" stroke-width="1.6" fill="none"/>
+<line x1="1213.6" y1="239.6" x2="1210.8" y2="236.8" stroke="#1f7f35" stroke-width="1.6" fill="none"/>
+<line x1="1220.0" y1="237.0" x2="1220.0" y2="233.0" stroke="#1f7f35" stroke-width="1.6" fill="none"/>
+<line x1="1226.4" y1="239.6" x2="1229.2" y2="236.8" stroke="#1f7f35" stroke-width="1.6" fill="none"/>
+<circle cx="1220.0" cy="246.0" r="9.5" fill="none" stroke="#1f7f35" stroke-width="1.6"/>
+<circle cx="1220.0" cy="246.0" r="3.4" fill="none" stroke="#1f7f35" stroke-width="1.4"/>
+<text x="1240.0" y="243.0" font-size="9.5" fill="#1f7f35" font-weight="900" text-anchor="start">Pipeline View</text>
+<text x="1240.0" y="257.0" font-size="7.4" fill="#111" font-weight="400" text-anchor="start"><tspan x="1240.0" dy="0.0">CopyIn-Compute-CopyOut stages, queues,</tspan><tspan x="1240.0" dy="9.2">events, overlap, double buffering</tspan></text>
+<line x1="1194.0" y1="273.0" x2="1518.0" y2="273.0" stroke="#b6dfbd" stroke-width="0.8" fill="none"/>
+<rect x="1213.0" y="288.0" width="16.0" height="21.0" rx="2.0" fill="none" stroke="#1f7f35" stroke-width="1.4"/>
+<path d="M 1223.0 288.0 v 8 h 8" stroke="#1f7f35" stroke-width="1.2" fill="none"/>
+<line x1="1217.0" y1="298.0" x2="1225.0" y2="298.0" stroke="#1f7f35" stroke-width="1.1" fill="none"/>
+<line x1="1217.0" y1="304.0" x2="1225.0" y2="304.0" stroke="#1f7f35" stroke-width="1.1" fill="none"/>
+<line x1="1217.0" y1="310.0" x2="1225.0" y2="310.0" stroke="#1f7f35" stroke-width="1.1" fill="none"/>
+<text x="1240.0" y="295.0" font-size="9.5" fill="#1f7f35" font-weight="900" text-anchor="start">Memory View</text>
+<text x="1240.0" y="309.0" font-size="7.4" fill="#111" font-weight="400" text-anchor="start"><tspan x="1240.0" dy="0.0">GM/UB/L1/L0/LOC spaces, buffers, alignment,</tspan><tspan x="1240.0" dy="9.2">liveness, bank conflicts</tspan></text>
+<line x1="1194.0" y1="325.0" x2="1518.0" y2="325.0" stroke="#b6dfbd" stroke-width="0.8" fill="none"/>
+<line x1="1220.0" y1="342.0" x2="1213.0" y2="356.0" stroke="#1f7f35" stroke-width="1.2" fill="none"/>
+<line x1="1220.0" y1="342.0" x2="1227.0" y2="356.0" stroke="#1f7f35" stroke-width="1.2" fill="none"/>
+<line x1="1213.0" y1="356.0" x2="1227.0" y2="356.0" stroke="#1f7f35" stroke-width="1.2" fill="none"/>
+<circle cx="1220.0" cy="342.0" r="4.7" fill="#fff" stroke="#1f7f35" stroke-width="1.4"/>
+<circle cx="1213.0" cy="356.0" r="4.7" fill="#fff" stroke="#1f7f35" stroke-width="1.4"/>
+<circle cx="1227.0" cy="356.0" r="4.7" fill="#fff" stroke="#1f7f35" stroke-width="1.4"/>
+<text x="1240.0" y="347.0" font-size="9.5" fill="#1f7f35" font-weight="900" text-anchor="start">Dependence View</text>
+<text x="1240.0" y="361.0" font-size="7.4" fill="#111" font-weight="400" text-anchor="start"><tspan x="1240.0" dy="0.0">data/control dependence graph, def-use,</tspan><tspan x="1240.0" dy="9.2">aliases and effects</tspan></text>
+<line x1="1194.0" y1="377.0" x2="1518.0" y2="377.0" stroke="#b6dfbd" stroke-width="0.8" fill="none"/>
+<circle cx="1220.0" cy="402.0" r="10.6" fill="none" stroke="#1f7f35" stroke-width="1.6"/>
+<line x1="1220.0" y1="402.0" x2="1220.0" y2="396.4" stroke="#1f7f35" stroke-width="1.4" fill="none"/>
+<line x1="1220.0" y1="402.0" x2="1225.0" y2="404.2" stroke="#1f7f35" stroke-width="1.4" fill="none"/>
+<line x1="1230.0" y1="402.0" x2="1232.0" y2="402.0" stroke="#1f7f35" stroke-width="1.0" fill="none"/>
+<line x1="1227.1" y1="409.1" x2="1228.5" y2="410.5" stroke="#1f7f35" stroke-width="1.0" fill="none"/>
+<line x1="1220.0" y1="412.0" x2="1220.0" y2="414.0" stroke="#1f7f35" stroke-width="1.0" fill="none"/>
+<line x1="1212.9" y1="409.1" x2="1211.5" y2="410.5" stroke="#1f7f35" stroke-width="1.0" fill="none"/>
+<line x1="1210.0" y1="402.0" x2="1208.0" y2="402.0" stroke="#1f7f35" stroke-width="1.0" fill="none"/>
+<line x1="1212.9" y1="394.9" x2="1211.5" y2="393.5" stroke="#1f7f35" stroke-width="1.0" fill="none"/>
+<line x1="1220.0" y1="392.0" x2="1220.0" y2="390.0" stroke="#1f7f35" stroke-width="1.0" fill="none"/>
+<line x1="1227.1" y1="394.9" x2="1228.5" y2="393.5" stroke="#1f7f35" stroke-width="1.0" fill="none"/>
+<text x="1240.0" y="399.0" font-size="9.5" fill="#1f7f35" font-weight="900" text-anchor="start">Performance View</text>
+<text x="1240.0" y="413.0" font-size="7.4" fill="#111" font-weight="400" text-anchor="start"><tspan x="1240.0" dy="0.0">time, AI Core utilization, bandwidth, stalls,</tspan><tspan x="1240.0" dy="9.2">IPC, bottlenecks, roofline</tspan></text>
+<line x1="1194.0" y1="429.0" x2="1518.0" y2="429.0" stroke="#b6dfbd" stroke-width="0.8" fill="none"/>
+<path d="M 1220.0 443.0 L 1225.0 452.0 L 1231.0 454.0 L 1225.0 456.0 L 1220.0 465.0 L 1215.0 456.0 L 1209.0 454.0 L 1215.0 452.0 Z" stroke="#1f7f35" stroke-width="1.2" fill="#fffaf0"/>
+<text x="1240.0" y="451.0" font-size="9.5" fill="#1f7f35" font-weight="900" text-anchor="start">Transformation Space</text>
+<text x="1240.0" y="465.0" font-size="7.4" fill="#111" font-weight="400" text-anchor="start"><tspan x="1240.0" dy="0.0">legal transformations, predicates, cost</tspan><tspan x="1240.0" dy="9.2">estimates, and risks</tspan></text>
+<line x1="1194.0" y1="481.0" x2="1518.0" y2="481.0" stroke="#b6dfbd" stroke-width="0.8" fill="none"/>
+<rect x="17.0" y="423.0" width="294.0" height="303.0" rx="7.0" fill="#ffffff" stroke="#6b37b2" stroke-width="1.0"/>
+<rect x="17.0" y="423.0" width="294.0" height="27.0" rx="7.0" fill="#f6efff" stroke="#6b37b2" stroke-width="1.0"/>
+<line x1="17.0" y1="450.0" x2="311.0" y2="450.0" stroke="#6b37b2" stroke-width="1.0" fill="none"/>
+<text x="164.0" y="442.0" font-size="13.0" fill="#6b37b2" font-weight="900" text-anchor="middle"><tspan x="164.0" dy="0.0">4. INDUSTRIAL ANALYSIS TECHNIQUES</tspan></text>
+<rect x="25.0" y="455.0" width="278.0" height="35.0" rx="4.0" fill="#fbf7ff" stroke="#d3b9ec" stroke-width="0.9"/>
+<text x="34.0" y="469.0" font-size="8.3" fill="#071225" font-weight="900" text-anchor="start"><tspan x="34.0" dy="0.0">Dataflow Analysis</tspan></text>
+<text x="34.0" y="486.0" font-size="7.2" fill="#111" font-weight="400" text-anchor="start"><tspan x="34.0" dy="0.0">reaching defs, liveness, const propagation</tspan></text>
+<rect x="25.0" y="494.0" width="278.0" height="35.0" rx="4.0" fill="#fbf7ff" stroke="#d3b9ec" stroke-width="0.9"/>
+<text x="34.0" y="508.0" font-size="8.3" fill="#071225" font-weight="900" text-anchor="start"><tspan x="34.0" dy="0.0">Dependence Analysis (PDG)</tspan></text>
+<text x="34.0" y="525.0" font-size="7.2" fill="#111" font-weight="400" text-anchor="start"><tspan x="34.0" dy="0.0">data/control dependencies, dependence graphs</tspan></text>
+<rect x="25.0" y="533.0" width="278.0" height="35.0" rx="4.0" fill="#fbf7ff" stroke="#d3b9ec" stroke-width="0.9"/>
+<text x="34.0" y="547.0" font-size="8.3" fill="#071225" font-weight="900" text-anchor="start"><tspan x="34.0" dy="0.0">Alias &amp; Effect Analysis</tspan></text>
+<text x="34.0" y="564.0" font-size="7.2" fill="#111" font-weight="400" text-anchor="start"><tspan x="34.0" dy="0.0">aliases, side effects, memory regions</tspan></text>
+<rect x="25.0" y="572.0" width="278.0" height="35.0" rx="4.0" fill="#fbf7ff" stroke="#d3b9ec" stroke-width="0.9"/>
+<text x="34.0" y="586.0" font-size="8.3" fill="#071225" font-weight="900" text-anchor="start"><tspan x="34.0" dy="0.0">Abstract Interpretation</tspan></text>
+<text x="34.0" y="603.0" font-size="7.2" fill="#111" font-weight="400" text-anchor="start"><tspan x="34.0" dy="0.0">ranges, shapes, alignment, safety</tspan></text>
+<rect x="25.0" y="611.0" width="278.0" height="35.0" rx="4.0" fill="#fbf7ff" stroke="#d3b9ec" stroke-width="0.9"/>
+<text x="34.0" y="625.0" font-size="8.3" fill="#071225" font-weight="900" text-anchor="start"><tspan x="34.0" dy="0.0">Polyhedral Analysis</tspan></text>
+<text x="34.0" y="642.0" font-size="7.2" fill="#111" font-weight="400" text-anchor="start"><tspan x="34.0" dy="0.0">loops, affine accesses, tiling, interchange</tspan></text>
+<rect x="25.0" y="650.0" width="278.0" height="35.0" rx="4.0" fill="#fbf7ff" stroke="#d3b9ec" stroke-width="0.9"/>
+<text x="34.0" y="664.0" font-size="8.3" fill="#071225" font-weight="900" text-anchor="start"><tspan x="34.0" dy="0.0">Program Slicing &amp; Pattern</tspan><tspan x="34.0" dy="9.5">Mining</tspan></text>
+<text x="34.0" y="681.0" font-size="7.2" fill="#111" font-weight="400" text-anchor="start"><tspan x="34.0" dy="0.0">repeated optimization structures</tspan></text>
+<rect x="25.0" y="689.0" width="278.0" height="35.0" rx="4.0" fill="#fbf7ff" stroke="#d3b9ec" stroke-width="0.9"/>
+<text x="34.0" y="703.0" font-size="8.3" fill="#071225" font-weight="900" text-anchor="start"><tspan x="34.0" dy="0.0">E-Graphs &amp; Equality Saturation</tspan></text>
+<text x="34.0" y="720.0" font-size="7.2" fill="#111" font-weight="400" text-anchor="start"><tspan x="34.0" dy="0.0">equivalent program forms</tspan></text>
+<text x="768.0" y="326.0" font-size="15.0" fill="#0b4fb3" font-weight="900" text-anchor="middle">5. AI-AGENT LOOP</text>
+<path d="M 538 353 C 640 318, 880 321, 951 357" stroke="#0b4fb3" stroke-width="1.6" fill="none" marker-end="url(#arrow-blue)"/>
+<path d="M 947 533 C 825 570, 624 574, 532 535" stroke="#0b4fb3" stroke-width="1.6" fill="none" marker-end="url(#arrow-blue)"/>
+<rect x="456.0" y="363.0" width="151.0" height="163.0" rx="5.0" fill="#f8fbff" stroke="#8fb4e8" stroke-width="1.0"/>
+<rect x="456.0" y="363.0" width="151.0" height="27.0" rx="5.0" fill="#eef5ff" stroke="#8fb4e8" stroke-width="1.0"/>
+<text x="531.5" y="382.0" font-size="10.0" fill="#0b4fb3" font-weight="900" text-anchor="middle">Agent input</text>
+<text x="470.0" y="421.0" font-size="7.7" fill="#111" font-weight="400" text-anchor="start"><tspan x="470.0" dy="0.0">• All views</tspan></text>
+<text x="470.0" y="432.6" font-size="7.7" fill="#111" font-weight="400" text-anchor="start"><tspan x="470.0" dy="0.0">• Change history</tspan></text>
+<text x="470.0" y="444.2" font-size="7.7" fill="#111" font-weight="400" text-anchor="start"><tspan x="470.0" dy="0.0">• Previous run results</tspan></text>
+<text x="470.0" y="455.8" font-size="7.7" fill="#111" font-weight="400" text-anchor="start"><tspan x="470.0" dy="0.0">• Goals and constraints</tspan></text>
+<text x="470.0" y="467.4" font-size="7.7" fill="#111" font-weight="400" text-anchor="start"><tspan x="470.0" dy="0.0">• API examples/docs</tspan></text>
+<rect x="650.0" y="373.0" width="191.0" height="163.0" rx="5.0" fill="#f2fbf0" stroke="#91c59b" stroke-width="1.0"/>
+<rect x="650.0" y="373.0" width="191.0" height="27.0" rx="5.0" fill="#eef5ff" stroke="#91c59b" stroke-width="1.0"/>
+<text x="745.5" y="392.0" font-size="10.0" fill="#0b4fb3" font-weight="900" text-anchor="middle">Agent actions</text>
+<text x="664.0" y="431.0" font-size="7.7" fill="#111" font-weight="400" text-anchor="start"><tspan x="664.0" dy="0.0">• Change tiling</tspan></text>
+<text x="664.0" y="442.6" font-size="7.7" fill="#111" font-weight="400" text-anchor="start"><tspan x="664.0" dy="0.0">• Loop reorder</tspan></text>
+<text x="664.0" y="454.2" font-size="7.7" fill="#111" font-weight="400" text-anchor="start"><tspan x="664.0" dy="0.0">• Enable double buffering</tspan></text>
+<text x="664.0" y="465.8" font-size="7.7" fill="#111" font-weight="400" text-anchor="start"><tspan x="664.0" dy="0.0">• Adjust queues</tspan></text>
+<text x="664.0" y="477.4" font-size="7.7" fill="#111" font-weight="400" text-anchor="start"><tspan x="664.0" dy="0.0">• Vectorize/unroll</tspan></text>
+<text x="664.0" y="489.0" font-size="7.7" fill="#111" font-weight="400" text-anchor="start"><tspan x="664.0" dy="0.0">• Fusion/fission</tspan></text>
+<text x="664.0" y="500.6" font-size="7.7" fill="#111" font-weight="400" text-anchor="start"><tspan x="664.0" dy="0.0">• Data placement</tspan></text>
+<text x="664.0" y="512.2" font-size="7.7" fill="#111" font-weight="400" text-anchor="start"><tspan x="664.0" dy="0.0">• Precision changes</tspan></text>
+<text x="664.0" y="523.8" font-size="7.7" fill="#111" font-weight="400" text-anchor="start"><tspan x="664.0" dy="0.0">• Generate DSL/IR patch</tspan></text>
+<text x="664.0" y="535.4" font-size="7.7" fill="#111" font-weight="400" text-anchor="start"><tspan x="664.0" dy="0.0">• Refactor code</tspan></text>
+<rect x="886.0" y="363.0" width="143.0" height="163.0" rx="5.0" fill="#f8fbff" stroke="#8fb4e8" stroke-width="1.0"/>
+<rect x="886.0" y="363.0" width="143.0" height="27.0" rx="5.0" fill="#eef5ff" stroke="#8fb4e8" stroke-width="1.0"/>
+<text x="957.5" y="382.0" font-size="10.0" fill="#0b4fb3" font-weight="900" text-anchor="middle">Agent output</text>
+<text x="900.0" y="421.0" font-size="7.7" fill="#111" font-weight="400" text-anchor="start"><tspan x="900.0" dy="0.0">• Code patches/new code</tspan></text>
+<text x="900.0" y="432.6" font-size="7.7" fill="#111" font-weight="400" text-anchor="start"><tspan x="900.0" dy="0.0">• Run parameters</tspan></text>
+<text x="900.0" y="444.2" font-size="7.7" fill="#111" font-weight="400" text-anchor="start"><tspan x="900.0" dy="0.0">• Host/tiling changes</tspan></text>
+<text x="900.0" y="455.8" font-size="7.7" fill="#111" font-weight="400" text-anchor="start"><tspan x="900.0" dy="0.0">• New annotations/directives</tspan></text>
+<line x1="615.0" y1="437.0" x2="642.0" y2="437.0" stroke="#1a63c7" stroke-width="2.4" fill="none" marker-end="url(#arrow-blue)"/>
+<line x1="879.0" y1="437.0" x2="851.0" y2="437.0" stroke="#1a63c7" stroke-width="2.4" fill="none" marker-end="url(#arrow-blue)"/>
+<rect x="425.0" y="590.0" width="628.0" height="108.0" rx="7.0" fill="#ffffff" stroke="#0b4fb3" stroke-width="1.0"/>
+<rect x="425.0" y="590.0" width="628.0" height="27.0" rx="7.0" fill="#f8fbff" stroke="#0b4fb3" stroke-width="1.0"/>
+<line x1="425.0" y1="617.0" x2="1053.0" y2="617.0" stroke="#0b4fb3" stroke-width="1.0" fill="none"/>
+<text x="739.0" y="609.0" font-size="13.0" fill="#0b4fb3" font-weight="900" text-anchor="middle"><tspan x="739.0" dy="0.0">6. VERIFICATION AND FEEDBACK</tspan></text>
+<rect x="435.0" y="620.0" width="108.0" height="75.0" rx="4.0" fill="#fbfdff" stroke="#c5d5eb" stroke-width="1.0"/>
+<text x="489.0" y="641.0" font-size="8.8" fill="#111" font-weight="900" text-anchor="middle">Compile</text>
+<line x1="498.5" y1="674.5" x2="502.5" y2="674.5" stroke="#56687d" stroke-width="1.6" fill="none"/>
+<line x1="495.9" y1="680.9" x2="498.7" y2="683.7" stroke="#56687d" stroke-width="1.6" fill="none"/>
+<line x1="489.5" y1="683.5" x2="489.5" y2="687.5" stroke="#56687d" stroke-width="1.6" fill="none"/>
+<line x1="483.1" y1="680.9" x2="480.3" y2="683.7" stroke="#56687d" stroke-width="1.6" fill="none"/>
+<line x1="480.5" y1="674.5" x2="476.5" y2="674.5" stroke="#56687d" stroke-width="1.6" fill="none"/>
+<line x1="483.1" y1="668.1" x2="480.3" y2="665.3" stroke="#56687d" stroke-width="1.6" fill="none"/>
+<line x1="489.5" y1="665.5" x2="489.5" y2="661.5" stroke="#56687d" stroke-width="1.6" fill="none"/>
+<line x1="495.9" y1="668.1" x2="498.7" y2="665.3" stroke="#56687d" stroke-width="1.6" fill="none"/>
+<circle cx="489.5" cy="674.5" r="9.5" fill="none" stroke="#56687d" stroke-width="1.6"/>
+<circle cx="489.5" cy="674.5" r="3.4" fill="none" stroke="#56687d" stroke-width="1.4"/>
+<rect x="563.0" y="620.0" width="108.0" height="75.0" rx="4.0" fill="#fbfdff" stroke="#c5d5eb" stroke-width="1.0"/>
+<text x="617.0" y="641.0" font-size="8.8" fill="#111" font-weight="900" text-anchor="middle">Correctness</text>
+<rect x="608.0" y="664.0" width="19.0" height="22.0" rx="3.0" fill="none" stroke="#56687d" stroke-width="1.6"/>
+<path d="M 613.0 671.0 l 3 3 l 5 -6" stroke="#56687d" stroke-width="1.4" fill="none"/>
+<line x1="624.0" y1="672.0" x2="624.0" y2="672.0" stroke="#56687d" stroke-width="1.2" fill="none"/>
+<path d="M 613.0 679.0 l 3 3 l 5 -6" stroke="#56687d" stroke-width="1.4" fill="none"/>
+<line x1="624.0" y1="680.0" x2="624.0" y2="680.0" stroke="#56687d" stroke-width="1.2" fill="none"/>
+<path d="M 613.0 687.0 l 3 3 l 5 -6" stroke="#56687d" stroke-width="1.4" fill="none"/>
+<line x1="624.0" y1="688.0" x2="624.0" y2="688.0" stroke="#56687d" stroke-width="1.2" fill="none"/>
+<rect x="691.0" y="620.0" width="108.0" height="75.0" rx="4.0" fill="#fbfdff" stroke="#c5d5eb" stroke-width="1.0"/>
+<text x="745.0" y="641.0" font-size="8.8" fill="#111" font-weight="900" text-anchor="middle">Profiling</text>
+<circle cx="745.5" cy="674.5" r="11.0" fill="none" stroke="#56687d" stroke-width="1.6"/>
+<line x1="745.5" y1="674.5" x2="745.5" y2="668.7" stroke="#56687d" stroke-width="1.4" fill="none"/>
+<line x1="745.5" y1="674.5" x2="750.7" y2="676.8" stroke="#56687d" stroke-width="1.4" fill="none"/>
+<line x1="755.5" y1="674.5" x2="757.5" y2="674.5" stroke="#56687d" stroke-width="1.0" fill="none"/>
+<line x1="752.6" y1="681.6" x2="754.0" y2="683.0" stroke="#56687d" stroke-width="1.0" fill="none"/>
+<line x1="745.5" y1="684.5" x2="745.5" y2="686.5" stroke="#56687d" stroke-width="1.0" fill="none"/>
+<line x1="738.4" y1="681.6" x2="737.0" y2="683.0" stroke="#56687d" stroke-width="1.0" fill="none"/>
+<line x1="735.5" y1="674.5" x2="733.5" y2="674.5" stroke="#56687d" stroke-width="1.0" fill="none"/>
+<line x1="738.4" y1="667.4" x2="737.0" y2="666.0" stroke="#56687d" stroke-width="1.0" fill="none"/>
+<line x1="745.5" y1="664.5" x2="745.5" y2="662.5" stroke="#56687d" stroke-width="1.0" fill="none"/>
+<line x1="752.6" y1="667.4" x2="754.0" y2="666.0" stroke="#56687d" stroke-width="1.0" fill="none"/>
+<rect x="819.0" y="620.0" width="108.0" height="75.0" rx="4.0" fill="#fbfdff" stroke="#c5d5eb" stroke-width="1.0"/>
+<text x="873.0" y="641.0" font-size="8.8" fill="#111" font-weight="900" text-anchor="middle">Performance</text>
+<line x1="865.0" y1="683.0" x2="884.0" y2="683.0" stroke="#56687d" stroke-width="1.3" fill="none"/>
+<rect x="868.0" y="673.0" width="5.0" height="9.0" rx="1.0" fill="none" stroke="#56687d" stroke-width="1.2"/>
+<rect x="876.0" y="666.0" width="5.0" height="16.0" rx="1.0" fill="none" stroke="#56687d" stroke-width="1.2"/>
+<rect x="884.0" y="658.0" width="5.0" height="24.0" rx="1.0" fill="none" stroke="#56687d" stroke-width="1.2"/>
+<path d="M 866.0 674.0 C 874.0 666.0, 878.0 666.0, 883.0 668.0" stroke="#56687d" stroke-width="1.4" fill="none"/>
+<rect x="947.0" y="620.0" width="108.0" height="75.0" rx="4.0" fill="#fbfdff" stroke="#c5d5eb" stroke-width="1.0"/>
+<text x="1001.0" y="641.0" font-size="8.8" fill="#111" font-weight="900" text-anchor="middle">Quality</text>
+<text x="1001.5" y="679.5" font-size="15.7" fill="#f2a000" font-weight="700" text-anchor="middle">☆☆☆☆☆</text>
+<rect x="553.0" y="711.0" width="390.0" height="74.0" rx="6.0" fill="#f8fbff" stroke="#a9c4e8" stroke-width="1.0"/>
+<ellipse cx="593.5" cy="728.0" rx="23.9" ry="5.0" fill="#eef3fb" stroke="#56687d" stroke-width="1.2"/>
+<rect x="569.6" y="728.0" width="47.9" height="49.0" rx="0.0" fill="#eef3fb" stroke="#56687d" stroke-width="1.2"/>
+<ellipse cx="593.5" cy="728.0" rx="23.9" ry="5.0" fill="none" stroke="#56687d" stroke-width="1.2"/>
+<ellipse cx="593.5" cy="750.2" rx="23.9" ry="5.0" fill="none" stroke="#56687d" stroke-width="1.2"/>
+<ellipse cx="593.5" cy="777.0" rx="23.9" ry="5.0" fill="none" stroke="#56687d" stroke-width="1.2"/>
+<text x="645.0" y="728.0" font-size="9.6" fill="#0b4fb3" font-weight="900" text-anchor="start">Experience / Motif / Skill Bank</text>
+<text x="645.0" y="742.0" font-size="7.6" fill="#111" font-weight="400" text-anchor="start"><tspan x="645.0" dy="0.0">• Successful optimization patterns</tspan></text>
+<text x="645.0" y="752.2" font-size="7.6" fill="#111" font-weight="400" text-anchor="start"><tspan x="645.0" dy="0.0">• Anti-patterns and failure causes</tspan></text>
+<text x="645.0" y="762.4" font-size="7.6" fill="#111" font-weight="400" text-anchor="start"><tspan x="645.0" dy="0.0">• Change -&gt; effect links</tspan></text>
+<text x="645.0" y="772.6" font-size="7.6" fill="#111" font-weight="400" text-anchor="start"><tspan x="645.0" dy="0.0">• Snippets, annotations, recipes</tspan></text>
+<rect x="1145.0" y="508.0" width="373.0" height="264.0" rx="7.0" fill="#ffffff" stroke="#f06b00" stroke-width="1.0"/>
+<rect x="1145.0" y="508.0" width="373.0" height="27.0" rx="7.0" fill="#fff5e6" stroke="#f06b00" stroke-width="1.0"/>
+<line x1="1145.0" y1="535.0" x2="1518.0" y2="535.0" stroke="#f06b00" stroke-width="1.0" fill="none"/>
+<text x="1331.5" y="527.0" font-size="13.0" fill="#f06b00" font-weight="900" text-anchor="middle"><tspan x="1331.5" dy="0.0">7. PROGRAMMING MODEL AND MODIFICATION</tspan></text>
+<text x="1194.0" y="560.0" font-size="10.2" fill="#111" font-weight="900" text-anchor="start">Make the model AI-friendly</text>
+<text x="1204.0" y="579.0" font-size="8.2" fill="#111" font-weight="400" text-anchor="start"><tspan x="1204.0" dy="0.0">• Explicit pipeline/memory/sync primitives</tspan></text>
+<text x="1204.0" y="591.0" font-size="8.2" fill="#111" font-weight="400" text-anchor="start"><tspan x="1204.0" dy="0.0">• Declarative annotations and contracts</tspan></text>
+<text x="1204.0" y="603.0" font-size="8.2" fill="#111" font-weight="400" text-anchor="start"><tspan x="1204.0" dy="0.0">• Constraints and checkable properties</tspan></text>
+<text x="1204.0" y="615.0" font-size="8.2" fill="#111" font-weight="400" text-anchor="start"><tspan x="1204.0" dy="0.0">• Metrics and cost model as part of the model</tspan></text>
+<text x="1204.0" y="627.0" font-size="8.2" fill="#111" font-weight="400" text-anchor="start"><tspan x="1204.0" dy="0.0">• Structured IR/DSL layer above code</tspan></text>
+<line x1="1145.0" y1="646.0" x2="1518.0" y2="646.0" stroke="#efb56f" stroke-width="0.9" fill="none"/>
+<text x="1194.0" y="677.0" font-size="10.2" fill="#111" font-weight="900" text-anchor="start">What can be modified/extended</text>
+<text x="1204.0" y="696.0" font-size="8.2" fill="#111" font-weight="400" text-anchor="start"><tspan x="1204.0" dy="0.0">• New DSL/IR layer</tspan></text>
+<text x="1204.0" y="708.0" font-size="8.2" fill="#111" font-weight="400" text-anchor="start"><tspan x="1204.0" dy="0.0">• New primitives: copy_async, stage, barrier</tspan></text>
+<text x="1204.0" y="720.0" font-size="8.2" fill="#111" font-weight="400" text-anchor="start"><tspan x="1204.0" dy="0.0">• Annotations: buffer, align, reuse</tspan></text>
+<text x="1204.0" y="732.0" font-size="8.2" fill="#111" font-weight="400" text-anchor="start"><tspan x="1204.0" dy="0.0">• Lowering rules to AscendC/ISA</tspan></text>
+<text x="1204.0" y="744.0" font-size="8.2" fill="#111" font-weight="400" text-anchor="start"><tspan x="1204.0" dy="0.0">• Verifiers and static checks</tspan></text>
+<rect x="17.0" y="793.0" width="364.0" height="160.0" rx="7.0" fill="#ffffff" stroke="#0f8b94" stroke-width="1.0"/>
+<rect x="17.0" y="793.0" width="364.0" height="27.0" rx="7.0" fill="#eaf9fa" stroke="#0f8b94" stroke-width="1.0"/>
+<line x1="17.0" y1="820.0" x2="381.0" y2="820.0" stroke="#0f8b94" stroke-width="1.0" fill="none"/>
+<text x="199.0" y="812.0" font-size="13.0" fill="#0f8b94" font-weight="900" text-anchor="middle"><tspan x="199.0" dy="0.0">8. TOOLS AND DATA SOURCES</tspan></text>
+<rect x="37.0" y="846.0" width="15.0" height="20.0" rx="2.0" fill="none" stroke="#0f8b94" stroke-width="1.4"/>
+<path d="M 46.0 846.0 v 8 h 8" stroke="#0f8b94" stroke-width="1.2" fill="none"/>
+<line x1="41.0" y1="856.0" x2="48.0" y2="856.0" stroke="#0f8b94" stroke-width="1.1" fill="none"/>
+<line x1="41.0" y1="862.0" x2="48.0" y2="862.0" stroke="#0f8b94" stroke-width="1.1" fill="none"/>
+<line x1="41.0" y1="868.0" x2="48.0" y2="868.0" stroke="#0f8b94" stroke-width="1.1" fill="none"/>
+<text x="65.0" y="851.0" font-size="8.5" fill="#111" font-weight="900" text-anchor="start">BiSheng</text>
+<text x="65.0" y="865.0" font-size="6.9" fill="#111" font-weight="400" text-anchor="start"><tspan x="65.0" dy="0.0">compile/build</tspan></text>
+<rect x="153.0" y="848.0" width="21.0" height="15.0" rx="3.0" fill="none" stroke="#0f8b94" stroke-width="1.4"/>
+<text x="163.5" y="859.0" font-size="8.1" fill="#0f8b94" font-weight="800" text-anchor="middle" font-family="Menlo">&lt;/&gt;</text>
+<text x="185.0" y="851.0" font-size="8.5" fill="#111" font-weight="900" text-anchor="start">msProf</text>
+<text x="185.0" y="865.0" font-size="6.9" fill="#111" font-weight="400" text-anchor="start"><tspan x="185.0" dy="0.0">profiling</tspan></text>
+<rect x="277.0" y="846.0" width="15.0" height="20.0" rx="2.0" fill="none" stroke="#0f8b94" stroke-width="1.4"/>
+<path d="M 286.0 846.0 v 8 h 8" stroke="#0f8b94" stroke-width="1.2" fill="none"/>
+<line x1="281.0" y1="856.0" x2="288.0" y2="856.0" stroke="#0f8b94" stroke-width="1.1" fill="none"/>
+<line x1="281.0" y1="862.0" x2="288.0" y2="862.0" stroke="#0f8b94" stroke-width="1.1" fill="none"/>
+<line x1="281.0" y1="868.0" x2="288.0" y2="868.0" stroke="#0f8b94" stroke-width="1.1" fill="none"/>
+<text x="305.0" y="851.0" font-size="8.5" fill="#111" font-weight="900" text-anchor="start">msobjdump</text>
+<text x="305.0" y="865.0" font-size="6.9" fill="#111" font-weight="400" text-anchor="start"><tspan x="305.0" dy="0.0">ELF/dump analysis</tspan></text>
+<rect x="37.0" y="906.0" width="15.0" height="20.0" rx="2.0" fill="none" stroke="#0f8b94" stroke-width="1.4"/>
+<path d="M 46.0 906.0 v 8 h 8" stroke="#0f8b94" stroke-width="1.2" fill="none"/>
+<line x1="41.0" y1="916.0" x2="48.0" y2="916.0" stroke="#0f8b94" stroke-width="1.1" fill="none"/>
+<line x1="41.0" y1="922.0" x2="48.0" y2="922.0" stroke="#0f8b94" stroke-width="1.1" fill="none"/>
+<line x1="41.0" y1="928.0" x2="48.0" y2="928.0" stroke="#0f8b94" stroke-width="1.1" fill="none"/>
+<text x="65.0" y="911.0" font-size="8.5" fill="#111" font-weight="900" text-anchor="start">msKPP</text>
+<text x="65.0" y="925.0" font-size="6.9" fill="#111" font-weight="400" text-anchor="start"><tspan x="65.0" dy="0.0">performance</tspan><tspan x="65.0" dy="8.4">modeling</tspan></text>
+<rect x="153.0" y="908.0" width="21.0" height="15.0" rx="3.0" fill="none" stroke="#0f8b94" stroke-width="1.4"/>
+<text x="163.5" y="919.0" font-size="8.1" fill="#0f8b94" font-weight="800" text-anchor="middle" font-family="Menlo">&lt;/&gt;</text>
+<text x="185.0" y="911.0" font-size="8.5" fill="#111" font-weight="900" text-anchor="start">Ascend C API</text>
+<text x="185.0" y="925.0" font-size="6.9" fill="#111" font-weight="400" text-anchor="start"><tspan x="185.0" dy="0.0">runtime/API</tspan></text>
+<rect x="277.0" y="906.0" width="15.0" height="20.0" rx="2.0" fill="none" stroke="#0f8b94" stroke-width="1.4"/>
+<path d="M 286.0 906.0 v 8 h 8" stroke="#0f8b94" stroke-width="1.2" fill="none"/>
+<line x1="281.0" y1="916.0" x2="288.0" y2="916.0" stroke="#0f8b94" stroke-width="1.1" fill="none"/>
+<line x1="281.0" y1="922.0" x2="288.0" y2="922.0" stroke="#0f8b94" stroke-width="1.1" fill="none"/>
+<line x1="281.0" y1="928.0" x2="288.0" y2="928.0" stroke="#0f8b94" stroke-width="1.1" fill="none"/>
+<text x="305.0" y="911.0" font-size="8.5" fill="#111" font-weight="900" text-anchor="start">Tests &amp; datasets</text>
+<text x="305.0" y="925.0" font-size="6.9" fill="#111" font-weight="400" text-anchor="start"><tspan x="305.0" dy="0.0">shapes, dtypes,</tspan><tspan x="305.0" dy="8.4">workloads</tspan></text>
+<rect x="395.0" y="795.0" width="737.0" height="157.0" rx="7.0" fill="#ffffff" stroke="#0b4fb3" stroke-width="1.0"/>
+<rect x="395.0" y="795.0" width="737.0" height="27.0" rx="7.0" fill="#f9fcff" stroke="#0b4fb3" stroke-width="1.0"/>
+<line x1="395.0" y1="822.0" x2="1132.0" y2="822.0" stroke="#0b4fb3" stroke-width="1.0" fill="none"/>
+<text x="763.5" y="814.0" font-size="13.0" fill="#0b4fb3" font-weight="900" text-anchor="middle"><tspan x="763.5" dy="0.0">9. SINGLE-OPERATOR FLOW EXAMPLE</tspan></text>
+<circle cx="438.8" cy="866.0" r="5.5" fill="#fff" stroke="#56687d" stroke-width="1.2"/>
+<circle cx="431.8" cy="867.0" r="5.5" fill="#fff" stroke="#56687d" stroke-width="1.2"/>
+<circle cx="445.8" cy="867.0" r="5.5" fill="#fff" stroke="#56687d" stroke-width="1.2"/>
+<circle cx="434.8" cy="859.0" r="5.5" fill="#fff" stroke="#56687d" stroke-width="1.2"/>
+<circle cx="442.8" cy="859.0" r="5.5" fill="#fff" stroke="#56687d" stroke-width="1.2"/>
+<circle cx="436.8" cy="874.0" r="5.5" fill="#fff" stroke="#56687d" stroke-width="1.2"/>
+<circle cx="443.8" cy="873.0" r="5.5" fill="#fff" stroke="#56687d" stroke-width="1.2"/>
+<path d="M 430.8 876.0 C 433.8 883.0, 446.8 883.0, 448.8 873.0" stroke="#56687d" stroke-width="1.2" fill="none"/>
+<text x="438.8" y="905.0" font-size="7.3" fill="#111" font-weight="400" text-anchor="middle"><tspan x="438.8" dy="0.0">Operator</tspan><tspan x="438.8" dy="8.4">RMSNorm</tspan></text>
+<line x1="463.8" y1="866.0" x2="474.5" y2="866.0" stroke="#56687d" stroke-width="1.6" fill="none" marker-end="url(#arrow-gray)"/>
+<rect x="489.5" y="852.0" width="26.0" height="29.0" rx="3.0" fill="none" stroke="#56687d" stroke-width="1.6"/>
+<path d="M 494.5 859.0 l 3 3 l 5 -6" stroke="#56687d" stroke-width="1.4" fill="none"/>
+<line x1="505.5" y1="860.0" x2="512.5" y2="860.0" stroke="#56687d" stroke-width="1.2" fill="none"/>
+<path d="M 494.5 867.0 l 3 3 l 5 -6" stroke="#56687d" stroke-width="1.4" fill="none"/>
+<line x1="505.5" y1="868.0" x2="512.5" y2="868.0" stroke="#56687d" stroke-width="1.2" fill="none"/>
+<path d="M 494.5 875.0 l 3 3 l 5 -6" stroke="#56687d" stroke-width="1.4" fill="none"/>
+<line x1="505.5" y1="876.0" x2="512.5" y2="876.0" stroke="#56687d" stroke-width="1.2" fill="none"/>
+<text x="502.5" y="905.0" font-size="7.3" fill="#111" font-weight="400" text-anchor="middle"><tspan x="502.5" dy="0.0">Source</tspan><tspan x="502.5" dy="8.4">code</tspan></text>
+<line x1="527.5" y1="866.0" x2="538.1" y2="866.0" stroke="#56687d" stroke-width="1.6" fill="none" marker-end="url(#arrow-gray)"/>
+<line x1="575.1" y1="866.0" x2="579.1" y2="866.0" stroke="#56687d" stroke-width="1.6" fill="none"/>
+<line x1="572.5" y1="872.4" x2="575.3" y2="875.2" stroke="#56687d" stroke-width="1.6" fill="none"/>
+<line x1="566.1" y1="875.0" x2="566.1" y2="879.0" stroke="#56687d" stroke-width="1.6" fill="none"/>
+<line x1="559.7" y1="872.4" x2="556.9" y2="875.2" stroke="#56687d" stroke-width="1.6" fill="none"/>
+<line x1="557.1" y1="866.0" x2="553.1" y2="866.0" stroke="#56687d" stroke-width="1.6" fill="none"/>
+<line x1="559.7" y1="859.6" x2="556.9" y2="856.8" stroke="#56687d" stroke-width="1.6" fill="none"/>
+<line x1="566.1" y1="857.0" x2="566.1" y2="853.0" stroke="#56687d" stroke-width="1.6" fill="none"/>
+<line x1="572.5" y1="859.6" x2="575.3" y2="856.8" stroke="#56687d" stroke-width="1.6" fill="none"/>
+<circle cx="566.1" cy="866.0" r="9.5" fill="none" stroke="#56687d" stroke-width="1.6"/>
+<circle cx="566.1" cy="866.0" r="3.4" fill="none" stroke="#56687d" stroke-width="1.4"/>
+<text x="566.1" y="905.0" font-size="7.3" fill="#111" font-weight="400" text-anchor="middle"><tspan x="566.1" dy="0.0">Compile</tspan></text>
+<line x1="591.1" y1="866.0" x2="601.7" y2="866.0" stroke="#56687d" stroke-width="1.6" fill="none" marker-end="url(#arrow-gray)"/>
+<rect x="618.7" y="852.0" width="24.0" height="29.0" rx="2.0" fill="none" stroke="#56687d" stroke-width="1.4"/>
+<path d="M 636.7 852.0 v 8 h 8" stroke="#56687d" stroke-width="1.2" fill="none"/>
+<line x1="622.7" y1="862.0" x2="638.7" y2="862.0" stroke="#56687d" stroke-width="1.1" fill="none"/>
+<line x1="622.7" y1="868.0" x2="638.7" y2="868.0" stroke="#56687d" stroke-width="1.1" fill="none"/>
+<line x1="622.7" y1="874.0" x2="638.7" y2="874.0" stroke="#56687d" stroke-width="1.1" fill="none"/>
+<text x="629.7" y="905.0" font-size="7.3" fill="#111" font-weight="400" text-anchor="middle"><tspan x="629.7" dy="0.0">Extract</tspan><tspan x="629.7" dy="8.4">views</tspan></text>
+<line x1="654.7" y1="866.0" x2="665.4" y2="866.0" stroke="#56687d" stroke-width="1.6" fill="none" marker-end="url(#arrow-gray)"/>
+<line x1="702.4" y1="866.0" x2="706.4" y2="866.0" stroke="#56687d" stroke-width="1.6" fill="none"/>
+<line x1="699.7" y1="872.4" x2="702.6" y2="875.2" stroke="#56687d" stroke-width="1.6" fill="none"/>
+<line x1="693.4" y1="875.0" x2="693.4" y2="879.0" stroke="#56687d" stroke-width="1.6" fill="none"/>
+<line x1="687.0" y1="872.4" x2="684.2" y2="875.2" stroke="#56687d" stroke-width="1.6" fill="none"/>
+<line x1="684.4" y1="866.0" x2="680.4" y2="866.0" stroke="#56687d" stroke-width="1.6" fill="none"/>
+<line x1="687.0" y1="859.6" x2="684.2" y2="856.8" stroke="#56687d" stroke-width="1.6" fill="none"/>
+<line x1="693.4" y1="857.0" x2="693.4" y2="853.0" stroke="#56687d" stroke-width="1.6" fill="none"/>
+<line x1="699.7" y1="859.6" x2="702.6" y2="856.8" stroke="#56687d" stroke-width="1.6" fill="none"/>
+<circle cx="693.4" cy="866.0" r="9.5" fill="none" stroke="#56687d" stroke-width="1.6"/>
+<circle cx="693.4" cy="866.0" r="3.4" fill="none" stroke="#56687d" stroke-width="1.4"/>
+<text x="693.4" y="905.0" font-size="7.3" fill="#111" font-weight="400" text-anchor="middle"><tspan x="693.4" dy="0.0">Agent</tspan><tspan x="693.4" dy="8.4">changes</tspan></text>
+<line x1="718.4" y1="866.0" x2="729.0" y2="866.0" stroke="#56687d" stroke-width="1.6" fill="none" marker-end="url(#arrow-gray)"/>
+<rect x="742.0" y="854.0" width="30.0" height="24.0" rx="3.0" fill="none" stroke="#56687d" stroke-width="1.4"/>
+<text x="757.0" y="870.7" font-size="10.8" fill="#56687d" font-weight="800" text-anchor="middle" font-family="Menlo">&lt;/&gt;</text>
+<text x="757.0" y="905.0" font-size="7.3" fill="#111" font-weight="400" text-anchor="middle"><tspan x="757.0" dy="0.0">New code</tspan></text>
+<line x1="782.0" y1="866.0" x2="792.6" y2="866.0" stroke="#56687d" stroke-width="1.6" fill="none" marker-end="url(#arrow-gray)"/>
+<ellipse cx="820.6" cy="856.0" rx="13.7" ry="5.0" fill="#eef3fb" stroke="#56687d" stroke-width="1.2"/>
+<rect x="807.0" y="856.0" width="27.4" height="22.0" rx="0.0" fill="#eef3fb" stroke="#56687d" stroke-width="1.2"/>
+<ellipse cx="820.6" cy="856.0" rx="13.7" ry="5.0" fill="none" stroke="#56687d" stroke-width="1.2"/>
+<ellipse cx="820.6" cy="865.3" rx="13.7" ry="5.0" fill="none" stroke="#56687d" stroke-width="1.2"/>
+<ellipse cx="820.6" cy="878.0" rx="13.7" ry="5.0" fill="none" stroke="#56687d" stroke-width="1.2"/>
+<text x="820.6" y="905.0" font-size="7.3" fill="#111" font-weight="400" text-anchor="middle"><tspan x="820.6" dy="0.0">Runs</tspan></text>
+<line x1="845.6" y1="866.0" x2="856.3" y2="866.0" stroke="#56687d" stroke-width="1.6" fill="none" marker-end="url(#arrow-gray)"/>
+<rect x="869.3" y="854.0" width="30.0" height="24.0" rx="3.0" fill="none" stroke="#56687d" stroke-width="1.4"/>
+<text x="884.3" y="870.7" font-size="10.8" fill="#56687d" font-weight="800" text-anchor="middle" font-family="Menlo">&lt;/&gt;</text>
+<text x="884.3" y="905.0" font-size="7.3" fill="#111" font-weight="400" text-anchor="middle"><tspan x="884.3" dy="0.0">Metrics</tspan></text>
+<line x1="909.3" y1="866.0" x2="919.9" y2="866.0" stroke="#56687d" stroke-width="1.6" fill="none" marker-end="url(#arrow-gray)"/>
+<rect x="934.9" y="852.0" width="26.0" height="29.0" rx="3.0" fill="none" stroke="#56687d" stroke-width="1.6"/>
+<path d="M 939.9 859.0 l 3 3 l 5 -6" stroke="#56687d" stroke-width="1.4" fill="none"/>
+<line x1="950.9" y1="860.0" x2="957.9" y2="860.0" stroke="#56687d" stroke-width="1.2" fill="none"/>
+<path d="M 939.9 867.0 l 3 3 l 5 -6" stroke="#56687d" stroke-width="1.4" fill="none"/>
+<line x1="950.9" y1="868.0" x2="957.9" y2="868.0" stroke="#56687d" stroke-width="1.2" fill="none"/>
+<path d="M 939.9 875.0 l 3 3 l 5 -6" stroke="#56687d" stroke-width="1.4" fill="none"/>
+<line x1="950.9" y1="876.0" x2="957.9" y2="876.0" stroke="#56687d" stroke-width="1.2" fill="none"/>
+<text x="947.9" y="905.0" font-size="7.3" fill="#111" font-weight="400" text-anchor="middle"><tspan x="947.9" dy="0.0">Better?</tspan></text>
+<line x1="972.9" y1="866.0" x2="983.5" y2="866.0" stroke="#56687d" stroke-width="1.6" fill="none" marker-end="url(#arrow-gray)"/>
+<path d="M 1011.5 851.0 L 1016.5 864.0 L 1026.5 866.0 L 1016.5 868.0 L 1011.5 881.0 L 1006.5 868.0 L 996.5 866.0 L 1006.5 864.0 Z" stroke="#56687d" stroke-width="1.2" fill="#fffaf0"/>
+<text x="1011.5" y="905.0" font-size="7.3" fill="#111" font-weight="400" text-anchor="middle"><tspan x="1011.5" dy="0.0">Yes</tspan></text>
+<line x1="1036.5" y1="866.0" x2="1047.2" y2="866.0" stroke="#56687d" stroke-width="1.6" fill="none" marker-end="url(#arrow-gray)"/>
+<ellipse cx="1075.2" cy="856.0" rx="13.7" ry="5.0" fill="#eef3fb" stroke="#56687d" stroke-width="1.2"/>
+<rect x="1061.5" y="856.0" width="27.4" height="22.0" rx="0.0" fill="#eef3fb" stroke="#56687d" stroke-width="1.2"/>
+<ellipse cx="1075.2" cy="856.0" rx="13.7" ry="5.0" fill="none" stroke="#56687d" stroke-width="1.2"/>
+<ellipse cx="1075.2" cy="865.3" rx="13.7" ry="5.0" fill="none" stroke="#56687d" stroke-width="1.2"/>
+<ellipse cx="1075.2" cy="878.0" rx="13.7" ry="5.0" fill="none" stroke="#56687d" stroke-width="1.2"/>
+<text x="1075.2" y="905.0" font-size="7.3" fill="#111" font-weight="400" text-anchor="middle"><tspan x="1075.2" dy="0.0">Save</tspan><tspan x="1075.2" dy="8.4">experience</tspan></text>
+<rect x="1149.0" y="793.0" width="369.0" height="160.0" rx="7.0" fill="#ffffff" stroke="#1f7f35" stroke-width="1.0"/>
+<rect x="1149.0" y="793.0" width="369.0" height="27.0" rx="7.0" fill="#edf8ee" stroke="#1f7f35" stroke-width="1.0"/>
+<line x1="1149.0" y1="820.0" x2="1518.0" y2="820.0" stroke="#1f7f35" stroke-width="1.0" fill="none"/>
+<text x="1333.5" y="812.0" font-size="13.0" fill="#1f7f35" font-weight="900" text-anchor="middle"><tspan x="1333.5" dy="0.0">10. BENEFITS AND EXPECTED EFFECTS</tspan></text>
+<text x="1187.0" y="833.0" font-size="8.7" fill="#071225" font-weight="400" text-anchor="start"><tspan x="1187.0" dy="0.0">☑ Agent reasons over structure, not only text.</tspan></text>
+<text x="1187.0" y="846.0" font-size="8.7" fill="#071225" font-weight="400" text-anchor="start"><tspan x="1187.0" dy="0.0">☑ Smaller search space and fewer mistakes.</tspan></text>
+<text x="1187.0" y="859.0" font-size="8.7" fill="#071225" font-weight="400" text-anchor="start"><tspan x="1187.0" dy="0.0">☑ More stable and explainable optimization.</tspan></text>
+<text x="1187.0" y="872.0" font-size="8.7" fill="#071225" font-weight="400" text-anchor="start"><tspan x="1187.0" dy="0.0">☑ Reusable patterns accumulate in the skill bank.</tspan></text>
+<text x="1187.0" y="885.0" font-size="8.7" fill="#071225" font-weight="400" text-anchor="start"><tspan x="1187.0" dy="0.0">☑ The programming model evolves toward the domain.</tspan></text>
+<path d="M 404 301 V 411 H 457" stroke="#6b37b2" stroke-width="1.1" fill="none" stroke-dasharray="2 4" marker-end="url(#arrow-gray)"/>
+<path d="M 1086 302 V 411 H 1030" stroke="#344760" stroke-width="1.1" fill="none" stroke-dasharray="2 4" marker-end="url(#arrow-gray)"/>
+<path d="M 1028 639 H 1107 V 414 H 1190" stroke="#344760" stroke-width="1.1" fill="none" stroke-dasharray="2 4" marker-end="url(#arrow-gray)"/>
+<path d="M 370 640 H 425" stroke="#1a63c7" stroke-width="1.1" fill="none" stroke-dasharray="2 4" marker-end="url(#arrow-blue)"/>
+<rect x="266.0" y="967.0" width="986.0" height="39.0" rx="5.0" fill="#fffaf0" stroke="#e9b943" stroke-width="0.9"/>
+<text x="342.0" y="986.0" font-size="10.5" fill="#111" font-weight="900" text-anchor="start">KEY IDEA:</text>
+<text x="438.0" y="986.0" font-size="10.0" fill="#111" font-weight="700" text-anchor="start">compiler tools + static analysis + structured views + programming-model constraints</text>
+<text x="759.0" y="1000.0" font-size="9.8" fill="#111" font-weight="500" text-anchor="middle">help the AI agent optimize operator code with measurable speedups and checkable correctness.</text>
+  </g>
+</svg>

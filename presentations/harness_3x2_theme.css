@@ -1,0 +1,14 @@
+/* @theme harness-3x2 */
+/* @size harness-3x2 1536px 1024px */
+
+section {
+  width: 1536px;
+  height: 1024px;
+  margin: 0;
+  padding: 0;
+  background: #ffffff;
+}
+
+section::after {
+  display: none;
+}
