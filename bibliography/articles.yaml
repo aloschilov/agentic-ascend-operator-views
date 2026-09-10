@@ -87,6 +87,34 @@ categories:
       tags: [survey, llm, code-optimization]
 
   programming_model_induction:
+    - id: prism-typed-perspectives-2511.11939v1
+      title: "Modular GPU Programming with Typed Perspectives"
+      authors: "Manya Bansal; Daniel Sainati; Joseph W. Cutler; Saman Amarasinghe; Jonathan Ragan-Kelley"
+      year: 2025
+      url: "https://arxiv.org/abs/2511.11939v1"
+      download_url: "https://arxiv.org/pdf/2511.11939v1"
+      download_kind: pdf
+      license: "CC BY 4.0"
+      license_url: "https://creativecommons.org/licenses/by/4.0/"
+      sha256: "b92338ba20a39fa214f2c027062127f2ad86150853c2f24724915e1ce1ce6504"
+      distribution: vendored-unchanged
+      status: core
+      relevance: "Prism/Bundl makes collective execution perspectives and memory access requirements explicit; a design reference, not a proof for Ascend asynchronous pipelines."
+      tags: [gpu, types, collective-operations, memory, programming-model]
+    - id: spatiotemporal-composability-2608.25512v1
+      title: "A Programming Paradigm for Spatiotemporal Composability"
+      authors: "Yifan Shi; Wei Zhang; Tianyi Cui"
+      year: 2026
+      url: "https://arxiv.org/abs/2608.25512v1"
+      download_url: "https://arxiv.org/pdf/2608.25512v1"
+      download_kind: pdf
+      license: "arXiv non-exclusive distribution licence"
+      license_url: "https://arxiv.org/licenses/nonexclusive-distrib/1.0/license.html"
+      sha256: "390775dbc9debdcf2ed1b076eed013387ca057630be3cb594617b2b742e48cf0"
+      distribution: local-only
+      status: supporting
+      relevance: "Dynamic-component effects, coeffects and observational independence; conceptual input, not a hardware topology or DMA model."
+      tags: [effects, coeffects, composition, observational-equivalence]
     - id: dreamcoder-2020
       title: "DreamCoder: Growing generalizable, interpretable knowledge with wake-sleep Bayesian program learning"
       year: 2020

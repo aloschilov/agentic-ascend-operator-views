@@ -14,7 +14,7 @@ The central hypothesis is that AI agents should not optimize raw AscendC source 
 - [`bibliography/reading-list.md`](bibliography/reading-list.md) — human-readable linked bibliography.
 - [`bibliography/articles.yaml`](bibliography/articles.yaml) — structured metadata for linked articles and docs.
 - [`bibliography/programming-model-induction.yaml`](bibliography/programming-model-induction.yaml) — structured links for bottom-up programming-model induction and algebraic programming-model discovery.
-- [`publications/README.md`](publications/README.md) — instructions for local-only downloaded copies of linked publications.
+- [`publications/README.md`](publications/README.md) — vendored publications, local downloads and redistribution notes.
 - [`notes/01-ascend-npu.md`](notes/01-ascend-npu.md) — Ascend/NPU-specific sources.
 - [`notes/02-agentic-kernel-optimization.md`](notes/02-agentic-kernel-optimization.md) — LLM/agentic kernel optimization sources.
 - [`notes/03-compiler-ir-autotuning.md`](notes/03-compiler-ir-autotuning.md) — compiler IR, tensor IR, scheduling, autotuning.
@@ -22,6 +22,7 @@ The central hypothesis is that AI agents should not optimize raw AscendC source 
 - [`notes/05-ascend-toolchain-views.md`](notes/05-ascend-toolchain-views.md) — candidate AI-facing compiler/toolchain views.
 - [`notes/06-target-grounded-bottom-up-programming-model-induction.md`](notes/06-target-grounded-bottom-up-programming-model-induction.md) — target-grounded bottom-up programming-model induction with LLMs.
 - [`notes/07-algebraic-programming-model-induction.md`](notes/07-algebraic-programming-model-induction.md) — automatic discovery of a CuTe-like algebraic programming model.
+- [`notes/08-perspectives-and-composability.md`](notes/08-perspectives-and-composability.md) — Prism and spatiotemporal composability: relevance, limits and attribution.
 - [`presentations/agentic_ascend_operator_views_overview.en.marp.md`](presentations/agentic_ascend_operator_views_overview.en.marp.md) — English overview Marp deck for compiler-derived operator views and agentic AscendC optimization.
 - [`presentations/agentic_ascend_operator_views_overview.ru.marp.md`](presentations/agentic_ascend_operator_views_overview.ru.marp.md) — Russian overview Marp deck (same content in Russian).
 - [`presentations/agentic_ascend_operator_views_overview_speech.en.md`](presentations/agentic_ascend_operator_views_overview_speech.en.md) — English spoken-talk script for the overview deck.
@@ -68,7 +69,7 @@ Downloaded PDFs are written to `publications/files/`; non-PDF downloads and the 
 
 ## Vendored publication PDFs
 
-Full-text PDFs of the linked papers are committed under [`publications/files/`](publications/files/).
+Vendored full-text PDFs are under [`publications/files/`](publications/files/). Not every linked paper is vendored: [spatiotemporal composability](https://arxiv.org/abs/2608.25512v1) has a local-only download pending redistribution permission.
 
 Ascend / NPU-specific:
 
@@ -88,6 +89,7 @@ Agentic kernel optimization:
 
 Programming-model induction:
 
+- [Modular GPU Programming with Typed Perspectives (Prism/Bundl)](publications/files/prism-typed-perspectives-2511.11939v1.pdf) — CC BY 4.0; [attribution](notes/08-perspectives-and-composability.md).
 - [DreamCoder: Growing generalizable, interpretable knowledge with wake-sleep Bayesian program learning](publications/files/dreamcoder-2020.pdf)
 - [Stitch: Top-Down Synthesis for Library Learning](publications/files/stitch-2022.pdf)
 - [LILO: Learning Interpretable Libraries by Compressing and Documenting Code](publications/files/lilo-2023.pdf)

@@ -1,0 +1,2 @@
+# Preserve publication bytes and avoid treating a PDF header as text.
+publications/files/*.pdf binary

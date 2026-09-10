@@ -19,6 +19,8 @@
 
 ## 3. Programming-model induction
 
+- [Modular GPU Programming with Typed Perspectives (Prism/Bundl)](https://arxiv.org/abs/2511.11939v1) — high priority for explicit execution-group and memory contracts; GPU guarantees require new justification on Ascend. [PDF](../publications/files/prism-typed-perspectives-2511.11939v1.pdf).
+- [A Programming Paradigm for Spatiotemporal Composability](https://arxiv.org/abs/2608.25512v1) — supporting reading on dynamic-component effects and independence, not an asynchronous accelerator model. Local offline copy only; see [source and licence notes](../notes/08-perspectives-and-composability.md).
 - [DreamCoder: Growing generalizable, interpretable knowledge with wake-sleep Bayesian program learning](https://arxiv.org/abs/2006.08381) — learns reusable symbolic abstractions from solved programs.
 - [Stitch: Top-Down Synthesis for Library Learning](https://arxiv.org/abs/2211.16605) — extracts reusable functions from corpora.
 - [LILO: Learning Interpretable Libraries by Compressing and Documenting Code](https://arxiv.org/abs/2310.19791) — combines LLM-guided synthesis, symbolic compression, and documentation.

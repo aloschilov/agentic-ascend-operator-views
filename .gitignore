@@ -9,4 +9,6 @@ dist/
 # Article PDFs are vendored; other downloads (HTML pages, JSON, manifest) stay local.
 publications/files/*
 !publications/files/*.pdf
+# arXiv redistribution grant is not a general republication licence.
+publications/files/spatiotemporal-composability-2608.25512v1.pdf
 publications/download-manifest.json
